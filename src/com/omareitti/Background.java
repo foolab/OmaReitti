@@ -6,14 +6,14 @@ import android.os.IBinder;
 
 public class Background extends Service {
 
-	public Background() {
-		// TODO Auto-generated constructor stub
-	}
+    public Background() {
+	// TODO Auto-generated constructor stub
+    }
 
-	@Override
+    @Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	// TODO Auto-generated method stub
+	return null;
+    }
 
 }

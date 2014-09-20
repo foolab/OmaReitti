@@ -25,32 +25,32 @@ import android.widget.ListView;
 
 public class Utils {
 
-	public static void addHomeScreenShortcut(Context context, String name, String fromAddress, String toAddress, String fromCoords, String toCoords) { 
-		Intent shortcutIntent = new Intent();
+    public static void addHomeScreenShortcut(Context context, String name, String fromAddress, String toAddress, String fromCoords, String toCoords) { 
+	Intent shortcutIntent = new Intent();
 		
-		shortcutIntent.setClassName(context, context.getClass().getName());
+	shortcutIntent.setClassName(context, context.getClass().getName());
         shortcutIntent.setAction(Intent.ACTION_MAIN);
         shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);			
-		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		
-		if (toAddress != null) shortcutIntent.putExtra("toAddress", toAddress);
-		if (fromAddress != null) shortcutIntent.putExtra("fromAddress", fromAddress);
+	if (toAddress != null) shortcutIntent.putExtra("toAddress", toAddress);
+	if (fromAddress != null) shortcutIntent.putExtra("fromAddress", fromAddress);
 
-		if (toCoords != null) shortcutIntent.putExtra("toCoords", toCoords);
-		if (fromCoords != null) shortcutIntent.putExtra("fromCoords", fromCoords);
+	if (toCoords != null) shortcutIntent.putExtra("toCoords", toCoords);
+	if (fromCoords != null) shortcutIntent.putExtra("fromCoords", fromCoords);
 		
-		Intent intent = new Intent();
-		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+	Intent intent = new Intent();
+	intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+	intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
 
-		intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-				Intent.ShortcutIconResource.fromContext(context,
-						R.drawable.icon));
+	intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+			Intent.ShortcutIconResource.fromContext(context,
+								R.drawable.icon));
 
-		intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-		context.sendBroadcast(intent);		
-	}
+	intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+	context.sendBroadcast(intent);		
+    }
 	
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -86,17 +86,17 @@ public class Utils {
         return deviceId;
     }
     /*public static ComponentName getForegroundActivity(Context context) {
-    	// get a list of running processes and iterate through them
-		ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+    // get a list of running processes and iterate through them
+    ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
 
 		
-		// get the info from the currently running task
-		List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+    // get the info from the currently running task
+    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
 
-		Log.d("current task :", "CURRENT Activity ::"
-				+ taskInfo.get(0).topActivity.getClassName());
+    Log.d("current task :", "CURRENT Activity ::"
+    + taskInfo.get(0).topActivity.getClassName());
 
-		ComponentName componentInfo = taskInfo.get(0).topActivity; 
-		return componentInfo;
+    ComponentName componentInfo = taskInfo.get(0).topActivity; 
+    return componentInfo;
     }*/
 }

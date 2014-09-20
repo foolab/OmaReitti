@@ -28,19 +28,19 @@ public class ShortcutActivity extends Activity {
     History.RoutesAdapter routesAdapter;
 
 	
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mainapp);
+	// TODO Auto-generated method stub
+	super.onCreate(savedInstanceState);
+	setContentView(R.layout.mainapp);
 		
-		TableLayout t1 = (TableLayout)findViewById(R.id.tableLayout1);
-		TableLayout t2 = (TableLayout)findViewById(R.id.tableLayout2);
-		TableLayout t3 = (TableLayout)findViewById(R.id.tableLayout3);
+	TableLayout t1 = (TableLayout)findViewById(R.id.tableLayout1);
+	TableLayout t2 = (TableLayout)findViewById(R.id.tableLayout2);
+	TableLayout t3 = (TableLayout)findViewById(R.id.tableLayout3);
 		
-		t1.setVisibility(View.GONE);
-		t2.setVisibility(View.GONE);
-		t3.setVisibility(View.GONE);
+	t1.setVisibility(View.GONE);
+	t2.setVisibility(View.GONE);
+	t3.setVisibility(View.GONE);
 		
         TabHost tabs = (TabHost)findViewById(R.id.TabHost01);
 
@@ -72,38 +72,38 @@ public class ShortcutActivity extends Activity {
         Utils.setListViewHeightBasedOnChildren((ListView)findViewById(R.id.myRoutesList));
         
         myPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-					HistoryItem h = history.get(arg2);
+		    HistoryItem h = history.get(arg2);
 					
-					String str = h.address; 
-			    	if (!h.name.equals("")) str = h.name;
+		    String str = h.address; 
+		    if (!h.name.equals("")) str = h.name;
 			    	
-					createShortcut(str, null, h.address);
-				}
-		});
+		    createShortcut(str, null, h.address);
+		}
+	    });
         
         myRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				RouteHistoryItem r = routes.get(arg2);
-				String n1 = r.start.substring(0, 5); if (r.start.length() > 0) n1 +=".";
-				String n2 = r.end;//.substring(0, 5); if (r.end.length() > 0) n2 +=".";
-				Utils.addHomeScreenShortcut(ShortcutActivity.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
-			}
-		});		
-	}
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		    RouteHistoryItem r = routes.get(arg2);
+		    String n1 = r.start.substring(0, 5); if (r.start.length() > 0) n1 +=".";
+		    String n2 = r.end;//.substring(0, 5); if (r.end.length() > 0) n2 +=".";
+		    Utils.addHomeScreenShortcut(ShortcutActivity.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
+		}
+	    });		
+    }
 
-	public void createShortcut(String name, String fromAddress, String toAddress) {
+    public void createShortcut(String name, String fromAddress, String toAddress) {
         // The meat of our shortcut
         Intent shortcutIntent = new Intent();//"com.omareitti.MainApp");
         shortcutIntent.setClassName(getPackageName(), MainApp.class.getName());
         shortcutIntent.setAction(Intent.ACTION_MAIN);
         shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         
-		if (toAddress != null) shortcutIntent.putExtra("toAddress", toAddress);
-		if (fromAddress != null) shortcutIntent.putExtra("fromAddress", fromAddress);
+	if (toAddress != null) shortcutIntent.putExtra("toAddress", toAddress);
+	if (fromAddress != null) shortcutIntent.putExtra("fromAddress", fromAddress);
 		
         // The result we are passing back from this activity
         Intent intent = new Intent();
@@ -115,5 +115,5 @@ public class ShortcutActivity extends Activity {
         setResult(RESULT_OK, intent);
  
         finish(); // Must call finish for result to be returned immediately				
-	}
+    }
 }
