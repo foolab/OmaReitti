@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="@string/prSettingsTitle">
+	<!-- 
+		<ListPreference android:title="@string/prLanguage" 
+			android:summary="" android:key="prefLanguage" android:defaultValue="@string/prLanguageDefault"
+			android:entries="@array/prefLanguageEntries" android:entryValues="@array/prefLanguageEntries" />
+ 	-->
+ 	
+		<ListPreference android:title="@string/prMapZoomLevel"
+			android:summary="" android:key="prefMapZoomLevel" android:defaultValue="15"
+			android:entries="@array/prefMapZoomLevelEntries" android:entryValues="@array/prefMapZoomLevelEntries" />
+
+		<Preference android:title="@string/prRouteSearchOptions" android:defaultValue="all"
+			android:summary="" android:key="prefRouteSearchOptions"/>
+
+		<Preference android:title="@string/prTimeType" 
+			android:summary="" android:key="prefTimeType" />
+
+		<ListPreference android:title="@string/prWalkingSpeed"
+			android:summary="" android:key="prefWalkingSpeed" android:defaultValue="1"
+			android:entries="@array/prefWalkingSpeedEntries" android:entryValues="@array/prefWalkingSpeedValues" />
+			
+		<ListPreference android:title="@string/prDepNotifInterval"
+			android:summary="" android:key="prefDepNotifInterval" android:defaultValue="5"
+			android:entries="@array/prefDepNotifIntervalEntries" android:entryValues="@array/prefDepNotifIntervalValues" />
+			
+		<Preference android:title="@string/prAllowCoords" 
+			android:summary="" android:key="prefAllowCoords" />
+
+	</PreferenceCategory>
+  
+</PreferenceScreen>

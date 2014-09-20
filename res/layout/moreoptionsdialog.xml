@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:background="@android:drawable/screen_background_light" android:layout_marginRight="10dp" android:layout_marginLeft="10dp">
+	<TableRow android:layout_width="match_parent" android:layout_height="match_parent" android:paddingTop="10dp" android:paddingBottom="10dp">
+    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonBus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
+    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonTram" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
+    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonMetro" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
+    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonTrain" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
+    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonWalk" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false"></ToggleButton>
+	</TableRow>
+	<TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+  		<Spinner android:layout_span="5" android:prompt="@string/moTitle" android:id="@+id/moreOptionsSpinner" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="10dp"></Spinner>
+	</TableRow>
+	<!--  <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+	    <FrameLayout android:layout_height="wrap_content" android:layout_span="5">	
+			<Button android:layout_span="5" android:id="@+id/moreOptionsOK" android:text="OK" android:textSize="22dip" android:layout_height="wrap_content" android:layout_width="100dip" android:layout_gravity="center"></Button>
+		</FrameLayout>
+	</TableRow> --> 
+</TableLayout>
+

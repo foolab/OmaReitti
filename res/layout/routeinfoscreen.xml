@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content" android:orientation="vertical">
+  
+    <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:stretchColumns="*" android:id="@+id/top_address_bar">
+		<TableRow android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/TopAddressRow">
+			<TextView android:id="@+id/RouteInfoScreenTextFrom" android:textColor="#FF000000" android:layout_height="wrap_content" android:textStyle="normal|bold" android:gravity="top|left" android:layout_width="fill_parent" android:text="Address1"></TextView>
+			<TextView android:textColor="#FF000000" android:id="@+id/RouteInfoScreenTextTo" android:layout_height="wrap_content" android:textStyle="normal|bold" android:text="Address2" android:gravity="right" android:layout_gravity="right" ></TextView>
+  		</TableRow>
+  	</TableLayout>
+  	
+  	<TableLayout android:layout_below="@+id/top_address_bar" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:stretchColumns="*" android:id="@+id/top_info_bar">
+		<TableRow android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/TopInfoRow">
+			<TextView android:id="@+id/RouteInfoScreenTextDuration" android:textColor="#FF000000" android:layout_height="wrap_content" android:textStyle="normal" android:gravity="top|left" android:layout_width="fill_parent" android:text="Address1"></TextView>
+			<TextView android:textColor="#FF000000" android:id="@+id/RouteInfoScreenTextDistance" android:layout_height="wrap_content" android:textStyle="normal" android:text="Address2" android:gravity="right" android:layout_gravity="right" ></TextView>
+  		</TableRow>
+  	</TableLayout>
+  	
+  	<!--  android:background="#b3ffffff"  -->
+  	<TableLayout android:layout_alignParentBottom="true"  android:background="#b3ffffff" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:stretchColumns="*" android:id="@+id/bottom_bar">
+		<TableRow android:layout_width="match_parent" android:layout_margin="2dp"  android:layout_height="wrap_content" android:id="@+id/BottomRow1">
+			<CheckBox android:layout_width="wrap_content" android:layout_column="0" android:id="@+id/checkBoxDeparture" android:text="@string/riCBDeparture" android:checked="true" android:layout_height="wrap_content"></CheckBox>
+			<CheckBox android:text="@string/riCBArrival" android:layout_column="1" android:id="@+id/checkBoxArrival" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></CheckBox>
+		</TableRow>
+		<TableRow android:layout_width="match_parent" android:layout_margin="2dp"  android:layout_height="wrap_content" android:id="@+id/BottomRow2" android:layout_span="2">
+			<Button android:text="@string/riButtonSelect" android:layout_column="0" android:layout_width="50dp" android:id="@+id/SelectRouteButton" android:layout_height="wrap_content"></Button>
+			<Button android:layout_column="1" android:layout_width="50dp" android:id="@+id/RouteInfoScreenShowMap" android:layout_height="wrap_content" android:text="@string/riButtonShowMap"></Button>
+		</TableRow>
+  	</TableLayout>
+  	
+  	<ListView android:layout_height="wrap_content" android:layout_below="@id/top_info_bar" android:layout_above="@id/bottom_bar" android:id="@+id/RouteInfoScreenListView" android:layout_width="fill_parent"></ListView>
+  	  	
+</RelativeLayout>

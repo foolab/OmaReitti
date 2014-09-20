@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- Application -->
+    <string name="appName">OmaReitti</string>
+    <string name="appDesc">Advanced Helsinki public transport navigator</string>
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+    <string name="networkErrorTitle">Network error</string>
+    <string name="networkErrorText">Please check your network connection</string>
+    <string name="PREFS_NAME">RoutePreferences</string>
+    <string name="about">"OmaReitti, ver. 0.75.1 beta\n\n(c) Boris Nechaev, Vladislav Bondarenko 2011</string>  
+   
+    <string name="versionName">0.75.1 beta</string>
+    <string name="hourAbbr">%d h</string>
+    <string name="minuteAbbr">%d min</string>
+    <string name="kmDouble"> %.2f km</string>
+    <string name="tr_walk">Walk</string>
+    <string name="tr_bus">Bus</string>
+    <string name="tr_tram">Tram</string>
+    <string name="tr_metro">Metro</string>
+    <string name="tr_train">Train</string>
+    <string name="tr_boat">Boat</string>   
+
+<!-- BackgroundService -->
+    <string name="bsNotifRouteStartTicker">Route started</string>
+    <string name="bsNotifRouteStartText">Route started</string>
+    <string name="bsNotifRouteFinishTicker">Route finished</string>
+    <string name="bsNotifRouteFinishText">Your trip finished!</string>
+    <string name="bsDialogNextStop">It seems that you should exit on the next stop</string>
+    <string name="bsDialogNextStopTimetable">Following the timetable you should exit on the next stop, please adjust if you are not going on time</string>        
+    <string name="bsNotifExitTicker">Exit from %s</string>
+    <string name="bsNotifExitText">You need to exit on the next stop</string>   
+    <string name="bsNotifPositionTicker">Position update</string>
+    <string name="bsNotifPositionText">Current position is %s</string>   
+    <string name="bsDialogRouteDone">Route done!</string>    
+    <string name="bsNotifDepartureTicker">Start departure</string>
+    <string name="bsNotifDepartureText1">You need to start departure in less than %d minutes</string>
+    <string name="bsNotifDepartureText2">You need to start departure as soon as possible, you are %d minutes late!</string>
+    <string name="bsTimer">ReittiopasTimer</string>        
+    <string name="bsToastRouteCancel">Route canceled</string>      
+    
+<!-- MainApp -->
+    <string name="maBtnSearch">Search</string>
+    <string name="maEditFromHint">From</string>
+    <string name="maEditFromHintLocating">Locating...</string>
+    <string name="maEditToHint">To</string>
+    <string name="maTabPlaces">My places</string>
+    <string name="maTabPlacesMenuFrom">Set as From</string>
+    <string name="maTabPlacesMenuTo">Set as To</string>
+    <string name="maTabPlacesMenuRename">Rename</string>
+    <string name="maTabPlacesMenuRenameDlgTitle">Enter new name</string>
+    <string name="maTabPlacesMenuDelete">Delete</string>
+    <string name="maTabPlacesMenuHome">Add to Home Screen</string>
+    <string name="maTabRoutes">My routes</string>
+    <string name="maTabRoutesMenuSet">Set</string>
+    <string name="maTabRoutesMenuSetBackwards">Set backwards</string>
+    <string name="maTabRoutesMenuDelete">Delete</string>
+    <string name="maTabRoutesMenuHome">Add to Home Screen</string>
+    <string name="maAddressMenuLocation">Current location</string>
+    <string name="maAddressMenuMap">Map</string>
+    <string name="maAddressMenuContacts">Contacts</string>
+    <string name="maDlgSearchLocation">Searching location. Please wait...</string>
+    <string name="maDlgErrorNoFrom">Could not find \'From\' location</string>
+    <string name="maDlgErrorNoTo">Could not find \'To\' location</string>
+    <string name="maDlgSelectFrom">Select \'From\' address</string>
+    <string name="maDlgSelectTo">Select \'To\' address</string>
+    <!-- <string name="maDlgSearchOptions">Search options</string> -->
+    <string name="maMenuSwap">Swap locations</string>
+    <string name="maMenuSettings">Settings</string>
+    <string name="maMenuAbout">About</string>
+    <string name="maMenuAboutDlgTitle">About</string>
+    <string name="maDlgAllowCoordsTitle">Location consent</string>    
+    <string name="maDlgAllowCoordsText">Allow sharing your current location while using public transport.</string>
+    <string name="maDlgAllowCoordsAgree">Agree</string>
+	<string name="maDlgAllowCoordsDisagree">Disagree</string>
+
+<!-- moreoptionsdialog -->
+    <string name="moTitle">Choose route optimization</string>    
+    <string-array name="moOptimize">
+        <item>Normal</item>
+        <item>Fastest</item>
+        <item>Least transfers</item>
+        <item>Least walking</item>
+    </string-array>
+    
+<!-- MapScreen -->
+	<string name="msToastAddressSelect">Double tap to select address</string>
+	<string name="msMenuCurrentLocation">My current location</string>
+		
+<!-- RouteInfoScreen -->    
+    <string name="riButtonSelect">Select</string>
+    <string name="riButtonCancelRoute">Cancel route</string>
+    <string name="riButtonShowMap">Show map</string>
+    <string name="riCBDeparture">Notify departure</string>       
+    <string name="riCBArrival">Notify arrival</string>
+    <string name="riToastNotSelected">Please note, your current route is not selected, press on Select button to start route</string>
+    <string name="riDlgNoGPSTitle">GPS Not Enabled</string>
+    <string name="riDlgNoGPSText">Please enable GPS in if you want to be reminded before arrival</string>
+    <string name="riDlgNoGPSButton">Settings</string>
+        
+<!-- SelectRouteScreen -->
+    <string name="srDeparture">Departure</string>
+    <string name="srArrival">Arrival</string>
+    <string name="srOptimNormal">Normal</string>
+    <string name="srOptimFastest">Fastest</string>
+    <string name="srOptimLeastTrans">Least transfers</string>
+    <string name="srOptimLeastWalk">Least walking</string>
+    <string name="srDlgSearching">Searching routes. Please wait...</string>
+    <string name="srMenuEarlier">Earlier</string>
+    <string name="srMenuNow">Now</string>
+    <string name="srMenuLater">Later</string>
+
+<!-- Preferences -->        
+	<string name="prSettingsTitle">Settings</string>
+    <string name="prLanguage">Language</string>
+    <string name="prLanguageDefault">English</string>
+    <string-array name="prefLanguageEntries">
+        <item>English</item>
+        <item>Finnish</item>
+    </string-array>
+    <string name="prAllowCoords">Allow sharing location</string>    
+    <string name="prMapZoomLevel">Default Map Zoom Level</string>
+    <string-array name="prefMapZoomLevelEntries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>        
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+    </string-array>    
+    <string name="prRouteSearchOptions">Default Route Search Options</string>
+    <string name="prTimeType">Default Time Type</string>
+    <string name="prWalkingSpeed">Walking Speed</string>
+    <string-array name="prefWalkingSpeedEntries">
+        <item>Slow, 0.5 m/s</item>
+        <item>Normal, 1 m/s</item>
+        <item>Fast, 1.5 m/s</item>
+        <item>Running, 4 m/s</item>
+        <item>Cycling, 6 m/s</item>
+    </string-array>        
+    <string name="prefMperS">%s m/s</string>
+    <string-array name="prefWalkingSpeedValues">
+        <item>0.5</item>
+        <item>1</item>
+        <item>1.5</item>
+        <item>4</item>
+        <item>6</item>
+    </string-array>        
+    <string name="prDepNotifInterval">Departure Notification Interval</string>
+    <string-array name="prefDepNotifIntervalEntries">
+        <item>0 min</item>
+        <item>1 min</item>
+        <item>2 min</item>
+        <item>3 min</item>
+        <item>4 min</item>
+        <item>5 min</item>
+        <item>6 min</item>
+        <item>7 min</item>
+        <item>8 min</item>
+        <item>9 min</item>
+        <item>10 min</item>
+    </string-array>
+    <string-array name="prefDepNotifIntervalValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    
+<!-- geoselectoritem -->
+    <string name="gsLocation">Location</string>
+    
+<!-- historyitem -->
+	<string name="hiName">Name</string>
+	<string name="hiAddress">Address</string>
+	
+<!-- mapscreen -->
+    <string name="msShowList">Show list</string>
+</resources>
