@@ -16,7 +16,7 @@ public class Coords {
     }
 	
     public String toString() {
-	return ""+y+","+x;
+	return ""+x+","+y;
     }
 	
     public int xToInt() {
