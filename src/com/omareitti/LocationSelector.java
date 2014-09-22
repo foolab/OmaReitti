@@ -19,23 +19,20 @@ import com.omareitti.datatypes.Coords;
 import com.omareitti.datatypes.GeoRec;
 import java.util.ArrayList;
 import android.widget.ArrayAdapter;
-import android.os.Handler;
 
 // TODO: autocomplete popup shows only after we type 4 characters
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
     private Button mButton;
     private LocationFinder mFinder;
-    private ArrayAdapter<String> mAdapter;
     private Coords mCoords;
     private int mHint;
-    private volatile Handler mHandler;
+    private Context mContext;
     private static final String TAG = MainApp.class.getSimpleName();
 
     public LocationSelector(Context context, AttributeSet attrs) {
 	super(context, attrs);
-	mAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line);
-	mHandler = new Handler();
+	mContext = context;
     }
 
     public void setLocationFinder(LocationFinder finder) {
@@ -45,7 +42,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     public void setInitialHint(int hint) {
 	mHint = hint;
 	mText.setHint(mHint);
-	mText.setAdapter(mAdapter);
+	mText.setAdapter(new CursorAdapter(mContext));
     }
 
     public Coords getCoords() {
@@ -89,60 +86,6 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private void setupViewItems() {
 	mText = (AutoCompleteTextView)findViewById(R.id.editText);
 	mButton = (Button)findViewById(R.id.button);
-
-	mText.addTextChangedListener(new TextWatcher() {
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-		    if (mText.isPerformingCompletion()) {
-			return;
-		    }
-
-		    String text = mText.getText().toString();
-
-		    if (text == null || text.length() < 3) {
-			return;
-		    }
-
-		    Log.i(TAG, "Text is now " + mText.getText());
-
-		    // Start thread:
-		    // TODO: We spawn a thread per char change which is really bad.
-		    new Thread(new Runnable() {
-			    public void run() {
-				final ArrayList<GeoRec> rects =
-				    ReittiopasAPI.getGeocode(mText.getText().toString());
-
-				mHandler.post(new Runnable() {
-					public void run() {
-					    // TODO: We need a way to purge old suggestions
-					    for (int x = 0; x < rects.size(); x++) {
-						int index =
-						    mAdapter.getPosition(rects.get(x).name);
-						if (index == -1) {
-						    mAdapter.add(rects.get(x).name);
-						    Log.i(TAG, "Adding location suggestion: " +
-							  rects.get(x).name);
-						}
-					    }
-
-					    mAdapter.notifyDataSetChanged();
-					}
-				    });
-
-			    }
-			}).start();
-
-		    // Text has been changed by user so we reset the hint
-		    mText.setHint(mHint);
-		    // No need to try to find our location.
-		    mFinder.remove((LocationFinder.Listener)LocationSelector.this);
-		    // Reset
-		    mCoords = null;
-		}
-
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-		public void afterTextChanged(Editable s) { }
-	    });
 
 	mButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
