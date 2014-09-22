@@ -11,6 +11,7 @@ import android.widget.FilterQueryProvider;
 // Brilliant idea from here:
 // http://stackoverflow.com/questions/19858843/how-to-dynamically-add-suggestions-to-autocompletetextview-with-preserving-chara
 
+// TODO: add history
 public class CursorAdapter extends SimpleCursorAdapter {
     CursorAdapter(Context context) {
 	super(context, android.R.layout.simple_dropdown_item_1line,

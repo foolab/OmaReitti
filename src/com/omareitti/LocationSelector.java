@@ -20,7 +20,6 @@ import com.omareitti.datatypes.GeoRec;
 import java.util.ArrayList;
 import android.widget.ArrayAdapter;
 
-// TODO: autocomplete popup shows only after we type 4 characters
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
     private Button mButton;
