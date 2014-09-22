@@ -61,7 +61,9 @@
     <string name="maAddressMenuLocation">Current location</string>
     <string name="maAddressMenuMap">Map</string>
     <string name="maAddressMenuContacts">Contacts</string>
-    <string name="maDlgSearchLocation">Searching location. Please wait...</string>
+    <string name="maDlgSearch">Searching. Please wait...</string>
+    <string name="maDlgErrorEmptyFrom">From cannot be empty</string>
+    <string name="maDlgErrorEmptyTo">To cannot be empty</string>
     <string name="maDlgErrorNoFrom">Could not find \'From\' location</string>
     <string name="maDlgErrorNoTo">Could not find \'To\' location</string>
     <string name="maDlgSelectFrom">Select \'From\' address</string>

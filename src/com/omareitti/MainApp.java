@@ -14,6 +14,7 @@ import com.omareitti.R;
 import com.omareitti.History.HistoryItem;
 import com.omareitti.History.RouteHistoryItem;
 import com.omareitti.datatypes.GeoRec;
+import com.omareitti.datatypes.Coords;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -76,41 +77,41 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
+import android.widget.ScrollView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MainApp extends Activity {
-    public static AutoCompleteTextView fromEditText;
     public static AutoCompleteTextView toEditText;
     public static Button searchButton;
     public static EditText timeEdit;
     public static EditText dateEdit;
     public static Button moreOptionsButton;
-    
+
     private static final int TIME_DIALOG_ID = 0;
     private static final int DATE_DIALOG_ID = 1;
-    
+
     private static String hour = "00";
     private static String minute = "00";
-    
+
     private static String year = "1900";
     private static String month = "01";
     private static String day = "01";
-    
+
     private static boolean isDateTimeUnchanged = true;
     private static boolean isMoreOptionsUnchanged = true;
-    private static boolean isTimeTypeUnchanged = true;    
-    
+    private static boolean isTimeTypeUnchanged = true;
+
     ArrayList<GeoRec> geoFrom;
-    ArrayList<GeoRec> geoTo; 
-    
-    private String fromCoords = "";
-    private String toCoords = "";
+    ArrayList<GeoRec> geoTo;
+
+    private Coords fromCoords;
+    private Coords toCoords;
     private String fromName = "";
-    private String toName = "";    
+    private String toName = "";
     private String optimize;
     private String transport_types;
     private String timetype;
-    
+
     public volatile Handler handler;
     private ListView l1;
     public Dialog locationFromSelectDialog;
@@ -137,6 +138,12 @@ public class MainApp extends Activity {
     static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 	
+
+
+    private static LocationSelector mFrom;
+    private static LocationSelector mTo;
+    private LocationFinder mLocation;
+
     private static String twodigits(int i) {
 	return (i > 10 ? "" + i : "0"+i);
     }
@@ -151,11 +158,11 @@ public class MainApp extends Activity {
 	year =		"" + c.get(Calendar.YEAR);
 	timeEdit.setText(timeFormat.format(dt));
 	dateEdit.setText(dateFormat.format(dt));
+	// TODO:
 	// hack
-	fromEditText.clearFocus();
-	findViewById(R.id.tableRow1).requestFocus();
+	mFrom.clearFocus();
     }
-	
+
     private void updateSettings(boolean showDialog) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -194,16 +201,14 @@ public class MainApp extends Activity {
         }
         ReittiopasAPI.walkingSpeed = (int)(Double.parseDouble(prefs.getString("prefWalkingSpeed", "1"))*60);
     }
-	
+
     @Override
 	protected void onStart() {
 	super.onStart();
-		
+
 	handler = new Handler();
-	//if (isDateTimeUnchanged) setCurrentDateTime();		
-	//updateSettings();
     }
-    
+
     @Override
 	protected void onRestart() {
 	super.onRestart();
@@ -238,39 +243,34 @@ public class MainApp extends Activity {
     History.RoutesAdapter routesAdapter;
     
     private ArrayAdapter<String> autoCompleteAdapter;
-    
+
     /** Called when the activity is first created. */
     @Override
 	public void onCreate(Bundle savedInstanceState) {
-    	   	
-        super.onCreate(savedInstanceState);        
-        setContentView(R.layout.mainapp);        
-        
-        fromEditText = (AutoCompleteTextView) findViewById(R.id.editText1);
-        fromEditText.setHint(R.string.maEditFromHint);
-        toEditText = (AutoCompleteTextView) findViewById(R.id.editText2);
-        toEditText.setHint(R.string.maEditToHint);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.mainapp);
 
-        fromEditText.addTextChangedListener(new TextWatcher() {
-		public void onTextChanged(CharSequence s, int start, int before, int count) {  }
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) { fromCoords = ""; /*Log.i(TAG, "CLEAR FROM COORDINATES!!!");*/ }
-		public void afterTextChanged(Editable s) {}
-	    });
-        
-        toEditText.addTextChangedListener(new TextWatcher() {
-		public void onTextChanged(CharSequence s, int start, int before, int count) { }
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) { toCoords = "";  /*Log.i(TAG, "CLEAR FROM COORDINATES!!!");*/ }
-		public void afterTextChanged(Editable s) {}
-	    });       
-        //fromEditText.setText("Iso Omena");
-        //toEditText.setText("Tapiolan kirkko");
-        
-        searchButton = (Button)findViewById(R.id.button1);
-        searchButton.setOnClickListener(searchRouteListener); 
-        
+	// TODO:
+	ScrollView view = (ScrollView)findViewById(R.id.scroller);
+	view.scrollTo(0, 0);
+
+
+	mLocation = new LocationFinder((Context)MainApp.this);
+
+        mFrom = (LocationSelector)findViewById(R.id.fromLocation);
+	mFrom.setInitialHint(R.string.maEditFromHint);
+	mFrom.setLocationFinder(mLocation);
+
+	mTo = (LocationSelector)findViewById(R.id.toLocation);
+	mTo.setInitialHint(R.string.maEditToHint);
+	mTo.setLocationFinder(mLocation);
+
+        searchButton = (Button)findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(searchRouteListener);
+
         imageButtonDepArr = (ImageButton)findViewById(R.id.imageButtonDepArr);
         imageButtonDepArr.setOnClickListener(depArrDirectionListener);
-        
+ 
         isTimeTypeUnchanged = true;
         isMoreOptionsUnchanged = true;
         isDateTimeUnchanged = true;
@@ -288,24 +288,8 @@ public class MainApp extends Activity {
         dateEdit.setOnClickListener(dateEditListener);
         
         moreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
-        moreOptionsButton.setOnClickListener(moreOptionsListener);      
-        
-        Button fromButton = (Button)findViewById(R.id.fromButton);
-        Button toButton = (Button)findViewById(R.id.toButton);
-        
-        fromButton.setOnClickListener(new View.OnClickListener() {
-		public void onClick(View arg0) {
-		    putAddressHere = fromEditText;
-		    showGetAddress();
-		}
-	    });
-        
-        toButton.setOnClickListener(new View.OnClickListener() {
-		public void onClick(View arg0) {
-		    putAddressHere = toEditText;
-		    showGetAddress();
-		}
-	    });        
+        moreOptionsButton.setOnClickListener(moreOptionsListener);
+
         setCurrentDateTime();
 	/* WTF IS THIS SHIT??!?!
 	   final Calendar c = Calendar.getInstance();
@@ -323,14 +307,9 @@ public class MainApp extends Activity {
 	   day = (d.length()==1) ? "0"+d : d;
 	   dateEdit.setText(day+"."+month+"."+year);
         */
-        
-        fromCoords = "";
-        toCoords = "";
-        fromName = "";
-        toName = "";   
-        
+
 	l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
-        
+
 	Log.i(TAG, "trying to bind service "+BackgroundService.class.getName());
 	Intent servIntent = new Intent(BackgroundService.class.getName());//this, BackgroundService.class);
         startService(servIntent);
@@ -380,17 +359,17 @@ public class MainApp extends Activity {
         
         autoCompleteAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, History.getHistoryAsArray());
         
-        fromEditText.setAdapter(autoCompleteAdapter);
-        toEditText.setAdapter(autoCompleteAdapter);
+	//        mFrom.setAdapter(autoCompleteAdapter);
+	//        mTo.setAdapter(autoCompleteAdapter);
         Utils.setListViewHeightBasedOnChildren((ListView)findViewById(R.id.myPlacesList));
         Utils.setListViewHeightBasedOnChildren((ListView)findViewById(R.id.myRoutesList));
         
         myPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				
+
 		    lastSelectedHistory = arg2;
-				
+
 		    final String[] items = new String[]{
 			getString(R.string.maTabPlacesMenuFrom),
 			getString(R.string.maTabPlacesMenuTo),
@@ -404,31 +383,28 @@ public class MainApp extends Activity {
 			    public void onClick(DialogInterface dialog, int which) {
 				HistoryItem h = history.get(lastSelectedHistory);
 				switch(which) {
-				case 0: fromEditText.setText(h.address); 
-				    fromName = h.address;
-				    fromCoords = h.coords;
-				    //Log.i(TAG, "SET FROM COORDINATES!!!");
+				case 0:
+				    mFrom.setLocation(h.address, h.coords);
 				    break;
-				case 1: toEditText.setText(h.address); 
-				    toName = h.address;
-				    toCoords = h.coords;
-				    //Log.i(TAG, "SET TO COORDINATES!!!");
+				case 1:
+				    mTo.setLocation(h.address, h.coords);
 				    break;
-				case 2: showEditName(); break;
-				case 3: 
-				    History.remove(MainApp.this, "history_"+history.get(lastSelectedHistory).address); 
+				case 2:
+				    showEditName();
+				    break;
+				case 3:
+				    History.remove(MainApp.this, "history_"+history.get(lastSelectedHistory).address);
 				    History.init(MainApp.this);
 				    history = History.getHistory(MainApp.this);
 				    historyAdapter.notifyDataSetChanged();
 				    break;
 				case 4:
-										
 				    String name = h.name;
 				    if (name.equals("")) name = h.address;
-				    Utils.addHomeScreenShortcut(MainApp.this, name, null, h.address, null, h.coords);
+				    // TODO:
+				    //				    Utils.addHomeScreenShortcut(MainApp.this, name, null, h.address, null, h.coords);
 				    break;
 				}
-								
 			    }
 			});
 		    builder.show();
@@ -451,24 +427,16 @@ public class MainApp extends Activity {
 			    public void onClick(DialogInterface dialog, int which) {
 				History.RouteHistoryItem r = routes.get(lastSelectedRoute);
 				switch(which) {
-				case 0: 
-				    fromEditText.setText(r.start);
-				    toEditText.setText(r.end);
-				    fromName = r.start;
-				    toName = r.end;
-				    fromCoords = r.coords;
-				    toCoords = r.coords2;
+				case 0:
+				    mFrom.setLocation(r.start, r.coords);
+				    mTo.setLocation(r.end, r.coords2);
 				    break;
-				case 1: 
-				    fromEditText.setText(r.end);
-				    toEditText.setText(r.start);
-				    fromName = r.end;
-				    toName = r.start;
-				    fromCoords = r.coords2;
-				    toCoords = r.coords;									        
+				case 1:
+				    mFrom.setLocation(r.end, r.coords2);
+				    mTo.setLocation(r.start, r.coords);
 				    break;
-				case 2: 
-				    History.remove(MainApp.this, "route_"+r.start+"_"+r.end); 
+				case 2:
+				    History.remove(MainApp.this, "route_"+r.start+"_"+r.end);
 				    History.init(MainApp.this);
 				    routes = History.getRoutes(MainApp.this);
 				    routesAdapter.notifyDataSetChanged();
@@ -476,7 +444,8 @@ public class MainApp extends Activity {
 				case 3:
 				    String n1 = r.start.substring(0, 5); if (r.start.length() > 0) n1 +=".";
 				    String n2 = r.end;//.substring(0, 5); if (r.end.length() > 0) n2 +=".";
-				    Utils.addHomeScreenShortcut(MainApp.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
+				    // TODO:
+				    //				    Utils.addHomeScreenShortcut(MainApp.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
 				    break;
 				}
 								
@@ -503,13 +472,14 @@ public class MainApp extends Activity {
 		toName = toAddress;
 	    }
 	    if (fromAddress != null) { 
-		fromEditText.setText(fromAddress);
+		mFrom.setText(fromAddress);
 		fromName = fromAddress;
 	    }
-	    if (fromCoordsInt != null) 
-		fromCoords = fromCoordsInt;
-	    if (toCoordsInt != null) 
-		toCoords = toCoordsInt;
+	    // TODO:
+	    //	    if (fromCoordsInt != null) 
+	    //		fromCoords = fromCoordsInt;
+	    //	    if (toCoordsInt != null) 
+	    //		toCoords = toCoordsInt;
         	 
 	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
 		//TODO: test 
@@ -522,7 +492,7 @@ public class MainApp extends Activity {
         }
     }
     
-    private EditText putAddressHere = null;
+    private LocationSelector putAddressHere = null;
     private static final int PICK_CONTACT = 123;
     private static final int PICK_MAP = 124;
     private static int currentAction = 0;
@@ -613,33 +583,34 @@ public class MainApp extends Activity {
 		String mapAddress = data.getStringExtra("mapAddress");
 		String mapCoords = data.getStringExtra("mapCoords");
 		putAddressHere.setText(mapAddress);
-		if (putAddressHere == fromEditText) {
-		    fromCoords = mapCoords;
-		} else if (putAddressHere == toEditText) {
-		    toCoords = mapCoords;
-		}
+		// TODO:
+		//		if (putAddressHere == mFrom) {
+		//		    fromCoords = mapCoords;
+		//		} else if (putAddressHere == mTo) {
+		//		    toCoords = mapCoords;
+		//		}
 		Log.i(TAG, "PICK_MAP: "+mapAddress+" "+mapCoords);
 		//putAddressHere = null;
 	    }
-	    break;				
+	    break;
 	}
 	currentAction = 0;
 	putAddressHere = null;
-    }  
-    
+    }
+
     private void showEditName() {
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setTitle(getString(R.string.maTabPlacesMenuRenameDlgTitle));
     	LayoutInflater inflater = LayoutInflater.from(this);
     	final View convertView = inflater.inflate(R.layout.editname, null);
     	builder.setView(convertView);
-    	
+
     	AlertDialog alertDialog = builder.create();
-    	
+
     	EditText et = (EditText)convertView.findViewById(R.id.editName);
     	HistoryItem h = history.get(lastSelectedHistory);
-    	
-    	String str = h.address; 
+
+    	String str = h.address;
     	if (!h.name.equals("")) str = h.name;
     	et.setText(str);
     	
@@ -681,65 +652,137 @@ public class MainApp extends Activity {
 
     private OnClickListener searchRouteListener = new OnClickListener() {
 	    public void onClick(View v) {
-        	if (!fromCoords.equals("") && !toCoords.equals("")) {
-		    launchNextActivity();
+		if (mFrom.getText().equals("")) {
+		    // TODO: not working?!
+		    showErrorDialog("", getString(R.string.maDlgErrorEmptyFrom));
 		    return;
-		}         	
-		fromCoords = "";
-		toCoords = "";
-		fromName = "";
-		toName = "";   
-        	
-        	processDialog = ProgressDialog.show(MainApp.this, "", getString(R.string.maDlgSearchLocation), true);
-        	
-    		new Thread(new Runnable() {
-    			public void run() {
+		}
+
+		if (mTo.getText().equals("")) {
+		    // TODO: not working?!
+		    showErrorDialog("", getString(R.string.maDlgErrorEmptyTo));
+		    return;
+		}
+
+        	processDialog =
+		    ProgressDialog.show(MainApp.this, "",
+					getString(R.string.maDlgSearch), true);
+
+		// TODO: what if we have coordinates?
+
+		new Thread(new Runnable() {
+			public void run() {
+			    ArrayList<GeoRec> res;
+			    res = ReittiopasAPI.getGeocode(mFrom.getText().toString());
+
 			    try {
-				ReittiopasAPI api = new ReittiopasAPI();
-    					
-				if (fromEditText.getText().toString().equals("") && !fromEditText.getHint().equals(getString(R.string.maEditFromHint)) && !fromEditText.getHint().equals("")) {
-				    geoFrom = api.getGeocode(fromEditText.getHint().toString());
-				} else {    					
-				    geoFrom = api.getGeocode(fromEditText.getText().toString()); // This makes an HTTP request don't call it many times
-				}
-				geoTo = api.getGeocode(toEditText.getText().toString());
-			    } catch ( Exception e ) {
-				Log.e("ERROR", "No network", e);
+				fromName = res.get(0).name;
+				// TODO:
+				//				fromCoords = res.get(0).coords;
+			    } catch (Exception e) {
+				Log.e(TAG, "error: ", e);
+			    }
+
+			    res = ReittiopasAPI.getGeocode(mTo.getText().toString());
+			    try {
+				toName = res.get(0).name;
+				//TODO:
+				//				toCoords = res.get(0).coords;
+			    } catch (Exception e) {
+				Log.e(TAG, "error: ", e);
 			    }
 
 			    handler.post(new Runnable() {
-				    public void run() {	
-					processDialog.dismiss(); 
-    						
-					if (geoFrom == null || geoTo == null) {
-					    showErrorDialog(getString(R.string.networkErrorTitle), getString(R.string.networkErrorText));
-					} else {
-					    if (geoFrom.size() == 0) showErrorDialog(getString(R.string.error), getString(R.string.maDlgErrorNoFrom));
-					    if (geoTo.size() == 0) showErrorDialog(getString(R.string.error), getString(R.string.maDlgErrorNoTo));
-            					            					
-					    if (geoTo.size() > 1) {
-						showLocationToSelectDialog();
-					    }
-            					
-					    if (geoFrom.size() > 1) {
-						showLocationFromSelectDialog();
-					    }            					
-          					
-					    if (geoFrom.size() == 1) {
-						fromCoords = geoFrom.get(0).coords;
-						fromName = geoFrom.get(0).name+", "+geoFrom.get(0).city;
-					    }
-					    if (geoTo.size() == 1) {
-						toCoords = geoTo.get(0).coords;
-						toName = geoTo.get(0).name+", "+geoTo.get(0).city;
-					    }
-
-					    launchNextActivity();
-					}
+				    public void run() {
+					processDialog.dismiss();
+					// TODO: alerts
+					launchNextActivity();
 				    }
-    				});					
-    			}
-		    }).start();
+				});
+
+			}
+		    }).run();
+
+		// //		String from = 
+		// ArrayList<GeoRec> res = ReittiopasAPI.getGeocode(mFrom.getText().toString());
+		// if (res.size() == 0) {
+		//     // TODO: tell ths user something
+		//     return;
+		// }
+
+
+
+		// String from = res.get(0).name;
+
+		// res = ReittiopasAPI.getGeocode(mTo.getText().toString());
+		// if (res.size() == 0) {
+		//     // TODO: tell ths user something
+		//     return;
+		// }
+
+		// String to = res.get(0).name;
+
+
+        	// if (!fromCoords.equals("") && !toCoords.equals("")) {
+		//     launchNextActivity();
+		//     return;
+		// }         	
+		// fromCoords = "";
+		// toCoords = "";
+		// fromName = "";
+		// toName = "";   
+        	
+
+        	
+    		// new Thread(new Runnable() {
+    		// 	public void run() {
+		// 	    try {
+		// 		ReittiopasAPI api = new ReittiopasAPI();
+    					
+		// 		if (mFrom.getText().toString().equals("") && !mFrom.getHint().equals(getString(R.string.maEditFromHint)) && !mFrom.getHint().equals("")) {
+		// 		    geoFrom = api.getGeocode(mFrom.getHint().toString());
+		// 		} else {    					
+		// 		    geoFrom = api.getGeocode(mFrom.getText().toString()); // This makes an HTTP request don't call it many times
+		// 		}
+		// 		geoTo = api.getGeocode(toEditText.getText().toString());
+		// 	    } catch ( Exception e ) {
+		// 		Log.e("ERROR", "No network", e);
+		// 	    }
+
+		// 	    handler.post(new Runnable() {
+		// 		    public void run() {	
+		// 			processDialog.dismiss(); 
+    						
+		// 			if (geoFrom == null || geoTo == null) {
+		// 			    showErrorDialog(getString(R.string.networkErrorTitle), getString(R.string.networkErrorText));
+		// 			} else {
+		// 			    if (geoFrom.size() == 0) showErrorDialog(getString(R.string.error), getString(R.string.maDlgErrorNoFrom));
+		// 			    if (geoTo.size() == 0) showErrorDialog(getString(R.string.error), getString(R.string.maDlgErrorNoTo));
+            					            					
+		// 			    if (geoTo.size() > 1) {
+		// 				showLocationToSelectDialog();
+		// 			    }
+            					
+		// 			    if (geoFrom.size() > 1) {
+		// 				showLocationFromSelectDialog();
+		// 			    }            					
+          					
+		// 			    if (geoFrom.size() == 1) {
+		// 				fromCoords = geoFrom.get(0).coords;
+		// 				fromName = geoFrom.get(0).name+", "+geoFrom.get(0).city;
+		// 			    }
+		// 			    if (geoTo.size() == 1) {
+		// 				toCoords = geoTo.get(0).coords;
+		// 				toName = geoTo.get(0).name+", "+geoTo.get(0).city;
+		// 			    }
+
+		// 			    launchNextActivity();
+		// 			}
+		// 		    }
+    		// 		});					
+    		// 	}
+		//     }).start();
+
 	    }
 	};
     
@@ -790,7 +833,7 @@ public class MainApp extends Activity {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
 		fromName = geoFrom.get(position).name+", "+geoFrom.get(position).city;
-		fromEditText.setText(fromName);
+		mFrom.setText(fromName);
 		// NB! THIS SHOULD BE AFTER fromEditText.setText(fromName);
 		fromCoords = geoFrom.get(position).coords;
 		locationFromSelectDialog.dismiss();
@@ -810,7 +853,7 @@ public class MainApp extends Activity {
 		launchNextActivity();
 	    }
 	};
-    
+
     private void showLocationFromSelectDialog() {
     	Context context = MainApp.this;
     	locationFromSelectDialog = new Dialog(context);
@@ -837,19 +880,18 @@ public class MainApp extends Activity {
 	// only if we successfully retrieved both from and to
 	// coordinates, start the new activity
     	Log.i(TAG, "launchNextActivity fromCoords:"+fromCoords+" toCoords:"+toCoords);
-	if (fromCoords != "" && toCoords != "") {
-			
+	if (mFrom.getCoords() != null && mTo.getCoords() != null) {
             Intent myIntent = new Intent(MainApp.this, SelectRouteScreen.class);
-            myIntent.putExtra("fromCoords", fromCoords);
-            myIntent.putExtra("toCoords", toCoords);
-            myIntent.putExtra("fromName", fromName);
-            myIntent.putExtra("toName", toName);
+            myIntent.putExtra("fromCoords", mFrom.getCoords().toString());
+            myIntent.putExtra("toCoords", mTo.getCoords().toString());
+            myIntent.putExtra("fromName", mFrom.getText());
+            myIntent.putExtra("toName", mTo.getText());
             myIntent.putExtra("date", year+month+day);
             myIntent.putExtra("time", hour+minute);
             myIntent.putExtra("optimize", optimize);
             myIntent.putExtra("timetype", timetype);
             myIntent.putExtra("transport_types", transport_types);
-            startActivity(myIntent);	 
+            startActivity(myIntent);
 	}
     }
     
@@ -1083,15 +1125,16 @@ public class MainApp extends Activity {
 	case SWAP_MENU_ID:
 	    String f = "";
 	    String t = "";
-	    if (!fromEditText.getHint().equals(getString(R.string.maEditFromHint)) && !fromEditText.getHint().equals("")) f = fromEditText.getHint().toString();
+	    if (!mFrom.getHint().equals(getString(R.string.maEditFromHint)) && !mFrom.getHint().equals("")) f = mFrom.getHint().toString();
 	    //Log.i(TAG, "sWAP: "+fromEditText.getText().toString().equals("")+"  "+(!fromEditText.getHint().equals("From") && !fromEditText.getHint().equals(""))+" "+f);
-	    if (!fromEditText.getText().toString().equals("")) f = fromEditText.getText().toString();
+	    if (!mFrom.getText().toString().equals("")) f = mFrom.getText().toString();
 	    if (!toEditText.getText().toString().equals("")) t = toEditText.getText().toString();
-	    fromEditText.setText(t);
-	    toEditText.setText(f);
-	    String tmp = fromCoords;
-	    fromCoords = toCoords;
-	    toCoords = tmp; 
+	    mFrom.setText(t);
+	    mTo.setText(f);
+	    // TODO:
+	    //	    String tmp = fromCoords;
+	    //	    fromCoords = toCoords;
+	    //	    toCoords = tmp;
 	    break;
 	case SETTINGS_MENU_ID:
 	    Intent settingsActivity = new Intent(MainApp.this, SettingsScreen.class);
@@ -1130,8 +1173,10 @@ public class MainApp extends Activity {
 		// TODO Auto-generated method stub
 		Log.i(TAG, "locationDiscovered: "+lat+" "+lon);
 		lastLocDisc = lon+","+lat;
-		if (fromCoords.equals(""))
-		    fromCoords = lon+","+lat;			
+
+		// TODO:
+		//		if (fromCoords.equals(""))
+		//		    fromCoords = lon+","+lat;			
 	    }
 		
 	    public void handleUpdate(String s) throws RemoteException {
@@ -1142,59 +1187,59 @@ public class MainApp extends Activity {
 	    public void handleGPSUpdate(double lat, double lon, float angle) throws RemoteException {
 		// TODO Auto-generated method stub
 		Log.i(TAG, "handleGPSUpdate: "+lat+" "+lon);
-		if (fromCoords.equals(""))
-		    fromCoords = lon+","+lat;
+		// TODO:
+		//		if (fromCoords.equals(""))
+		//  fromCoords = lon+","+lat;
 	    }
-		
+
 	    public void addressDiscovered(String address) throws RemoteException {
 		Log.i(TAG, "addressDiscovered: "+address);
 		//fromEditText = (EditText) findViewById(R.id.editText1);
 		if (putAddressHere == null) {
 		    if (address.equals("")) {
-			fromEditText.setHint(getString(R.string.maEditFromHint));
+			//			mFrom.setHint(getString(R.string.maEditFromHint));
 		    } else {
-			fromEditText.setHint(address);
+			//			mFrom.setHint(address);
 			fromName = address;
 		    }
 		} else if (currentAction == 0) putAddressHere.setText(address);
-			
+
 		if (launchedFromParamsAlready) return;
 	        Bundle b = getIntent().getExtras();
 	        if (b != null) {
 		    Log.i(TAG, "Bundle: "+b);
 		    String toAddress = b.getString("toAddress");
 		    String fromAddress = b.getString("fromAddress");
-	        	 
+
 		    String toCoordsInt = b.getString("toCoords");
 		    if (toAddress != null && fromAddress == null && !lastLocDisc.equals("")) {
 			toName = toAddress;
-			toCoords = toCoordsInt;
+			// TODO:
+			//			toCoords = toCoordsInt;
 			fromName = address;
-			fromCoords = lastLocDisc;
+			//			fromCoords = lastLocDisc;
 			setCurrentDateTime();
-			updateSettings(false);                
-			launchNextActivity(); 
+			updateSettings(false);
+			launchNextActivity();
 			launchedFromParamsAlready = true;
 		    }
-	        }			
+	        }
 	    }
 	};
 
-	
     private IBackgroundServiceAPI api = null;
-	
+
     private ServiceConnection servceConection = new ServiceConnection() {
-		
 	    public void onServiceDisconnected(ComponentName name) {
 		Log.i(TAG, "Service disconnected!");
 		api = null;
 	    }
-		
+
 	    public void onServiceConnected(ComponentName name, IBinder service) {
 		api = IBackgroundServiceAPI.Stub.asInterface(service);
 
-		fromEditText.setHint(getString(R.string.maEditFromHintLocating));
-			
+		//		mFrom.setHint(getString(R.string.maEditFromHintLocating));
+
 		Log.i(TAG, "Service connected! "+api.toString());
 		try {
 		    api.addListener(serviceListener);
@@ -1207,7 +1252,7 @@ public class MainApp extends Activity {
 		    Log.e(TAG, "ERROR!!", e);
 		}
 	    }
-	};	
+	};
 }
 
 

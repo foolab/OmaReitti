@@ -45,6 +45,7 @@ import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import com.omareitti.datatypes.Coords;
 
 public class SelectRouteScreen extends Activity {
 
@@ -53,7 +54,7 @@ public class SelectRouteScreen extends Activity {
 	private Context context;
 	private ArrayList<Route> routes;
 	private int screenWidth;
-		
+
 	public EfficientAdapter(Context context, ArrayList<Route> routes, int screenWidth) {
 	    mInflater = LayoutInflater.from(context);
 	    this.context = context;
@@ -72,9 +73,8 @@ public class SelectRouteScreen extends Activity {
 	public long getItemId(int position) {
 	    return position;
 	}
-		
 
-	public View getView(int position, View convertView, ViewGroup parent) { 			
+	public View getView(int position, View convertView, ViewGroup parent) {
 	    ViewHolder holder;
 	    if (convertView == null) {
 		convertView = mInflater.inflate(R.layout.routelistitem, null);
@@ -97,71 +97,65 @@ public class SelectRouteScreen extends Activity {
 	    Resources res = context.getResources();
 	    Drawable dr = res.getDrawable(R.drawable.man);
 	    int iconWidth = dr.getIntrinsicWidth();
-			
-	    //Log.i("ddd", Integer.toString(screenWidth));
-	    //Log.i("ddd", Integer.toString(iconWidth));
-			
+
 	    Route route1 = routes.get(position);
-			
+
 	    String hours = Integer.toString(route1.depTime.getHours());
 	    hours = hours.length() == 1 ? "0"+hours : hours;
 	    String mins = Integer.toString(route1.depTime.getMinutes());
 	    mins = mins.length() == 1 ? "0"+mins : mins;
 	    holder.text.setText(hours+":"+mins);
-			
+
 	    if (route1.firstBusTime != null) {
 		hours = Integer.toString(route1.firstBusTime.getHours());
 		hours = hours.length() == 1 ? "0"+hours : hours;
 		mins = Integer.toString(route1.firstBusTime.getMinutes());
-		mins = mins.length() == 1 ? "0"+mins : mins;			
-		holder.text3.setText(" ("+hours+":"+mins+")");			
+		mins = mins.length() == 1 ? "0"+mins : mins;
+		holder.text3.setText(" ("+hours+":"+mins+")");
 	    }
-			
-	    //holder.text1.setText(route1.getStringDuration());
+
 	    holder.text1.setText(RouteInfoScreen.getStringDuration(route1.actual_duration, context));
-			
+
 	    hours = Integer.toString(route1.arrTime.getHours());
 	    hours = hours.length() == 1 ? "0"+hours : hours;
 	    mins = Integer.toString(route1.arrTime.getMinutes());
 	    mins = mins.length() == 1 ? "0"+mins : mins;
-	    holder.text2.setText(hours+":"+mins);		
-		
+	    holder.text2.setText(hours+":"+mins);
+
 	    int iconsFit = (int)Math.floor((double)screenWidth/iconWidth);
-	    iconsFit = iconsFit < route1.steps.size() ? iconsFit-1 : iconsFit; 
+	    iconsFit = iconsFit < route1.steps.size() ? iconsFit-1 : iconsFit;
 	    int fitLeft = (int)Math.ceil((double)iconsFit/2);
 	    int fitRight = (int)Math.floor((double)iconsFit/2);
-									
+
 	    for (int i = 0; i < route1.steps.size(); i++) {
 		Route.RouteStep step = route1.steps.get(i);
-				
+
 		if (i+1 > fitLeft && i+1 < route1.steps.size()-fitRight+1) {
 		    if (i+1 == fitLeft+1) {
-			ImageView icon = new ImageView(context); 
-			icon.setImageResource(R.drawable.dots); 
+			ImageView icon = new ImageView(context);
+			icon.setImageResource(R.drawable.dots);
 			holder.row1.addView(icon);
-						
+
 			TextView desc = new TextView(context);
 			desc.setText("");
 			desc.setGravity(Gravity.CENTER_HORIZONTAL);
 			holder.row2.addView(desc);
 		    }
-					
+
 		    continue;
 		}
-				
-		ImageView icon = new ImageView(context); 
-		icon.setImageResource(step.getIconId()); 
+
+		ImageView icon = new ImageView(context);
+		icon.setImageResource(step.getIconId());
 		holder.row1.addView(icon);
-				
+
 		TextView desc = new TextView(context);
 		desc.setText(step.getBusNumber());
 		desc.setGravity(Gravity.CENTER_HORIZONTAL);
 		holder.row2.addView(desc);
-	    }			
+	    }
 
 	    return convertView;
-			
-
 	}
 
 	static class ViewHolder {
@@ -172,19 +166,18 @@ public class SelectRouteScreen extends Activity {
 	    TableRow row1;
 	    TableRow row2;
 	}
-
     }
-	
+
     private static final int ID_DIALOG_SEARCHING = 0;
     private static final int EARLIER_MENU_ID = 0;
     private static final int NOW_MENU_ID = 1;
     private static final int LATER_MENU_ID = 2;
-	
+
     public ProgressDialog dialog;
-	
+
     public ArrayList<Route> routes = null;
     public volatile Handler handler;
-	
+
     public int screenWidth;
     public String fromCoords = "";
     public String toCoords = "";
@@ -195,58 +188,37 @@ public class SelectRouteScreen extends Activity {
     public String optimize = "";
     public String timetype = "";
     public String transport_types = "";
-	
-	
+
     public ListView l1;
-	
-    //public static String fromLocCoords = "";
-    //public static String toLocCoords = "";
-	
-    //public static String fromLocFinal = "";
-    //public static String toLocFinal = "";
-	
+
     @Override
 	protected void onStart() {
 	// TODO Auto-generated method stub
 	super.onStart();
-		
+
 	handler = new Handler();
     }
-    /*
-      protected Dialog onCreateDialog(int id) {   
-      if(id == ID_DIALOG_SEARCHING){   
-      ProgressDialog loadingDialog = new ProgressDialog(this);   
-      loadingDialog.setMessage("Searching. Please wait...");   
-      loadingDialog.setIndeterminate(true);   
-      loadingDialog.setCancelable(true);   
-	    	
-      return loadingDialog;   
-      }   
-    	  
-      return super.onCreateDialog(id);   
-      }   
-    */
+
     public void doMakeUp() {
-        TableRow row = (TableRow) findViewById(R.id.SelectRouteScreenRow1); 
+        TableRow row = (TableRow) findViewById(R.id.SelectRouteScreenRow1);
         row.setBackgroundColor(Color.argb(178,255,255,255));
-		        
+
         TextView from = (TextView) findViewById(R.id.SelectRouteScreenTextFrom);
         from.setText(fromName);
-        
+
         TextView to = (TextView) findViewById(R.id.SelectRouteScreenTextTo);
         to.setText(toName);
-        
-        TableRow row2 = (TableRow) findViewById(R.id.SelectRouteScreenRow3); 
+
+        TableRow row2 = (TableRow) findViewById(R.id.SelectRouteScreenRow3);
         row2.setBackgroundColor(Color.argb(178,255,255,255));
-        
+
         TextView tt = (TextView) findViewById(R.id.SelectRouteScreenTextTimeType);
         if (timetype.equals("departure")) {
 	    tt.setText(getString(R.string.srDeparture));
         } else {
 	    tt.setText(getString(R.string.srArrival));
         }
-        //tt.setText(timetype.substring(0, 1).toUpperCase() + timetype.substring(1).toLowerCase());
-        
+
         TextView optim = (TextView) findViewById(R.id.SelectRouteScreenTextOptimization);
         String opt = getString(R.string.srOptimNormal);
         if (optimize.equals("default")) opt = getString(R.string.srOptimNormal);
@@ -254,59 +226,6 @@ public class SelectRouteScreen extends Activity {
         if (optimize.equals("least_transfers")) opt = getString(R.string.srOptimLeastTrans);
         if (optimize.equals("least_walking")) opt = getString(R.string.srOptimLeastWalk);
         optim.setText(opt);
-
-        /*
-	  Bitmap bity = Bitmap.createBitmap(75,25,Bitmap.Config.ARGB_8888);
-	  Canvas canvas = new Canvas(bity);
-	  BitmapDrawable bit = new BitmapDrawable(SelectRouteScreen.this.getResources().openRawResource(R.drawable.boat));
-	  bit.setBounds(0, 0, 25, 25);
-    	
-	  Paint paint = new Paint();
-	  canvas.drawBitmap(bit.getBitmap(), 0, 0, paint);
-    	
-	  //ImageView imgv = (ImageView) findViewById(R.id.imageView1);
-    	
-	  TextView tw_icons = (TextView) findViewById(R.id.SelectRouteScreenTextIcons);
-	  BitmapDrawable bit1 = new BitmapDrawable(SelectRouteScreen.this.getResources().openRawResource(R.drawable.metro));
-	  bit1.setBounds(0, 0, 25, 25);
-    	
-	  canvas.drawBitmap(bit1.getBitmap(), 25, 0, paint);
-    	
-	  BitmapDrawable allb = new BitmapDrawable(SelectRouteScreen.this.getResources(), bity); 
-    	
-	  tw_icons.setCompoundDrawables(allb, null, null, null);
-    	*/
-    	//imgv.setImageBitmap(bity);
-        
-
-    	/*
-	  if (transport_types.contains("bus") || transport_types.contains("all")) {
-	  Drawable dd = getResources().getDrawable(R.drawable.bus); 
-	  dd.setBounds(0, 0, 25, 25);
-	  tw_icons.setCompoundDrawables(dd, null, null, null);
-	  }
-	  if (transport_types.contains("tram") || transport_types.contains("all")) {
-	  Drawable dd = getResources().getDrawable(R.drawable.tram); 
-	  dd.setBounds(0, 0, 25, 25);
-	  tw_icons.setCompoundDrawables(dd, null, null, null);
-	  }
-	  if (transport_types.contains("metro") || transport_types.contains("all")) {
-	  Drawable dd = getResources().getDrawable(R.drawable.metro); 
-	  dd.setBounds(0, 0, 25, 25);
-	  tw_icons.setCompoundDrawables(dd, null, null, null);
-	  }
-	  if (transport_types.contains("train") || transport_types.contains("all")) {
-	  Drawable dd = getResources().getDrawable(R.drawable.train); 
-	  dd.setBounds(0, 0, 25, 25);
-	  tw_icons.setCompoundDrawables(dd, null, null, null);
-	  }
-	  if (transport_types.contains("walk")) {
-	  Drawable dd = getResources().getDrawable(R.drawable.man); 
-	  dd.setBounds(0, 0, 25, 25);
-	  tw_icons.setCompoundDrawables(dd, null, null, null);
-	  }
-        */
-		
     }
 
     private OnItemClickListener routeClickListener = new OnItemClickListener() {
@@ -327,87 +246,86 @@ public class SelectRouteScreen extends Activity {
 
     @Override
 	public void onCreate(Bundle savedInstanceState) {
-    	   	
         super.onCreate(savedInstanceState);
-        
+
         Bundle b = getIntent().getExtras();
-        
+
         fromCoords 		= b.getString("fromCoords");
-        toCoords   		= b.getString("toCoords");        
+        toCoords   		= b.getString("toCoords");
         fromName  		= b.getString("fromName");
-        toName     		= b.getString("toName");   
-        date       		= b.getString("date");   
+        toName     		= b.getString("toName");
+        date       		= b.getString("date");
         time       		= b.getString("time");
         optimize   		= b.getString("optimize");
         timetype   		= b.getString("timetype");
         transport_types = b.getString("transport_types");
-        
-        History.saveHistory(this, fromName, "", fromCoords);
-        History.saveHistory(this, toName, "", toCoords);
-        History.saveRoute(this, fromName, toName, fromCoords, toCoords);
+
+        History.saveHistory(this, fromName, "", new Coords(fromCoords));
+        History.saveHistory(this, toName, "", new Coords(toCoords));
+        History.saveRoute(this, fromName, toName, new Coords(fromCoords), new Coords(toCoords));
 	calcRoutes();
     }
-	
+
     public void calcRoutes() {
-	//		showDialog(ID_DIALOG_SEARCHING);
-	dialog = ProgressDialog.show(SelectRouteScreen.this, "", getString(R.string.srDlgSearching), true);
-		
-        Display display = getWindowManager().getDefaultDisplay(); 
+	dialog =
+	    ProgressDialog.show(SelectRouteScreen.this, "",
+				getString(R.string.srDlgSearching), true);
+
+        Display display = getWindowManager().getDefaultDisplay();
         screenWidth = display.getWidth();
-   
+
         setContentView(R.layout.selectroutescreen);
-      
-        l1 = (ListView) findViewById(R.id.SelectRouteScreenListView); 
+
+        l1 = (ListView) findViewById(R.id.SelectRouteScreenListView);
         l1.setOnItemClickListener(routeClickListener);
-        
+
         routes = null;
-        
+
 	new Thread(new Runnable() {
 		public void run() {
 		    try {
 			ReittiopasAPI api = new ReittiopasAPI();
-			routes = api.getRoute(fromCoords, toCoords, date, time, optimize, timetype, transport_types);						
+			routes =
+			    api.getRoute(fromCoords, toCoords, date, time,
+					 optimize, timetype, transport_types);
 		    } catch ( Exception e ) {
 			Log.e("ERROR", "No network", e);
 		    }
-		    handler.post(new Runnable() {						
-			    //				@Override
+
+		    handler.post(new Runnable() {
 			    public void run() {
 				// TODO Auto-generated method stub
 				if (routes != null) {
 				    l1.setAdapter(new EfficientAdapter(SelectRouteScreen.this, routes, screenWidth));
 				    doMakeUp();
 				} else {
-				    //if (routes == null) {
-				    //dismissDialog(ID_DIALOG_SEARCHING);
-				    AlertDialog alertDialog = new AlertDialog.Builder(SelectRouteScreen.this).create();
+				    AlertDialog alertDialog =
+					new AlertDialog.Builder(SelectRouteScreen.this).create();
 				    alertDialog.setTitle(getString(R.string.networkErrorTitle));
 				    alertDialog.setMessage(getString(R.string.networkErrorText));
-				    alertDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-					    public void onClick(DialogInterface dialog, int which) {
+				    alertDialog.setButton(getString(R.string.ok),
+							  new DialogInterface.OnClickListener() {
+							      public void onClick(DialogInterface dialog, int which) {
 						SelectRouteScreen.this.finish();
-					    } }); 
-				    alertDialog.show();	
-				    //}
+							      } });
+				    alertDialog.show();
 				}
-				//dismissDialog(ID_DIALOG_SEARCHING);
+
 				dialog.dismiss();
 			    }
 			});
 		}
 	    }).start();
     }
-    
+
     @Override
-	public void onConfigurationChanged(Configuration newConfig)
-    {
-        super.onConfigurationChanged(newConfig);	    
-	    
+	public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 	if (routes != null) {
 	    setContentView(R.layout.selectroutescreen);
 	    doMakeUp();
-	        
-	    Display display = getWindowManager().getDefaultDisplay(); 
+
+	    Display display = getWindowManager().getDefaultDisplay();
 	    screenWidth = display.getWidth();
 
 	    l1 = (ListView) findViewById(R.id.SelectRouteScreenListView);
@@ -415,14 +333,14 @@ public class SelectRouteScreen extends Activity {
 	    l1.setAdapter(new EfficientAdapter(SelectRouteScreen.this, routes, screenWidth));
         }
     }
- 
+
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-    	
-    	Drawable drRew  = getResources().getDrawable(android.R.drawable.ic_media_rew);	
-    	Drawable drForw = getResources().getDrawable(android.R.drawable.ic_media_ff);	
-    	Drawable drNow = getResources().getDrawable(android.R.drawable.ic_menu_set_as);	
-    	
+
+   	Drawable drRew  = getResources().getDrawable(android.R.drawable.ic_media_rew);
+    	Drawable drForw = getResources().getDrawable(android.R.drawable.ic_media_ff);
+    	Drawable drNow = getResources().getDrawable(android.R.drawable.ic_menu_set_as);
+
     	MenuItem tmp = menu.add(0, EARLIER_MENU_ID, 0, getString(R.string.srMenuEarlier));
     	tmp.setIcon(drRew);
     	tmp = menu.add(0, NOW_MENU_ID, 1, getString(R.string.srMenuNow));
@@ -431,11 +349,11 @@ public class SelectRouteScreen extends Activity {
     	tmp.setIcon(drForw);
     	return super.onCreateOptionsMenu(menu);
     }
-    
+
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-    	Date dt = new Date();  
+    	Date dt = new Date();
         switch (item.getItemId()) {
 	case EARLIER_MENU_ID:
 	    if (timetype.equals("departure")) {
@@ -458,14 +376,14 @@ public class SelectRouteScreen extends Activity {
 	    }
 	    break;
 	default:
-	    return super.onOptionsItemSelected(item);	        
+	    return super.onOptionsItemSelected(item);
         }
-        
+
     	date = ReittiopasAPI.formatDate(dt);
-    	time = ReittiopasAPI.formatTime(dt);        
-        
+    	time = ReittiopasAPI.formatTime(dt);
+
         calcRoutes();
-        
+
         return true;
     }
 

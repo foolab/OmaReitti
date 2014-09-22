@@ -193,20 +193,20 @@ public class Route {
 	try {
 	    // Reittiopas couldn't find any locations
 	    if (json.equals("") || json.substring(0, 3).equals("<h1")) return res;
-			
+
 	    JSONArray list = new JSONArray(json);
 
 	    // find the lowest locTypeId
 	    int minLocTypeID = 1000;
 	    for (int i=0; i<list.length(); i++) {
 		JSONObject geo_rec = list.getJSONObject(i);
-		minLocTypeID = Integer.parseInt(geo_rec.getString("locTypeId")) < minLocTypeID ? 
-		    Integer.parseInt(geo_rec.getString("locTypeId")) : minLocTypeID;				 
+		minLocTypeID = Integer.parseInt(geo_rec.getString("locTypeId")) < minLocTypeID ?
+		    Integer.parseInt(geo_rec.getString("locTypeId")) : minLocTypeID;
 	    }
-			
+
 	    for (int i=0; i<list.length(); i++) {
 		JSONObject geo_rec = list.getJSONObject(i);
-				
+
 		// filter out unwanted location entries
 		if (minLocTypeID <= 2) {
 		    if (Integer.parseInt(geo_rec.getString("locTypeId")) > 2) {
@@ -217,12 +217,11 @@ public class Route {
 			continue;
 		    }
 		}
-				
+
 		GeoRec rec = new GeoRec();
-				
 		rec.city = geo_rec.getString("city");
-				
 		rec.name = geo_rec.getString("matchedName");
+
 		if (rec.name == null || rec.name.equals("null") ) {
 		    rec.name = geo_rec.getString("name");
 		} else { 
@@ -237,9 +236,8 @@ public class Route {
 		//Log.i("ROUTEEEE", "rec.name: "+rec.name+" "+geo_rec.getString("matchedName"));
 				
 		rec.lang = geo_rec.getString("lang");
-				
-				
-		rec.coords = geo_rec.getString("coords");
+		String[] p = geo_rec.getString("coords").split(",");
+		rec.coords = new Coords(Double.parseDouble(p[0]), Double.parseDouble(p[1]));
 		rec.locType = geo_rec.getString("locType");
 		rec.locTypeId = geo_rec.getString("locTypeId");
 				
@@ -305,6 +303,9 @@ public class Route {
 		JSONObject coord = loc.getJSONObject("coord");
 			
 		PathSegment p = new PathSegment();
+		//		String parts = coo
+		// TODO:
+		Log.e("FOOO", coord.toString());
 		p.coords = new Coords(coord.getDouble("y"), coord.getDouble("x"));
 				
 		p.arrTime = parseReittiOpasDate(loc.getString("arrTime"));

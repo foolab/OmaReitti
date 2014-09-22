@@ -46,18 +46,18 @@ public class ReittiopasAPI {
     public static String formatDate(Date dt) {
 	return dateFormat.format(dt);
     }
-	
+
     public static String formatTime(Date dt) {
 	return timeFormat.format(dt);
-    }	
-	
-    public ArrayList<GeoRec> getGeocode(String search) {
+    }
+
+    public static ArrayList<GeoRec> getGeocode(String search) {
 	String url = main_url+"geocode"+auth+"&key="+search.replace(" ", "+").toLowerCase();
 	//Log.i(TAG, "URL: "+url);
 	return Route.getGeocodeCoords(queryUrl(url));
     }
-	
-    public ArrayList<GeoRec> getReverseGeocode(String data) {
+
+    public static ArrayList<GeoRec> getReverseGeocode(String data) {
 	String url = main_url+"reverse_geocode"+auth+"&coordinate="+data.replace(" ", "+");
 	//Log.i(TAG, "URL: "+url);
 	return Route.getGeocodeCoords(queryUrl(url));
@@ -107,30 +107,30 @@ public class ReittiopasAPI {
 		}
 	    }).run();
     }
-	
-    public String queryUrl(String url) {
+
+    public static String queryUrl(String url) {
 	HttpClient httpclient = new DefaultHttpClient();
 	HttpGet httpget = new HttpGet(url);
 	HttpResponse response;
-		
+
 	try {
 	    response = httpclient.execute(httpget);
 	    Log.i(TAG, "Url:" + url + "");
 	    Log.i(TAG, "Status:[" + response.getStatusLine().toString() + "]");
 	    HttpEntity entity = response.getEntity();
-		
+
 	    if (entity != null) {
-				
 		InputStream instream = entity.getContent();
-				
+
 		BufferedReader r = new BufferedReader(new InputStreamReader(instream));
 		StringBuilder total = new StringBuilder();
 		String line;
 		while ((line = r.readLine()) != null) {
 		    total.append(line);
-		}                
+		}
+
 		instream.close();
-				
+
 		String result = total.toString();
 		return result;
 	    }
