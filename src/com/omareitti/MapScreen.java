@@ -9,6 +9,11 @@ import java.util.prefs.Preferences;
 import com.omareitti.IBackgroundServiceAPI;
 import com.omareitti.IBackgroundServiceListener;
 import com.omareitti.R;
+
+import org.osmdroid.views.MapView;
+import org.osmdroid.util.GeoPoint;
+
+/*
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -16,10 +21,13 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
+*/
+
 import com.omareitti.Route.PathSegment;
 import com.omareitti.Route.RouteStep;
 import com.omareitti.datatypes.GeoRec;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -54,60 +62,52 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class MapScreen extends MapActivity {
-	
+public class MapScreen extends Activity {
     private static final String TAG = MapScreen.class.getSimpleName();
-	
-    @Override
-	protected boolean isRouteDisplayed() {
-	return false;
-    }
 
     LinearLayout linearLayout;
     MapView mapView;
-	
+
     private Paint mPaint;
-	
     public Route route = null;
     private String routeString;
-	
     private int currentStep = 0;
-	
     private int zoomLevel;
     private String pickPoint;
-	
     Bitmap markerBmp;
-	
     //private MyLocationOverlay myLocOverlay;
-	
     private Boolean isJustLooking = false;
-	
     SharedPreferences prefs;
-	
+
+    // @Override
+    // 	protected boolean isRouteDisplayed() {
+    // 	return false;
+    // }
+
     @Override
 	protected void onCreate(Bundle icicle) {
 	// TODO Auto-generated method stub
 	super.onCreate(icicle);
 	setContentView(R.layout.mapscreen);
-		
+
 	SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
 	routeString = settings.getString("route", "");
 
 	//Log.i(TAG, "routeString:"+routeString);
 	//Log.i(TAG, "getIntent().getExtras():"+getIntent().getExtras());
-		
+
 	if (getIntent().getExtras() == null && routeString.equals("")) {
             startActivity(new Intent(MapScreen.this, MainApp.class));
             Log.i(TAG, "intent extras is null, switching to main activity ");
             finish();
             return;
 	}
-		
+
 	mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         mSensorManager.registerListener(mListener, mSensor,
 					SensorManager.SENSOR_DELAY_GAME);
-        
+
         makeArrow();
 	// markerBmp = BitmapFactory.decodeResource(getResources(), R.drawable.map_pin); // pin.png image will require.
         
@@ -115,21 +115,21 @@ public class MapScreen extends MapActivity {
 	pickPoint = getIntent().getExtras().getString("pickPoint");
 	//if (pickPoint == null) pickPoint = "";
 	Log.i(TAG, "pickPoint: "+pickPoint);
-		
+
 	mapView = (MapView) findViewById(R.id.mapview);
+	mapView.setClickable(true);
 	mapView.setBuiltInZoomControls(true);
-		
-	mapView.setSatellite(false);
-	mapView.setStreetView(false);
-        
+	////	mapView.setSatellite(false);
+	////	mapView.setStreetView(false);
+
 	prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	zoomLevel = Integer.parseInt(prefs.getString("prefMapZoomLevel", "15"));
 		
-	myMapController = mapView.getController();
+	////	myMapController = mapView.getController();
 	//myMapController = mapView.getController();
-	myMapController.setZoom(zoomLevel);
+	////	myMapController.setZoom(zoomLevel);
 
-	myMapController.setCenter(new GeoPoint(6016265,24915534)); 
+	////	myMapController.setCenter(new GeoPoint(6016265,24915534)); 
 	//myMapController.setCenter(new GeoPoint(60171135, 24943797));
 	//myMapController.setZoom(12);
 		
@@ -153,10 +153,10 @@ public class MapScreen extends MapActivity {
         
 	if (pickPoint != null) {
 
-	    MapOverlay mapOverlay = new MapOverlay();
+	    ////	    MapOverlay mapOverlay = new MapOverlay();
 	    /*List<Overlay> listOfOverlays = mapView.getOverlays();
 	      listOfOverlays.clear();*/
-	    mapView.getOverlays().add(mapOverlay);        
+	    ////	    mapView.getOverlays().add(mapOverlay);        
 	 
 	    mapView.invalidate();				
 	    Toast.makeText(this, getString(R.string.msToastAddressSelect), Toast.LENGTH_SHORT).show();
@@ -182,14 +182,14 @@ public class MapScreen extends MapActivity {
 		
         currentStep = getIntent().getExtras().getInt("currentStep");
         
-	mapView.getOverlays().add(new RouteOverlay()); 
+	////	mapView.getOverlays().add(new RouteOverlay()); 
 	//myMapController.setCenter(new GeoPoint(60216298, 24881828));
 		
 	if (route != null && route.steps.size() > currentStep) {
 	    RouteStep r = route.steps.get(currentStep);
 	    if (r.path.size() > 0) {
 		PathSegment p = r.path.get(0);
-		myMapController.setCenter(new GeoPoint((int) (p.coords.x * 1E6), (int) (p.coords.y * 1E6)));
+		/////		myMapController.setCenter(new GeoPoint((int) (p.coords.x * 1E6), (int) (p.coords.y * 1E6)));
 	    }
 	}
 		
@@ -218,7 +218,7 @@ public class MapScreen extends MapActivity {
         switch (item.getItemId()) {
 	case LOC_MENU_ID:
 	    if (currentPoint == null) { takeLocation = true; return true; }
-	    myMapController.animateTo(currentPoint);
+	    ////	    myMapController.animateTo(currentPoint);
 	    break;
 	default:
 	    return super.onOptionsItemSelected(item);	        	
@@ -239,139 +239,139 @@ public class MapScreen extends MapActivity {
 	    Log.e(TAG, "ERROR!!", e);
 	}
     }	    
-	
-    class MapOverlay extends com.google.android.maps.Overlay {
-	@Override
-	    public boolean draw(Canvas canvas, MapView mapView, boolean shadow,
-				long when) {
-	    super.draw(canvas, mapView, shadow);
-	    if (currentPoint == null) return false;
 
-	    Point screenPts = new Point();
-	    mapView.getProjection().toPixels(currentPoint, screenPts);
+    // class MapOverlay extends com.google.android.maps.Overlay {
+    // 	@Override
+    // 	    public boolean draw(Canvas canvas, MapView mapView, boolean shadow,
+    // 				long when) {
+    // 	    super.draw(canvas, mapView, shadow);
+    // 	    if (currentPoint == null) return false;
 
-	    drawArrow(canvas, screenPts.x, screenPts.y);
-	    return true;
-	}
+    // 	    Point screenPts = new Point();
+    // 	    mapView.getProjection().toPixels(currentPoint, screenPts);
 
-	private long lastTouchTime;  
-	@Override
-	    public boolean onTouchEvent(MotionEvent event, MapView mapView) {
-	    if (pickPoint == null) return super.onTouchEvent(event, mapView);
+    // 	    drawArrow(canvas, screenPts.x, screenPts.y);
+    // 	    return true;
+    // 	}
 
-	    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-		long thisTime = System.currentTimeMillis();
-		if (thisTime - lastTouchTime > 250) {
-		    // Too slow :)
-		    lastTouchTime = thisTime;
-		    return false;
-		} else {
-		    // Double tap
-		    lastTouchTime = -1;
-		}
+    // 	private long lastTouchTime;  
+    // 	@Override
+    // 	    public boolean onTouchEvent(MotionEvent event, MapView mapView) {
+    // 	    if (pickPoint == null) return super.onTouchEvent(event, mapView);
+
+    // 	    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+    // 		long thisTime = System.currentTimeMillis();
+    // 		if (thisTime - lastTouchTime > 250) {
+    // 		    // Too slow :)
+    // 		    lastTouchTime = thisTime;
+    // 		    return false;
+    // 		} else {
+    // 		    // Double tap
+    // 		    lastTouchTime = -1;
+    // 		}
 			 				
-		GeoPoint p = mapView.getProjection().fromPixels(
-								(int) event.getX(), (int) event.getY());
+    // 		GeoPoint p = mapView.getProjection().fromPixels(
+    // 								(int) event.getX(), (int) event.getY());
 
-		Geocoder geoCoder = new Geocoder(getBaseContext(),
-						 Locale.getDefault());
-		try {
-		    /*List<Address> addresses = geoCoder.getFromLocation(
-		      p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6,
-		      1);
-		      String add = "";
-		      if (addresses.size() > 0) {
-		      if (addresses.get(0).getMaxAddressLineIndex() > 0)
-		      add += addresses.get(0).getAddressLine(0);
-		      /*for (int i = 0; i < addresses.get(0).getMaxAddressLineIndex(); i++) {
-		      add += addresses.get(0).getAddressLine(i);
-		      if (i != addresses.get(0).getMaxAddressLineIndex() - 1) add += ", ";
-		      }
-		      for (int j = 0; j < addresses.size(); j++)
-		      for (int i = 0; i < addresses.get(j).getMaxAddressLineIndex(); i++)
-		      Log.i(TAG, "j:"+j+" i:"+i+" "+addresses.get(j).getAddressLine(i));*/
-		    /*}*/
+    // 		Geocoder geoCoder = new Geocoder(getBaseContext(),
+    // 						 Locale.getDefault());
+    // 		try {
+    // 		    /*List<Address> addresses = geoCoder.getFromLocation(
+    // 		      p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6,
+    // 		      1);
+    // 		      String add = "";
+    // 		      if (addresses.size() > 0) {
+    // 		      if (addresses.get(0).getMaxAddressLineIndex() > 0)
+    // 		      add += addresses.get(0).getAddressLine(0);
+    // 		      /*for (int i = 0; i < addresses.get(0).getMaxAddressLineIndex(); i++) {
+    // 		      add += addresses.get(0).getAddressLine(i);
+    // 		      if (i != addresses.get(0).getMaxAddressLineIndex() - 1) add += ", ";
+    // 		      }
+    // 		      for (int j = 0; j < addresses.size(); j++)
+    // 		      for (int i = 0; i < addresses.get(j).getMaxAddressLineIndex(); i++)
+    // 		      Log.i(TAG, "j:"+j+" i:"+i+" "+addresses.get(j).getAddressLine(i));*/
+    // 		    /*}*/
 					
-		    ArrayList<GeoRec> recs = (new ReittiopasAPI()).getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
-		    if (recs.size() == 0) return false;
-		    String name = recs.get(0).name;
-		    Toast.makeText(getBaseContext(), name, Toast.LENGTH_SHORT).show();
-		    if (name.length() > 0) {
-			//Intent intent = getIntent();
-			Intent intent = new Intent(); 
-			intent.putExtra("mapAddress", name);
-			intent.putExtra("mapCoords", (p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
-			Log.i(TAG, "mapCoords:"+(p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
-			setResult(RESULT_OK, intent);
-			//mapView.getOverlays().remove(myLocOverlay);
-			finish();
-		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-		return true;
-	    } else
-		return false;
-	}
-    }
-    
-    class RouteOverlay extends Overlay {
-	@Override
-	    public void draw(Canvas canvas, MapView mapv, boolean shadow){
-	    super.draw(canvas, mapv, shadow);
+    // 		    ArrayList<GeoRec> recs = (new ReittiopasAPI()).getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
+    // 		    if (recs.size() == 0) return false;
+    // 		    String name = recs.get(0).name;
+    // 		    Toast.makeText(getBaseContext(), name, Toast.LENGTH_SHORT).show();
+    // 		    if (name.length() > 0) {
+    // 			//Intent intent = getIntent();
+    // 			Intent intent = new Intent(); 
+    // 			intent.putExtra("mapAddress", name);
+    // 			intent.putExtra("mapCoords", (p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
+    // 			Log.i(TAG, "mapCoords:"+(p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
+    // 			setResult(RESULT_OK, intent);
+    // 			//mapView.getOverlays().remove(myLocOverlay);
+    // 			finish();
+    // 		    }
+    // 		} catch (Exception e) {
+    // 		    e.printStackTrace();
+    // 		}
+    // 		return true;
+    // 	    } else
+    // 		return false;
+    // 	}
+    // }
 
-	    if (route == null) return;
-	        
-	    Point p1 = new Point();
-	    Point p2 = new Point();
-	        
-	    for (int i = 0; i < route.steps.size(); i++) {
-		Path path = new Path();
-	        	
-		RouteStep r = route.steps.get(i);
-		mPaint.setColor(r.getColor());
-	        	
-		for (int j = 0; j < r.path.size(); j++) {
-		    PathSegment p = r.path.get(j);
-	        		
-		    int x = (int) (p.coords.x * 1E6);
-		    int y = (int) (p.coords.y * 1E6);
-	        		
-		    GeoPoint gP1 = new GeoPoint(x, y);
-		    mapView.getProjection().toPixels(gP1, p1);
-	        		
-		    if (j == 0)  {
-			path.moveTo(p1.x, p1.y);
-			//canvas.drawCircle(p1.x, p1.y, 4, mPaint);
-			path.addCircle(p1.x, p1.y, 5, Path.Direction.CW);
-		    }
-		    else {
-			path.moveTo(p2.x, p2.y);
-			path.addCircle(p2.x, p2.y, 3, Path.Direction.CW);
-			path.lineTo(p1.x, p1.y);
-			//canvas.drawCircle(p1.x, p1.y, 3, mPaint);
-		    }
-	        		
-		    p2.x = p1.x; p2.y = p1.y; 
-		    //Log.i(TAG, "path:"+j+" x:"+p1.x+" y:"+p1.y);
-		}
-		canvas.drawPath(path, mPaint);
-	    }
-	    if (currentPoint != null) {
-		Point screenPts = new Point();
-		mapView.getProjection().toPixels(currentPoint, screenPts);
+    // class RouteOverlay extends Overlay {
+    // 	@Override
+    // 	    public void draw(Canvas canvas, MapView mapv, boolean shadow){
+    // 	    super.draw(canvas, mapv, shadow);
 
-		drawArrow(canvas, screenPts.x, screenPts.y);
-	    }
-	}
+    // 	    if (route == null) return;
+	        
+    // 	    Point p1 = new Point();
+    // 	    Point p2 = new Point();
+	        
+    // 	    for (int i = 0; i < route.steps.size(); i++) {
+    // 		Path path = new Path();
+	        	
+    // 		RouteStep r = route.steps.get(i);
+    // 		mPaint.setColor(r.getColor());
+	        	
+    // 		for (int j = 0; j < r.path.size(); j++) {
+    // 		    PathSegment p = r.path.get(j);
+	        		
+    // 		    int x = (int) (p.coords.x * 1E6);
+    // 		    int y = (int) (p.coords.y * 1E6);
+	        		
+    // 		    GeoPoint gP1 = new GeoPoint(x, y);
+    // 		    mapView.getProjection().toPixels(gP1, p1);
+	        		
+    // 		    if (j == 0)  {
+    // 			path.moveTo(p1.x, p1.y);
+    // 			//canvas.drawCircle(p1.x, p1.y, 4, mPaint);
+    // 			path.addCircle(p1.x, p1.y, 5, Path.Direction.CW);
+    // 		    }
+    // 		    else {
+    // 			path.moveTo(p2.x, p2.y);
+    // 			path.addCircle(p2.x, p2.y, 3, Path.Direction.CW);
+    // 			path.lineTo(p1.x, p1.y);
+    // 			//canvas.drawCircle(p1.x, p1.y, 3, mPaint);
+    // 		    }
+	        		
+    // 		    p2.x = p1.x; p2.y = p1.y; 
+    // 		    //Log.i(TAG, "path:"+j+" x:"+p1.x+" y:"+p1.y);
+    // 		}
+    // 		canvas.drawPath(path, mPaint);
+    // 	    }
+    // 	    if (currentPoint != null) {
+    // 		Point screenPts = new Point();
+    // 		mapView.getProjection().toPixels(currentPoint, screenPts);
+
+    // 		drawArrow(canvas, screenPts.x, screenPts.y);
+    // 	    }
+    // 	}
 		
-	@Override
-	    public boolean onTouchEvent(MotionEvent event, MapView mapView) {
-	    return super.onTouchEvent(event, mapView);
-	}
-    }
+    // 	@Override
+    // 	    public boolean onTouchEvent(MotionEvent event, MapView mapView) {
+    // 	    return super.onTouchEvent(event, mapView);
+    // 	}
+    // }
 	
-    private MapController myMapController;
+    ////    private MapController myMapController;
     private GeoPoint currentPoint = null;
     private float locationAngle = 0f;
     private Boolean takeLocation = false;
@@ -387,7 +387,7 @@ public class MapScreen extends MapActivity {
 		int ilat = (int) (lat * 1E6);
 		int ilng = (int) (lon * 1E6);
 		currentPoint = new GeoPoint(ilat, ilng);
-		myMapController.animateTo(currentPoint); //setCenter	
+		////		myMapController.animateTo(currentPoint); //setCenter	
 		locationAngle = 0f;
 		//}
 	    }
@@ -403,8 +403,8 @@ public class MapScreen extends MapActivity {
         	int ilng = (int) (lon * 1E6);
         	currentPoint = new GeoPoint(ilat, ilng);
         	
-        	if (!isJustLooking)
-		    myMapController.animateTo(currentPoint); //setCenter
+		////        	if (!isJustLooking)
+		    ////		    myMapController.animateTo(currentPoint); //setCenter
         	
         	if (takeLocation) takeLocation = false;
 
