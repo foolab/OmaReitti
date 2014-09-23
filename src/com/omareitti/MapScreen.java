@@ -114,7 +114,6 @@ public class MapScreen extends Activity {
 	Log.i(TAG, "pickPoint: "+pickPoint);
 
 	mapView = (MapView) findViewById(R.id.mapview);
-	mapView.setClickable(true);
 	mapView.setBuiltInZoomControls(true);
 	////	mapView.setSatellite(false);
 	////	mapView.setStreetView(false);
