@@ -88,8 +88,7 @@ public class ShortcutActivity extends Activity {
 		    RouteHistoryItem r = routes.get(arg2);
 		    String n1 = r.start.substring(0, 5); if (r.start.length() > 0) n1 +=".";
 		    String n2 = r.end;//.substring(0, 5); if (r.end.length() > 0) n2 +=".";
-		    // TODO:
-		    //		    Utils.addHomeScreenShortcut(ShortcutActivity.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
+		    Utils.addHomeScreenShortcut(ShortcutActivity.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
 		}
 	    });		
     }

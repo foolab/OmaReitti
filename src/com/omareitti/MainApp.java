@@ -401,8 +401,7 @@ public class MainApp extends Activity {
 				case 4:
 				    String name = h.name;
 				    if (name.equals("")) name = h.address;
-				    // TODO:
-				    //				    Utils.addHomeScreenShortcut(MainApp.this, name, null, h.address, null, h.coords);
+				    Utils.addHomeScreenShortcut(MainApp.this, name, null, h.address, null, h.coords);
 				    break;
 				}
 			    }
@@ -410,10 +409,9 @@ public class MainApp extends Activity {
 		    builder.show();
 		}
 	    });
-        
+
         myRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				
 		    lastSelectedRoute = arg2;
 		    final String[] items = new String[]{
 			getString(R.string.maTabRoutesMenuSet),
@@ -444,8 +442,7 @@ public class MainApp extends Activity {
 				case 3:
 				    String n1 = r.start.substring(0, 5); if (r.start.length() > 0) n1 +=".";
 				    String n2 = r.end;//.substring(0, 5); if (r.end.length() > 0) n2 +=".";
-				    // TODO:
-				    //				    Utils.addHomeScreenShortcut(MainApp.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
+				    Utils.addHomeScreenShortcut(MainApp.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
 				    break;
 				}
 								
