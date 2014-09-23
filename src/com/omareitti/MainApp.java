@@ -115,29 +115,27 @@ public class MainApp extends Activity {
     public volatile Handler handler;
     private ListView l1;
     public Dialog locationFromSelectDialog;
-    public Dialog locationToSelectDialog;    
-    public Dialog moreOptionsDialog;    
+    public Dialog locationToSelectDialog;
+    public Dialog moreOptionsDialog;
     public ProgressDialog processDialog;
-    
+
     private ToggleButton tbBus;
     private ToggleButton tbTram;
     private ToggleButton tbMetro;
     private ToggleButton tbTrain;
     private ToggleButton tbWalk;
     private Spinner spinnerOptions;
-    //private Button optionsButtonOK;
-    
-    private static ImageButton imageButtonDepArr;    
-    
+
+    private static ImageButton imageButtonDepArr;
+
     SharedPreferences prefs;
-    
+
     private static final int SWAP_MENU_ID = 0;
     private static final int SETTINGS_MENU_ID = 1;
     private static final int ABOUT_MENU_ID = 2;
-    
+
     static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-	
 
 
     private static LocationSelector mFrom;
@@ -506,7 +504,7 @@ public class MainApp extends Activity {
 		public void onClick(DialogInterface dialog, int which) {
 		    currentAction = which;
 		    switch(which) {
-		    case 0: 
+		    case 0:
 			if (api != null && putAddressHere != null) {
 			    putAddressHere.setText("");
 			    putAddressHere.setHint(getString(R.string.maEditFromHintLocating));
@@ -515,12 +513,12 @@ public class MainApp extends Activity {
 			    } catch (Exception e) { };
 			}
 			break;
-		    case 1: 
+		    case 1:
 			Intent myIntent = new Intent(MainApp.this, MapScreen.class);
 			myIntent.putExtra("pickPoint", "yes");
 			startActivityForResult(myIntent, PICK_MAP);
-			break; 
-		    case 2: 
+			break;
+		    case 2:
 			Intent intent = new Intent(Intent.ACTION_PICK, android.provider.ContactsContract.Contacts.CONTENT_URI);
 			startActivityForResult(intent, PICK_CONTACT);
 			break;
@@ -644,18 +642,18 @@ public class MainApp extends Activity {
 	}
 		
 	unbindService(servceConection);
-	Log.i(TAG, "unbind ");		
+	Log.i(TAG, "unbind ");
     }
 
     private OnClickListener searchRouteListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mFrom.getText().equals("")) {
+		if (mFrom.getText() == null || mFrom.getText().equals("")) {
 		    // TODO: not working?!
 		    showErrorDialog("", getString(R.string.maDlgErrorEmptyFrom));
 		    return;
 		}
 
-		if (mTo.getText().equals("")) {
+		if (mTo.getText() == null || mTo.getText().equals("")) {
 		    // TODO: not working?!
 		    showErrorDialog("", getString(R.string.maDlgErrorEmptyTo));
 		    return;
