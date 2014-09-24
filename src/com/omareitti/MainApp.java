@@ -353,10 +353,14 @@ public class MainApp extends Activity {
 	  History.saveHistory(this, "Pienen Villasaaren tie 1", "");
 	  History.saveHistory(this, "Nupurintie 56", "");
 	  History.saveRoute(this, "Pienen Villasaaren tie 1", "Nupurintie 56");  */      
-        
-        myPlaces = (ListView)findViewById(R.id.myPlacesList);
-        myRoutes = (ListView)findViewById(R.id.myRoutesList);
-        
+
+	myPlaces = (ListView)findViewById(R.id.myPlacesList);
+	myRoutes = (ListView)findViewById(R.id.myRoutesList);
+
+	// These prevent the ScrollView from hiding the tabhost
+        myPlaces.setFocusable(false);
+	myRoutes.setFocusable(false);
+
         historyAdapter = new History.HistoryAdapter(this);
         routesAdapter = new History.RoutesAdapter(this);
         myPlaces.setAdapter(historyAdapter);
