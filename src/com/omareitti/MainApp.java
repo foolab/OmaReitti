@@ -162,27 +162,6 @@ public class MainApp extends Activity {
     private void updateSettings(boolean showDialog) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // if run for the first time, ask for coords permissions
-        String a = prefs.getString("prefAllowCoords", "");        
-        if (a.equals("") && showDialog) {
-	    final SharedPreferences.Editor editor = prefs.edit();
-            
-	    AlertDialog alertDialog = new AlertDialog.Builder(MainApp.this).create();
-    	    alertDialog.setTitle(getString(R.string.maDlgAllowCoordsTitle));    	    
-    	    alertDialog.setMessage(getString(R.string.maDlgAllowCoordsText));
-    	    alertDialog.setButton(getString(R.string.maDlgAllowCoordsAgree), new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int which) {
-    	    		editor.putString("prefAllowCoords", "Yes");
-    	    		editor.commit();
-		    } });
-    	    alertDialog.setButton2(getString(R.string.maDlgAllowCoordsDisagree), new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int which) {
-    	    		editor.putString("prefAllowCoords", "No");
-    	    		editor.commit();
-		    } });
-    	    alertDialog.show();    	    
-        }
-        
         if (isMoreOptionsUnchanged) {
 	    optimize = prefs.getString("prefRouteSearchOptionsOptimize", "default");
 	    transport_types = prefs.getString("prefRouteSearchOptionsTT", "all");

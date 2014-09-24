@@ -73,11 +73,6 @@
     <string name="maMenuSettings">Settings</string>
     <string name="maMenuAbout">About</string>
     <string name="maMenuAboutDlgTitle">About</string>
-    <string name="maDlgAllowCoordsTitle">Location consent</string>    
-    <string name="maDlgAllowCoordsText">Allow sharing your current location while using public transport.</string>
-    <string name="maDlgAllowCoordsAgree">Agree</string>
-	<string name="maDlgAllowCoordsDisagree">Disagree</string>
-
 <!-- moreoptionsdialog -->
     <string name="moTitle">Choose route optimization</string>    
     <string-array name="moOptimize">
@@ -122,7 +117,6 @@
         <item>English</item>
         <item>Finnish</item>
     </string-array>
-    <string name="prAllowCoords">Allow sharing location</string>    
     <string name="prMapZoomLevel">Default Map Zoom Level</string>
     <string-array name="prefMapZoomLevelEntries">
         <item>1</item>

@@ -86,8 +86,7 @@ public class BackgroundService extends Service implements LocationListener {
     private String prevRouteString = "";
 	
     SharedPreferences prefs;
-    private boolean allowCoords;
-	
+
     public void getRouteFromSettings() {
 	Log.i(TAG, "SERVICE getRouteFromSettings");
         SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
@@ -95,7 +94,7 @@ public class BackgroundService extends Service implements LocationListener {
 	    String routeString = settings.getString("route", "");
 
 	    if (!routeString.equals("")) route = new Route(routeString);
-        	
+
 	    needRemindDep = settings.getBoolean("needRemindDep", true);
 	    needRemindArr = settings.getBoolean("needRemindArr", true);
 	    prevRouteString = routeString;
@@ -105,7 +104,7 @@ public class BackgroundService extends Service implements LocationListener {
         }
         isNotRouteInSettings = true;
     }
-	
+
     public void deleteRoute() {
 	Log.i(TAG, "SERVICE deleteRoute");
 	SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
@@ -119,17 +118,7 @@ public class BackgroundService extends Service implements LocationListener {
 	route = null;
 	prevRouteString = "";
     }
-	
-    public void startRoute() {
-	Log.i(TAG, "SERVICE deleteRoute");
-	allowCoords = prefs.getString("prefAllowCoords", "dgdsfg").equals("Yes") ? true : false;
-	Log.i("DEBUG!!", prefs.getString("prefAllowCoords", "Yes"));
-	SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
-	SharedPreferences.Editor editor = settings.edit();
-	editor.putBoolean("routeStarted", true);
-	editor.commit();
-    }	
-	
+
     private Boolean isSameRoute = false;
     /** The actual API */
     public void setServiceRoute(String r) {
@@ -579,12 +568,10 @@ public class BackgroundService extends Service implements LocationListener {
 		
 	changeState(STATE_LAZY_MODE);
     }
-	
+
     public float BUS_SPEED = 4.5f; // m/s
-	
     public float prevSpeed = 0;
-	
-    public long counter = 0; 
+
     private TimerTask updateTask = new TimerTask() {
 	    @Override
 		public void run() {
@@ -634,7 +621,6 @@ public class BackgroundService extends Service implements LocationListener {
 				}
 				if (diff < 0 && !isRouteStartedShown) {
 				    createNotification(getString(R.string.bsNotifRouteStartTicker), getString(R.string.appName), getString(R.string.bsNotifRouteStartText), false, false, Toast.LENGTH_SHORT);
-				    startRoute();
 				    isRouteStartedShown = true;
 				}
 			    } 
@@ -643,33 +629,13 @@ public class BackgroundService extends Service implements LocationListener {
 			    //showDialog("MESSAGE FROM SERVICE", "You arrived at "+arrTime);
 			    changeState(STATE_DO_NOTHING);
 			}
-					
+
 			processRoute();
 		    }
-		    Log.i("DEBUG!", ""+allowCoords);
-		    if (counter % SEND_DATA_RATE == 0 && allowCoords) sendDataToServer();
 		}
-			
-		/*synchronized (listeners) {
-		  for (IBackgroundServiceListener listener : listeners) {
-		  try {
-		  listener.handleUpdate("");
-		  } catch (RemoteException e) {
-		  }
-		  }
-		  }*/
-
-		counter++;
 	    }
 	};
 
-    public static int SEND_DATA_RATE = 5;
-	
-    public void sendDataToServer() {
-	if (currentLocation == null) return;
-	api.sendCoords(userId, currentLocation.getLatitude()+","+currentLocation.getLongitude()+","+currentLocation.getBearing(), busName);
-    }
-	
     public BackgroundService() {
 	super();
     }
@@ -680,41 +646,24 @@ public class BackgroundService extends Service implements LocationListener {
     }
 
     private Handler handle;
-    private String userId;
-	
+
     @Override
 	public void onCreate() {
 	super.onCreate();
 
 	timer = new Timer(getString(R.string.bsTimer));
 	timer.schedule(updateTask, 0, timerInverval);
-		
 	prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	reminderTime = Integer.parseInt(prefs.getString("prefDepNotifInterval", "5")) * 60 * 1000;
-		
 	// get a hangle on the location manager
 	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 	currentState = STATE_DO_NOTHING;
-		
 	api = new ReittiopasAPI();
-		
 	Log.i(TAG, "SERVICE CREATED");
 	handle = new Handler();
-		
 	alarmSound = Uri.parse("android.resource://"+getPackageName()+"/" +R.raw.alarm_clock);
-		
-	SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
-	userId = settings.getString("userId", "");
-	Log.i(TAG, "User ID: "+userId);
-	if (userId.equals("")) {
-	    SharedPreferences.Editor editor = settings.edit();
-	    userId = api.getUniqueID();
-	    editor.putString("userId", userId);
-	    Log.i(TAG, "User ID from API: "+userId);
-	    editor.commit();
-	}
     }
-	
+
     @Override
 	public void onDestroy() {
 	locationManager.removeUpdates(this);

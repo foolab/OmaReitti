@@ -139,20 +139,7 @@ public class ReittiopasAPI {
 	} catch (Exception e) {
 	    Log.e(TAG, "There was some error", e);
 	}
-		
+
 	return null;
-    }
-	
-    /** OUR API */
-    public String sendCoords(String userId, String coords, String bus) {
-	String url = "http://verkkoale.com:8888/putdata?user_id="+userId+"&bus="+bus+"&coords="+coords.replace(" ", "+");
-	//Log.i(TAG, "URL: "+url);
-	return queryUrl(url);
-    }
-	
-    public String getUniqueID() {
-	String url = "http://verkkoale.com:8888/genid";
-	String answ = queryUrl(url);
-	return answ;
     }
 }

@@ -26,9 +26,6 @@
 			android:summary="" android:key="prefDepNotifInterval" android:defaultValue="5"
 			android:entries="@array/prefDepNotifIntervalEntries" android:entryValues="@array/prefDepNotifIntervalValues" />
 			
-		<Preference android:title="@string/prAllowCoords" 
-			android:summary="" android:key="prefAllowCoords" />
-
 	</PreferenceCategory>
   
 </PreferenceScreen>

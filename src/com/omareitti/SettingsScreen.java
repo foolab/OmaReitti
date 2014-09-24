@@ -25,7 +25,6 @@ public class SettingsScreen extends PreferenceActivity {
     public SharedPreferences.Editor editor;
 	
     public ListPreference prefLanguage;
-    public Preference prefAllowCoords;
     public ListPreference prefMapZoomLevel;
     public Preference prefRouteSearchOptions;
     public Preference prefTimeType;
@@ -58,22 +57,7 @@ public class SettingsScreen extends PreferenceActivity {
 	  }
 	  });
 	*/
-    	
-    	prefAllowCoords = (Preference) findPreference("prefAllowCoords");
-    	prefAllowCoords.setSummary(prefs.getString("prefAllowCoords", "Yes"));
-    	prefAllowCoords.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-    		public boolean onPreferenceClick(Preference preference) {
-		    editor = prefs.edit();
-		    if (prefs.getString("prefAllowCoords", "Yes").equals("Yes")) 
-			editor.putString("prefAllowCoords", "No");
-		    else 
-			editor.putString("prefAllowCoords", "Yes");
-		    editor.commit();
-		    prefAllowCoords.setSummary(prefs.getString("prefAllowCoords", "Yes"));
-		    return false;
-    		}
-	    });
-    	
+
     	prefMapZoomLevel = (ListPreference) findPreference("prefMapZoomLevel");
     	prefMapZoomLevel.setSummary(prefMapZoomLevel.getValue());
     	prefMapZoomLevel.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -239,7 +223,3 @@ public class SettingsScreen extends PreferenceActivity {
     	moreOptionsDialog.dismiss();    	
     }
 }
-
-
-//SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-//prefs.getString("prefLanguage", "swedish")
