@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.http.util.LangUtils;
-
 import com.omareitti.IBackgroundServiceAPI;
 import com.omareitti.IBackgroundServiceListener;
 import com.omareitti.R;
@@ -231,11 +229,12 @@ public class MainApp extends Activity {
 		api.requestLastKnownAddress(1);
 	    } catch (Exception e) { };
 	}
-		
-	if (isDateTimeUnchanged) setCurrentDateTime();		
+
+	if (isDateTimeUnchanged)
+	    setCurrentDateTime();
 	updateSettings(false);
     }
-    
+
     private static final String TAG = MainApp.class.getSimpleName();
 	
     ArrayList<HistoryItem> history;
