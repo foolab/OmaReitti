@@ -1,65 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/scroller"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:fillViewport="true"
-	    android:windowSoftInputMode="stateHidden">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="vertical">
 
-  <LinearLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content" android:orientation="vertical"
-      android:id="@+id/searchLayout">
-    <!-- android:background="@drawable/mainappgradient"  -->
+  <!-- from -->
+  <com.omareitti.LocationSelector
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:orientation="horizontal"
+      android:id="@+id/fromLocation" />
 
-    <com.omareitti.LocationSelector
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content" android:orientation="horizontal"
-	android:id="@+id/fromLocation" />
-    <com.omareitti.LocationSelector
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content" android:orientation="horizontal"
-	android:id="@+id/toLocation" />
+  <!-- to -->
+  <com.omareitti.LocationSelector
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:orientation="horizontal"
+      android:id="@+id/toLocation" />
 
-    <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout2"
-		 android:layout_width="match_parent" android:stretchColumns="0,1"
-		 android:padding="3dip">
-      <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"
-		android:id="@+id/tableRow3">
-	<EditText android:id="@+id/editTime" android:gravity="center"
-		  android:layout_width="wrap_content" android:text="00:00"
-		  android:layout_height="wrap_content" android:cursorVisible="false"
-		  android:clickable="true" android:focusableInTouchMode="false"
-		  android:editable="true" android:textSize="20dip"></EditText>
-	<EditText android:id="@+id/editDate" android:gravity="center"
-		  android:layout_width="wrap_content" android:text="01.01.1900"
-		  android:layout_height="wrap_content" android:editable="false"
-		  android:clickable="true" android:cursorVisible="false"
-		  android:focusable="false" android:focusableInTouchMode="false"
-		  android:textSize="20dip"></EditText>
-	<ImageButton android:src="@drawable/ic_menu_exit" android:layout_width="50dip"
-		     android:id="@+id/imageButtonDepArr" android:layout_height="wrap_content"
-		     android:padding="0dip" android:cropToPadding="true"></ImageButton>
-	<Button android:text="..." android:id="@+id/MainAppMoreOptions"
-		android:layout_width="50dip" android:layout_height="wrap_content"
-		android:textSize="20dip"></Button>
-      </TableRow>
-    </TableLayout>
+  <!-- date, time and extra -->
+  <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout2"
+	       android:layout_width="match_parent" android:stretchColumns="0,1"
+	       android:padding="3dip">
+    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"
+	      android:id="@+id/tableRow3">
+      <EditText android:id="@+id/editTime" android:gravity="center"
+		android:layout_width="wrap_content" android:text="00:00"
+		android:layout_height="wrap_content" android:cursorVisible="false"
+		android:clickable="true" android:focusableInTouchMode="false"
+		android:editable="true" android:textSize="20dip"></EditText>
+      <EditText android:id="@+id/editDate" android:gravity="center"
+		android:layout_width="wrap_content" android:text="01.01.1900"
+		android:layout_height="wrap_content" android:editable="false"
+		android:clickable="true" android:cursorVisible="false"
+		android:focusable="false" android:focusableInTouchMode="false"
+		android:textSize="20dip"></EditText>
+      <ImageButton android:src="@drawable/ic_menu_exit" android:layout_width="50dip"
+		   android:id="@+id/imageButtonDepArr" android:layout_height="wrap_content"
+		   android:padding="0dip" android:cropToPadding="true"></ImageButton>
+      <Button android:text="..." android:id="@+id/MainAppMoreOptions"
+	      android:layout_width="50dip" android:layout_height="wrap_content"
+	      android:textSize="20dip"></Button>
+    </TableRow>
+  </TableLayout>
 
-    <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout3"
-		 android:layout_width="match_parent" android:stretchColumns="*">
-      <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"
-		android:id="@+id/tableRow4">
-	<Button android:layout_height="wrap_content" android:id="@+id/searchButton"
-		android:layout_width="fill_parent" android:text="@string/maBtnSearch"
-		android:textSize="26dip"
-		android:drawableLeft="@android:drawable/ic_menu_search"></Button>
-      </TableRow>
-    </TableLayout>
+  <!-- search -->
+  <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout3"
+	       android:layout_width="match_parent" android:stretchColumns="*">
+    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"
+	      android:id="@+id/tableRow4">
+      <Button android:layout_height="wrap_content" android:id="@+id/searchButton"
+	      android:layout_width="fill_parent" android:text="@string/maBtnSearch"
+	      android:textSize="26dip"
+	      android:drawableLeft="@android:drawable/ic_menu_search"></Button>
+    </TableRow>
+  </TableLayout>
+
+  <!-- history -->
+
+  <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	      android:id="@+id/scroller"
+	      android:layout_width="fill_parent"
+	      android:layout_height="fill_parent"
+	      android:fillViewport="true"
+	      android:windowSoftInputMode="stateHidden">
 
     <TabHost android:id="@+id/TabHost01" android:layout_width="match_parent"
 	     android:layout_height="wrap_content">
+
       <LinearLayout
 	  android:orientation="vertical"
 	  android:layout_width="fill_parent"
@@ -75,5 +81,5 @@
 	</FrameLayout>
       </LinearLayout>
     </TabHost>
-  </LinearLayout>
-</ScrollView>
+  </ScrollView>
+</LinearLayout>
