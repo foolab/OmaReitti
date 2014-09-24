@@ -208,6 +208,13 @@ public class MainApp extends Activity {
     }
 
     @Override
+	protected void onStop() {
+	super.onStop();
+
+	// TODO: stop gps
+    }
+
+    @Override
 	protected void onRestart() {
 	super.onRestart();
 				
