@@ -68,6 +68,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.ScrollView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RadioGroup;
 
 public class MainApp extends Activity {
     public static AutoCompleteTextView toEditText;
@@ -75,7 +76,6 @@ public class MainApp extends Activity {
     public static Button moreOptionsButton;
 
     private static boolean isMoreOptionsUnchanged = true;
-    private static boolean isTimeTypeUnchanged = true;
 
     ArrayList<GeoRec> geoFrom;
     ArrayList<GeoRec> geoTo;
@@ -86,7 +86,6 @@ public class MainApp extends Activity {
     private String toName = "";
     private String optimize;
     private String transport_types;
-    private String timetype;
 
     public volatile Handler handler;
     private ListView l1;
@@ -102,8 +101,6 @@ public class MainApp extends Activity {
     private ToggleButton tbWalk;
     private Spinner spinnerOptions;
 
-    private static ImageButton imageButtonDepArr;
-
     SharedPreferences prefs;
 
     private static final int SWAP_MENU_ID = 0;
@@ -111,6 +108,7 @@ public class MainApp extends Activity {
     private static final int ABOUT_MENU_ID = 2;
 
 
+    private String mTimeType;
     private LocationSelector mFrom;
     private LocationSelector mTo;
     private LocationFinder mLocation;
@@ -123,14 +121,7 @@ public class MainApp extends Activity {
 	    optimize = prefs.getString("prefRouteSearchOptionsOptimize", "default");
 	    transport_types = prefs.getString("prefRouteSearchOptionsTT", "all");
         }
-        if (isTimeTypeUnchanged) {
-	    timetype = prefs.getString("prefTimeType", "Departure").toLowerCase();
-	    if (timetype.equals("arrival")) {
-		imageButtonDepArr.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_entrance));
-	    } else {
-		imageButtonDepArr.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_exit));
-	    }
-        }
+
         ReittiopasAPI.walkingSpeed = (int)(Double.parseDouble(prefs.getString("prefWalkingSpeed", "1"))*60);
     }
 
@@ -197,21 +188,27 @@ public class MainApp extends Activity {
 
 	mDateTime = (DateTimeSelector)findViewById(R.id.dateTime);
 
+	RadioGroup gp = (RadioGroup)findViewById(R.id.departureArrival);
+	gp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+		    switch (checkedId) {
+		    case R.id.radioArrival:
+			mTimeType = "arrival";
+			break;
+
+		    case R.id.radioDeparture:
+		    default:
+			mTimeType = "departure";
+			break;
+		    }
+		}
+	    });
+
         searchButton = (Button)findViewById(R.id.searchButton);
         searchButton.setOnClickListener(searchRouteListener);
 
-        imageButtonDepArr = (ImageButton)findViewById(R.id.imageButtonDepArr);
-        imageButtonDepArr.setOnClickListener(depArrDirectionListener);
- 
-        isTimeTypeUnchanged = true;
         isMoreOptionsUnchanged = true;
         updateSettings(true);
-        
-	/*      
-		Drawable dd = getResources().getDrawable(android.R.drawable.ic_menu_search); 
-		dd.setBounds( 0, 0, 60, 60 );
-		searchButton.setCompoundDrawables(dd, null, null, null);
-	*/
 
         moreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
         moreOptionsButton.setOnClickListener(moreOptionsListener);
@@ -383,7 +380,6 @@ public class MainApp extends Activity {
         	 
 	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
 		//optimize = "default";
-		//timetype = "departure";
 		updateSettings(false);                
 		launchNextActivity(); 
 	    }
@@ -787,25 +783,12 @@ public class MainApp extends Activity {
             myIntent.putExtra("date", mDateTime.getYear()+mDateTime.getMonth()+mDateTime.getDay());
             myIntent.putExtra("time", mDateTime.getHour() + mDateTime.getMinute());
             myIntent.putExtra("optimize", optimize);
-            myIntent.putExtra("timetype", timetype);
+            myIntent.putExtra("timetype", mTimeType);
             myIntent.putExtra("transport_types", transport_types);
             startActivity(myIntent);
 	}
     }
-    
-    private OnClickListener depArrDirectionListener = new OnClickListener() {
-	    public void onClick(View v) {
-        	isTimeTypeUnchanged = false;
-        	if (timetype.equals("departure")) {
-		    timetype = "arrival";
-		    imageButtonDepArr.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_entrance));
-        	} else {
-		    timetype = "departure";
-		    imageButtonDepArr.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_exit));	
-        	}
-	    }
-	};
-    
+
     private OnClickListener moreOptionsListener = new OnClickListener() {
 	    public void onClick(View v) {
     		Context context = MainApp.this;

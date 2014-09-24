@@ -16,11 +16,31 @@
       android:layout_height="wrap_content" android:orientation="horizontal"
       android:id="@+id/toLocation" />
 
-  <!-- date, time and extra -->
+  <!-- date, time and now -->
   <com.omareitti.DateTimeSelector
       android:layout_width="fill_parent"
       android:layout_height="wrap_content" android:orientation="horizontal"
       android:id="@+id/dateTime" />
+
+  <!-- departure and arrival -->
+  <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+	      android:layout_width="fill_parent"
+	      android:layout_height="wrap_content"
+	      android:gravity="center"
+	      android:orientation="horizontal"
+	      android:id="@+id/departureArrival"
+	      android:checkedButton="@+id/radioDeparture">
+    <RadioButton android:id="@+id/radioDeparture"
+		 android:layout_width="wrap_content"
+		 android:layout_height="wrap_content"
+		 android:layout_marginRight="10dp"
+		 android:text="@string/maRadioDeparture" />
+    <RadioButton android:id="@+id/radioArrival"
+		 android:layout_width="wrap_content"
+		 android:layout_height="wrap_content"
+		 android:layout_marginLeft="10dp"
+		 android:text="@string/maRadioArrival" />
+  </RadioGroup>
 
   <!-- search -->
   <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout3"
