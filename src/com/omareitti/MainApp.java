@@ -225,25 +225,25 @@ public class MainApp extends Activity {
         routes = History.getRoutes(this);
 
         Log.i(TAG, "HISTORY SIZE!!!!!!!!!!!!1: "+history.size()+" "+routes.size());
-        
+
         TabHost tabs = (TabHost)findViewById(R.id.TabHost01);
         tabs.setup();
 
         if (history.size() > 0 || routes.size() > 0) {
-	
 	    TabHost.TabSpec spec1 = tabs.newTabSpec("tag1");
-	
+
 	    spec1.setContent(R.id.myPlacesList);
-	    spec1.setIndicator(getString(R.string.maTabPlaces), getResources().getDrawable(android.R.drawable.ic_menu_mylocation));
-	        
+	    spec1.setIndicator(getString(R.string.maTabPlaces));
 	    tabs.addTab(spec1);
-	
+
 	    TabHost.TabSpec spec2 = tabs.newTabSpec("tag2");
 	    spec2.setContent(R.id.myRoutesList);
-	    spec2.setIndicator(getString(R.string.maTabRoutes), getResources().getDrawable(android.R.drawable.ic_menu_myplaces));
-	
+	    spec2.setIndicator(getString(R.string.maTabRoutes));
+
 	    tabs.addTab(spec2);
-        } else tabs.setVisibility(View.GONE);
+        } else
+	    tabs.setVisibility(View.GONE);
+
 	myPlaces = (ListView)findViewById(R.id.myPlacesList);
 	myRoutes = (ListView)findViewById(R.id.myRoutesList);
 
@@ -956,6 +956,7 @@ public class MainApp extends Activity {
 	case SWAP_MENU_ID:
 	    String f = "";
 	    String t = "";
+	    // TODO: crash if both locations are empty
 	    if (!mFrom.getHint().equals(getString(R.string.maEditFromHint)) && !mFrom.getHint().equals("")) f = mFrom.getHint().toString();
 	    //Log.i(TAG, "sWAP: "+fromEditText.getText().toString().equals("")+"  "+(!fromEditText.getHint().equals("From") && !fromEditText.getHint().equals(""))+" "+f);
 	    if (!mFrom.getText().toString().equals("")) f = mFrom.getText().toString();
