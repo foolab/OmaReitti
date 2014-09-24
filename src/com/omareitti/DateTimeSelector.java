@@ -53,6 +53,12 @@ public class DateTimeSelector extends LinearLayout
     protected void onFinishInflate() {
 	super.onFinishInflate();
 	((Activity)getContext()).getLayoutInflater().inflate(R.layout.date_time_selector, this);
+	Button button = (Button)findViewById(R.id.nowButton);
+	button.setOnClickListener(new View.OnClickListener() {
+		public void onClick(View v) {
+		    reset();
+		}
+	    });
 
 	mTimeEdit = (EditText)findViewById(R.id.editTime);
 	mTimeEdit.setOnClickListener(new OnClickListener() {
@@ -82,9 +88,7 @@ public class DateTimeSelector extends LinearLayout
 		}
 	    });
 
-	Calendar c = Calendar.getInstance();
-	onTimeSet(null, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
-	onDateSet(null, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+	reset();
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -101,4 +105,9 @@ public class DateTimeSelector extends LinearLayout
 	mDateEdit.setText(String.format("%s.%s.%s", mDay, mMonth, mYear));
     }
 
+    private void reset() {
+	Calendar c = Calendar.getInstance();
+	onTimeSet(null, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+	onDateSet(null, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+    }
 }
