@@ -23,24 +23,23 @@ public class ShortcutActivity extends Activity {
     ArrayList<RouteHistoryItem> routes;
     private int lastSelectedHistory = -1;
     ListView myPlaces, myRoutes;
-    
+
     History.HistoryAdapter historyAdapter;
     History.RoutesAdapter routesAdapter;
 
-	
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 	// TODO Auto-generated method stub
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.mainapp);
+	// TODO: ?
+	//	TableLayout t1 = (TableLayout)findViewById(R.id.tableLayout1);
+	//	TableLayout t2 = (TableLayout)findViewById(R.id.tableLayout2);
+	//	TableLayout t3 = (TableLayout)findViewById(R.id.tableLayout3);
 		
-	TableLayout t1 = (TableLayout)findViewById(R.id.tableLayout1);
-	TableLayout t2 = (TableLayout)findViewById(R.id.tableLayout2);
-	TableLayout t3 = (TableLayout)findViewById(R.id.tableLayout3);
-		
-	t1.setVisibility(View.GONE);
-	t2.setVisibility(View.GONE);
-	t3.setVisibility(View.GONE);
+	//	t1.setVisibility(View.GONE);
+	//	t2.setVisibility(View.GONE);
+	//	t3.setVisibility(View.GONE);
 		
         TabHost tabs = (TabHost)findViewById(R.id.TabHost01);
 

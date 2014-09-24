@@ -1,11 +1,6 @@
 package com.omareitti;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 import com.omareitti.IBackgroundServiceAPI;
 import com.omareitti.IBackgroundServiceListener;
 import com.omareitti.R;
@@ -16,10 +11,8 @@ import com.omareitti.datatypes.Coords;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -62,7 +55,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -73,7 +65,6 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.ToggleButton;
 import android.widget.ScrollView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -81,21 +72,8 @@ import android.widget.AdapterView.OnItemClickListener;
 public class MainApp extends Activity {
     public static AutoCompleteTextView toEditText;
     public static Button searchButton;
-    public static EditText timeEdit;
-    public static EditText dateEdit;
     public static Button moreOptionsButton;
 
-    private static final int TIME_DIALOG_ID = 0;
-    private static final int DATE_DIALOG_ID = 1;
-
-    private static String hour = "00";
-    private static String minute = "00";
-
-    private static String year = "1900";
-    private static String month = "01";
-    private static String day = "01";
-
-    private static boolean isDateTimeUnchanged = true;
     private static boolean isMoreOptionsUnchanged = true;
     private static boolean isTimeTypeUnchanged = true;
 
@@ -132,32 +110,11 @@ public class MainApp extends Activity {
     private static final int SETTINGS_MENU_ID = 1;
     private static final int ABOUT_MENU_ID = 2;
 
-    static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
-
-    private static LocationSelector mFrom;
-    private static LocationSelector mTo;
+    private LocationSelector mFrom;
+    private LocationSelector mTo;
     private LocationFinder mLocation;
-
-    private static String twodigits(int i) {
-	return (i > 10 ? "" + i : "0"+i);
-    }
-	
-    private void setCurrentDateTime() {
-	Calendar c = Calendar.getInstance();
-	Date dt = c.getTime();
-	hour =		twodigits( c.get(Calendar.HOUR_OF_DAY) );
-	minute =	twodigits( c.get(Calendar.MINUTE) );
-	day =		twodigits( c.get(Calendar.DAY_OF_MONTH) );
-	month =		twodigits( (c.get(Calendar.MONTH) + 1) );
-	year =		"" + c.get(Calendar.YEAR);
-	timeEdit.setText(timeFormat.format(dt));
-	dateEdit.setText(dateFormat.format(dt));
-	// TODO:
-	// hack
-	mFrom.clearFocus();
-    }
+    private DateTimeSelector mDateTime;
 
     private void updateSettings(boolean showDialog) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -194,23 +151,18 @@ public class MainApp extends Activity {
     @Override
 	protected void onRestart() {
 	super.onRestart();
-				
-	//if (isDateTimeUnchanged) setCurrentDateTime();		
-	//updateSettings();
     }
 
     @Override
 	protected void onResume() {
 	super.onResume();
-		
-	if (api != null) { 
+
+	if (api != null) {
 	    try {
 		api.requestLastKnownAddress(1);
 	    } catch (Exception e) { };
 	}
 
-	if (isDateTimeUnchanged)
-	    setCurrentDateTime();
 	updateSettings(false);
     }
 
@@ -243,6 +195,8 @@ public class MainApp extends Activity {
 	mTo.setInitialHint(R.string.maEditToHint);
 	mTo.setLocationFinder(mLocation);
 
+	mDateTime = (DateTimeSelector)findViewById(R.id.dateTime);
+
         searchButton = (Button)findViewById(R.id.searchButton);
         searchButton.setOnClickListener(searchRouteListener);
 
@@ -251,7 +205,6 @@ public class MainApp extends Activity {
  
         isTimeTypeUnchanged = true;
         isMoreOptionsUnchanged = true;
-        isDateTimeUnchanged = true;
         updateSettings(true);
         
 	/*      
@@ -259,16 +212,9 @@ public class MainApp extends Activity {
 		dd.setBounds( 0, 0, 60, 60 );
 		searchButton.setCompoundDrawables(dd, null, null, null);
 	*/
-        
-        timeEdit = (EditText)findViewById(R.id.editTime);
-        timeEdit.setOnClickListener(timeEditListener);
-        dateEdit = (EditText)findViewById(R.id.editDate);
-        dateEdit.setOnClickListener(dateEditListener);
-        
+
         moreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
         moreOptionsButton.setOnClickListener(moreOptionsListener);
-
-        setCurrentDateTime();
 
 	l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
 
@@ -436,8 +382,6 @@ public class MainApp extends Activity {
 	    //		toCoords = toCoordsInt;
         	 
 	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
-		//TODO: test 
-		setCurrentDateTime();
 		//optimize = "default";
 		//timetype = "departure";
 		updateSettings(false);                
@@ -840,8 +784,8 @@ public class MainApp extends Activity {
             myIntent.putExtra("toCoords", mTo.getCoords().toString());
             myIntent.putExtra("fromName", mFrom.getText());
             myIntent.putExtra("toName", mTo.getText());
-            myIntent.putExtra("date", year+month+day);
-            myIntent.putExtra("time", hour+minute);
+            myIntent.putExtra("date", mDateTime.getYear()+mDateTime.getMonth()+mDateTime.getDay());
+            myIntent.putExtra("time", mDateTime.getHour() + mDateTime.getMinute());
             myIntent.putExtra("optimize", optimize);
             myIntent.putExtra("timetype", timetype);
             myIntent.putExtra("transport_types", transport_types);
@@ -988,57 +932,7 @@ public class MainApp extends Activity {
         	}
 	    }
 	};
-    
-    @Override
-	protected Dialog onCreateDialog(int id) {
-        switch (id) {
-	case TIME_DIALOG_ID:
-	    return new TimePickerDialog(this, 
-					mTimeSetListener, 
-					Integer.parseInt(hour), Integer.parseInt(minute), true); 
-	case DATE_DIALOG_ID:
-	    return new DatePickerDialog(this,
-					mDateSetListener,
-					Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day));
-	}
-        return null;
-    }
-       
-    private OnClickListener timeEditListener = new OnClickListener() {
-	    public void onClick(View v) {
-        	showDialog(TIME_DIALOG_ID);
-	    }
-	};
-    
-    private TimePickerDialog.OnTimeSetListener mTimeSetListener =
-        new TimePickerDialog.OnTimeSetListener() {
-            public void onTimeSet(TimePicker view, int h, int m) {
-            	isDateTimeUnchanged = false;
-                hour = (Integer.toString(h).length()==1) ? "0"+Integer.toString(h) : Integer.toString(h);
-                minute = (Integer.toString(m).length()==1) ? "0"+Integer.toString(m) : Integer.toString(m);;
-                timeEdit.setText(hour+":"+minute);
-	    }
-	};
-    
-    private OnClickListener dateEditListener = new OnClickListener() {
-	    public void onClick(View v) {
-        	showDialog(DATE_DIALOG_ID);        	
-	    }
-	};
-            
-    private DatePickerDialog.OnDateSetListener mDateSetListener =
-        new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int y, int m, int d) {
-            	isDateTimeUnchanged = false;
-            	// January is month 0
-            	m++;
-                year = Integer.toString(y);
-                month = (Integer.toString(m).length()==1) ? "0"+Integer.toString(m) : Integer.toString(m);
-                day = (Integer.toString(d).length()==1) ? "0"+Integer.toString(d) : Integer.toString(d);
-                dateEdit.setText(day+"."+month+"."+year);
-            }
-	};
-    
+
     private void showErrorDialog(String title, String message) {
 	AlertDialog alertDialog = new AlertDialog.Builder(MainApp.this).create();
 	alertDialog.setTitle(title);
@@ -1172,7 +1066,6 @@ public class MainApp extends Activity {
 			//			toCoords = toCoordsInt;
 			fromName = address;
 			//			fromCoords = lastLocDisc;
-			setCurrentDateTime();
 			updateSettings(false);
 			launchNextActivity();
 			launchedFromParamsAlready = true;

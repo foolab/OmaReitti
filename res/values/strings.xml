@@ -68,6 +68,7 @@
     <string name="maDlgErrorNoTo">Could not find \'To\' location</string>
     <string name="maDlgSelectFrom">Select \'From\' address</string>
     <string name="maDlgSelectTo">Select \'To\' address</string>
+    <string name="maBtnNow">Now</string>
     <!-- <string name="maDlgSearchOptions">Search options</string> -->
     <string name="maMenuSwap">Swap locations</string>
     <string name="maMenuSettings">Settings</string>
