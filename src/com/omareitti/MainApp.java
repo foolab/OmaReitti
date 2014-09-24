@@ -233,11 +233,6 @@ public class MainApp extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainapp);
 
-	// TODO:
-	ScrollView view = (ScrollView)findViewById(R.id.scroller);
-	view.scrollTo(0, 0);
-
-
 	mLocation = new LocationFinder((Context)MainApp.this);
 
         mFrom = (LocationSelector)findViewById(R.id.fromLocation);
