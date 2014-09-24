@@ -295,22 +295,6 @@ public class MainApp extends Activity {
         moreOptionsButton.setOnClickListener(moreOptionsListener);
 
         setCurrentDateTime();
-	/* WTF IS THIS SHIT??!?!
-	   final Calendar c = Calendar.getInstance();
-	   String h = Integer.toString(c.get(Calendar.HOUR_OF_DAY));
-	   hour = (h.length()==1) ? "0"+h : h;
-	   String min = Integer.toString(c.get(Calendar.MINUTE));
-	   minute = (min.length()==1) ? "0"+min : min;
-	   timeEdit.setText(hour+":"+minute);
-        
-	   year = Integer.toString(c.get(Calendar.YEAR));
-	   // January is month 0, hence +1
-	   String m = Integer.toString(c.get(Calendar.MONTH)+1);
-	   month = (m.length()==1) ? "0"+m : m;
-	   String d = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
-	   day = (d.length()==1) ? "0"+d : d;
-	   dateEdit.setText(day+"."+month+"."+year);
-        */
 
 	l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
 
@@ -343,16 +327,6 @@ public class MainApp extends Activity {
 	
 	    tabs.addTab(spec2);
         } else tabs.setVisibility(View.GONE);
-        //tabs.getTabWidget().getChildAt(0).getLayoutParams().height = 35; 
-        
-        /*History.saveHistory(this, "Matinraitti 5", "");
-	  History.saveHistory(this, "Kamppi", "");
-	  History.saveRoute(this, "Matinraitti 5", "Kamppi");        
-
-	  History.saveHistory(this, "Pienen Villasaaren tie 1", "");
-	  History.saveHistory(this, "Nupurintie 56", "");
-	  History.saveRoute(this, "Pienen Villasaaren tie 1", "Nupurintie 56");  */      
-
 	myPlaces = (ListView)findViewById(R.id.myPlacesList);
 	myRoutes = (ListView)findViewById(R.id.myRoutesList);
 
@@ -364,7 +338,8 @@ public class MainApp extends Activity {
         routesAdapter = new History.RoutesAdapter(this);
         myPlaces.setAdapter(historyAdapter);
         myRoutes.setAdapter(routesAdapter);
-        
+
+	// TODO: take into account history when completing
         autoCompleteAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, History.getHistoryAsArray());
         
 	//        mFrom.setAdapter(autoCompleteAdapter);
@@ -1259,57 +1234,3 @@ public class MainApp extends Activity {
 	    }
 	};
 }
-
-
-/* This is the right way to display lists in dialogs!
- *  final String[] PENS = new String[]{
- "MONT Blanc",
- "Gucci",
- "Parker",
- "Sailor",
- "Porsche Design",
- "Rotring",
- "Sheaffer",
- "Waterman"
- };
-
- AlertDialog.Builder builder = new AlertDialog.Builder(this);
- builder.setTitle("Pick a color").setView(arg0)
- .setItems(PENS, new DialogInterface.OnClickListener() {
-		
- @Override
- public void onClick(DialogInterface dialog, int which) {
- // TODO Auto-generated method stub
-			
- }
- });   
- builder.show();	
- MainApp.setListViewHeightBasedOnChildren((ListView)findViewById(R.id.myPlacesList));
-
- final LayoutInflater mInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
- ArrayList<HistoryItem> history = History.getHistory(this);
- myPlaces.setAdapter(
- new ArrayAdapter<String>(this, android.R.layout.two_line_list_item, PENS) {
- @Override
- public View getView(int position, View convertView, ViewGroup parent) {
- View row;
-     
- if (null == convertView) {
- row = mInflater.inflate(android.R.layout.two_line_list_item, null);
- } else {
- row = convertView;
- }
-    		
-    		
-    		
- TextView tv = (TextView) row.findViewById(android.R.id.text1);
- tv.setText(getItem(position));
-
- TextView tv = (TextView) row.findViewById(android.R.id.text2);
- tv.setText(getItem(position));
-    		
- return row;
- }
- }
- );*/  
