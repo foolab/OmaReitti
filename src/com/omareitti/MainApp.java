@@ -73,7 +73,6 @@ import android.widget.RadioGroup;
 public class MainApp extends Activity {
     public static AutoCompleteTextView toEditText;
     public static Button searchButton;
-    public static Button moreOptionsButton;
 
     private static boolean isMoreOptionsUnchanged = true;
 
@@ -84,22 +83,13 @@ public class MainApp extends Activity {
     private Coords toCoords;
     private String fromName = "";
     private String toName = "";
-    private String optimize;
-    private String transport_types;
 
     public volatile Handler handler;
     private ListView l1;
     public Dialog locationFromSelectDialog;
     public Dialog locationToSelectDialog;
-    public Dialog moreOptionsDialog;
-    public ProgressDialog processDialog;
 
-    private ToggleButton tbBus;
-    private ToggleButton tbTram;
-    private ToggleButton tbMetro;
-    private ToggleButton tbTrain;
-    private ToggleButton tbWalk;
-    private Spinner spinnerOptions;
+    public ProgressDialog processDialog;
 
     SharedPreferences prefs;
 
@@ -113,13 +103,16 @@ public class MainApp extends Activity {
     private LocationSelector mTo;
     private LocationFinder mLocation;
     private DateTimeSelector mDateTime;
+    private static Button mMoreOptionsButton;
+    private String mOptimize;
+    private String mTransportTypes;
 
     private void updateSettings(boolean showDialog) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (isMoreOptionsUnchanged) {
-	    optimize = prefs.getString("prefRouteSearchOptionsOptimize", "default");
-	    transport_types = prefs.getString("prefRouteSearchOptionsTT", "all");
+	    mOptimize = prefs.getString("prefRouteSearchOptionsOptimize", "default");
+	    mTransportTypes = prefs.getString("prefRouteSearchOptionsTT", "all");
         }
 
         ReittiopasAPI.walkingSpeed = (int)(Double.parseDouble(prefs.getString("prefWalkingSpeed", "1"))*60);
@@ -210,8 +203,8 @@ public class MainApp extends Activity {
         isMoreOptionsUnchanged = true;
         updateSettings(true);
 
-        moreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
-        moreOptionsButton.setOnClickListener(moreOptionsListener);
+        mMoreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
+        mMoreOptionsButton.setOnClickListener(moreOptionsListener);
 
 	l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
 
@@ -782,137 +775,26 @@ public class MainApp extends Activity {
             myIntent.putExtra("toName", mTo.getText());
             myIntent.putExtra("date", mDateTime.getYear()+mDateTime.getMonth()+mDateTime.getDay());
             myIntent.putExtra("time", mDateTime.getHour() + mDateTime.getMinute());
-            myIntent.putExtra("optimize", optimize);
+            myIntent.putExtra("optimize", mOptimize);
             myIntent.putExtra("timetype", mTimeType);
-            myIntent.putExtra("transport_types", transport_types);
+            myIntent.putExtra("transport_types", mTransportTypes);
             startActivity(myIntent);
 	}
     }
 
     private OnClickListener moreOptionsListener = new OnClickListener() {
 	    public void onClick(View v) {
-    		Context context = MainApp.this;
-        	/*moreOptionsDialog = new Dialog(context);
-		  moreOptionsDialog.setTitle("Search options");
-		  View inflatedView = View.inflate(context, R.layout.moreoptionsdialog, null);
-		  moreOptionsDialog.setContentView(inflatedView);   */     
-
-    		View inflatedView = View.inflate(context, R.layout.moreoptionsdialog, null);
-    		
-    		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle(getString(R.string.moTitle)).setView(inflatedView);   
-		builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-			    setMoreOptions();
+		TravelOptionsDialog.TravelOptionsDialogResults listener =
+		    new TravelOptionsDialog.TravelOptionsDialogResults() {
+			public void onDone(String optimize, String transportTypes) {
+			    mOptimize = optimize;
+			    mTransportTypes = transportTypes;
 			}
-		    });
-		moreOptionsDialog = builder.create();	
-        	
-        	tbBus = (ToggleButton) inflatedView.findViewById(R.id.toggleButtonBus);
-        	Drawable d = getResources().getDrawable(R.drawable.bus);
-        	d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-        	tbBus.setCompoundDrawables(null,d,null,null); 
-        	tbBus.setCompoundDrawablePadding(8);
-        	tbBus.setChecked(transport_types.contains("bus|uline|service") || transport_types.equals("all"));
-        	tbBus.setOnClickListener(toggleListener);
-        	
-        	tbTram = (ToggleButton) inflatedView.findViewById(R.id.toggleButtonTram);
-        	d = getResources().getDrawable(R.drawable.tram);
-        	d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-        	tbTram.setCompoundDrawables(null,d,null,null); 
-        	tbTram.setCompoundDrawablePadding(8);        	
-        	tbTram.setChecked(transport_types.contains("tram") || transport_types.equals("all"));
-        	tbTram.setOnClickListener(toggleListener);
-        	
-        	tbMetro = (ToggleButton) inflatedView.findViewById(R.id.toggleButtonMetro);
-        	d = getResources().getDrawable(R.drawable.metro);
-        	d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-        	tbMetro.setCompoundDrawables(null,d,null,null); 
-        	tbMetro.setCompoundDrawablePadding(8);
-        	tbMetro.setChecked(transport_types.contains("metro") || transport_types.equals("all"));
-        	tbMetro.setOnClickListener(toggleListener);
-        	
-        	tbTrain = (ToggleButton) inflatedView.findViewById(R.id.toggleButtonTrain);
-        	d = getResources().getDrawable(R.drawable.train);
-        	d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-        	tbTrain.setCompoundDrawables(null,d,null,null); 
-        	tbTrain.setCompoundDrawablePadding(8);
-        	tbTrain.setChecked(transport_types.contains("train") || transport_types.equals("all"));
-        	tbTrain.setOnClickListener(toggleListener);
-        	
-        	tbWalk = (ToggleButton) inflatedView.findViewById(R.id.toggleButtonWalk);
-        	d = getResources().getDrawable(R.drawable.man);
-        	d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-        	tbWalk.setCompoundDrawables(null,d,null,null); 
-        	tbWalk.setCompoundDrawablePadding(8);
-        	tbWalk.setChecked(transport_types.contains("walk"));
-        	tbWalk.setOnClickListener(toggleListener);
-        	
-		spinnerOptions = (Spinner) inflatedView.findViewById(R.id.moreOptionsSpinner);
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(inflatedView.getContext(), R.array.moOptimize, android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinnerOptions.setAdapter(adapter);
-		if (optimize.equals("default")) spinnerOptions.setSelection(0);
-		if (optimize.equals("fastest")) spinnerOptions.setSelection(1);
-		if (optimize.equals("least_transfers")) spinnerOptions.setSelection(2);
-		if (optimize.equals("least_walking")) spinnerOptions.setSelection(3);
-            
-		/*optionsButtonOK = (Button) inflatedView.findViewById(R.id.moreOptionsOK);
-		  optionsButtonOK.setOnClickListener(optionsOK);*/
-            
-        	moreOptionsDialog.show();
-	    }
-	};
-    
-    private void setMoreOptions() {
-    	transport_types = "";
-    	if (tbBus.isChecked()) transport_types = (transport_types.equals("")) ? "bus|uline|service" : transport_types+"|bus|uline|service";
-    	if (tbTram.isChecked()) transport_types = (transport_types.equals("")) ? "tram" : transport_types+"|tram";
-    	if (tbMetro.isChecked()) transport_types = (transport_types.equals("")) ? "metro" : transport_types+"|metro";
-    	if (tbTrain.isChecked()) transport_types = (transport_types.equals("")) ? "train" : transport_types+"|train";
-    	if (tbWalk.isChecked()) transport_types = "walk";
+		    };
 
-    	if (transport_types.equals("bus|uline|service|tram|metro|train")) transport_types = "all";
-    	
-    	optimize = "";
-    	switch (spinnerOptions.getSelectedItemPosition()) {
-	case 0: 
-	    optimize = "default";
-	    break;
-	case 1:
-	    optimize = "fastest";
-	    break;
-	case 2:
-	    optimize = "least_transfers";
-	    break;
-	case 3:
-	    optimize = "least_walking";
-	    break;
-	default:
-	    break;
-    	}
-    	
-    	isMoreOptionsUnchanged = false;
-    	moreOptionsDialog.dismiss();    	
-    }
-    
-    /*
-      private OnClickListener optionsOK = new OnClickListener() {
-      public void onClick(View v) {
-      setMoreOptions();
-      }
-      };*/
-    
-    private OnClickListener toggleListener = new OnClickListener() {
-	    public void onClick(View v) {
-        	if (v.getId() == tbWalk.getId()) {
-		    tbBus.setChecked(false);
-		    tbTram.setChecked(false);
-		    tbMetro.setChecked(false);
-		    tbTrain.setChecked(false);        		
-        	} else {
-		    if (tbWalk.isChecked()) tbWalk.setChecked(false);
-        	}
+		AlertDialog dlg =
+		    TravelOptionsDialog.create(MainApp.this, mTransportTypes, mOptimize, listener);
+		dlg.show();
 	    }
 	};
 

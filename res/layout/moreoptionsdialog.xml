@@ -1,22 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent" android:background="@android:drawable/screen_background_light" android:layout_marginRight="10dp" android:layout_marginLeft="10dp">
-	<TableRow android:layout_width="match_parent" android:layout_height="match_parent" android:paddingTop="10dp" android:paddingBottom="10dp">
-    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonBus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
-    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonTram" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
-    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonMetro" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
-    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonTrain" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></ToggleButton>
-    	<ToggleButton android:lines="0" android:id="@+id/toggleButtonWalk" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false"></ToggleButton>
-	</TableRow>
-	<TableRow android:layout_width="match_parent" android:layout_height="match_parent">
-  		<Spinner android:layout_span="5" android:prompt="@string/moTitle" android:id="@+id/moreOptionsSpinner" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="10dp"></Spinner>
-	</TableRow>
-	<!--  <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
-	    <FrameLayout android:layout_height="wrap_content" android:layout_span="5">	
-			<Button android:layout_span="5" android:id="@+id/moreOptionsOK" android:text="OK" android:textSize="22dip" android:layout_height="wrap_content" android:layout_width="100dip" android:layout_gravity="center"></Button>
-		</FrameLayout>
-	</TableRow> --> 
-</TableLayout>
 
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="3dip"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:orientation="vertical">
+
+  <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="3dip"
+    android:layout_width="fill_parent"
+    android:gravity="center"
+    android:layout_height="wrap_content" android:orientation="horizontal">
+
+    <ToggleButton android:lines="0"
+		  android:id="@+id/toggleButtonBus"
+		  android:textOn=""
+		  android:textOff=""
+		  android:layout_width="wrap_content"
+		  android:layout_height="fill_parent"
+		  android:drawableTop="@drawable/bus"
+		  android:paddingTop="10dp"
+		  android:checked="true"></ToggleButton>
+    <ToggleButton android:lines="0"
+		  android:id="@+id/toggleButtonTram"
+		  android:textOn=""
+		  android:textOff=""
+		  android:layout_width="wrap_content"
+		  android:layout_height="fill_parent"
+		  android:drawableTop="@drawable/tram"
+		  android:paddingTop="10dp"
+		  android:checked="true"></ToggleButton>
+    <ToggleButton android:lines="0"
+		  android:id="@+id/toggleButtonMetro"
+		  android:textOn=""
+		  android:textOff=""
+		  android:layout_width="wrap_content"
+		  android:layout_height="fill_parent"
+		  android:drawableTop="@drawable/metro"
+		  android:paddingTop="10dp"
+		  android:checked="true"></ToggleButton>
+  </LinearLayout>
+  <LinearLayout
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:padding="3dip"
+      android:gravity="center"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:orientation="horizontal">
+
+    <ToggleButton android:lines="0"
+		  android:id="@+id/toggleButtonTrain"
+		  android:textOn=""
+		  android:textOff=""
+		  android:layout_width="wrap_content"
+		  android:layout_height="fill_parent"
+		  android:drawableTop="@drawable/train"
+		  android:paddingTop="10dp"
+		  android:checked="true"></ToggleButton>
+    <ToggleButton android:lines="0"
+		  android:id="@+id/toggleButtonFerry"
+		  android:textOn=""
+		  android:textOff=""
+		  android:layout_width="wrap_content"
+		  android:layout_height="fill_parent"
+		  android:drawableTop="@drawable/boat"
+		  android:paddingTop="10dp"
+		  android:checked="true"></ToggleButton>
+    <ToggleButton android:lines="0"
+		  android:id="@+id/toggleButtonWalk"
+		  android:textOn=""
+		  android:textOff=""
+		  android:layout_width="wrap_content"
+		  android:layout_height="fill_parent"
+		  android:drawableTop="@drawable/man"
+		  android:paddingTop="10dp"
+		  android:checked="false"></ToggleButton>
+  </LinearLayout>
+  <LinearLayout
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:padding="3dip"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:orientation="horizontal">
+
+    <TextView
+	android:text="@string/moTitle"
+	android:id="@+id/RouteListItemText1"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content" android:gravity="left"></TextView>
+
+    <Spinner android:id="@+id/moreOptionsSpinner" android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:entries="@array/moOptimize"
+	     android:dropDownSelector="@android:layout/simple_spinner_dropdown_item"></Spinner>
+  </LinearLayout>
+</LinearLayout>

@@ -76,15 +76,26 @@
     <string name="maMenuSettings">Settings</string>
     <string name="maMenuAbout">About</string>
     <string name="maMenuAboutDlgTitle">About</string>
-<!-- moreoptionsdialog -->
-    <string name="moTitle">Choose route optimization</string>    
+    <!-- moreoptionsdialog -->
+    <string name="moOptimizeNormal">Normal</string>
+    <string name="moOptimizeFastest">Fastest</string>
+    <string name="moOptimizeLeastTransfers">Least transfers</string>
+    <string name="moOptimizeLeastWalking">Least walking</string>
+
+    <string name="moTitle">Route optimization</string>
     <string-array name="moOptimize">
-        <item>Normal</item>
-        <item>Fastest</item>
-        <item>Least transfers</item>
-        <item>Least walking</item>
+        <item>@string/moOptimizeNormal</item>
+        <item>@string/moOptimizeFastest</item>
+        <item>@string/moOptimizeLeastTransfers</item>
+        <item>@string/moOptimizeLeastWalking</item>
     </string-array>
-    
+    <!-- Keep in sync with moOptimize -->
+    <string-array name="moOptimizeValues">
+        <item>default</item>
+        <item>fastest</item>
+        <item>least_transfers</item>
+        <item>least_walking</item>
+    </string-array>
 <!-- MapScreen -->
 	<string name="msToastAddressSelect">Double tap to select address</string>
 	<string name="msMenuCurrentLocation">My current location</string>
