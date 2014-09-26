@@ -107,7 +107,7 @@ public class MainApp extends Activity {
     private String mOptimize;
     private String mTransportTypes;
 
-    private void updateSettings(boolean showDialog) {
+    private void updateSettings() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (isMoreOptionsUnchanged) {
@@ -147,20 +147,20 @@ public class MainApp extends Activity {
 	    } catch (Exception e) { };
 	}
 
-	updateSettings(false);
+	updateSettings();
     }
 
     private static final String TAG = MainApp.class.getSimpleName();
-	
+
     ArrayList<HistoryItem> history;
     ArrayList<RouteHistoryItem> routes;
     private int lastSelectedHistory = -1;
     private int lastSelectedRoute = -1;
     ListView myPlaces, myRoutes;
-    
+
     History.HistoryAdapter historyAdapter;
     History.RoutesAdapter routesAdapter;
-    
+
     private ArrayAdapter<String> autoCompleteAdapter;
 
     /** Called when the activity is first created. */
@@ -201,7 +201,7 @@ public class MainApp extends Activity {
         searchButton.setOnClickListener(searchRouteListener);
 
         isMoreOptionsUnchanged = true;
-        updateSettings(true);
+        updateSettings();
 
         mMoreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
         mMoreOptionsButton.setOnClickListener(moreOptionsListener);
@@ -373,8 +373,8 @@ public class MainApp extends Activity {
         	 
 	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
 		//optimize = "default";
-		updateSettings(false);                
-		launchNextActivity(); 
+		updateSettings();
+		launchNextActivity();
 	    }
         }
     }
@@ -932,7 +932,7 @@ public class MainApp extends Activity {
 			//			toCoords = toCoordsInt;
 			fromName = address;
 			//			fromCoords = lastLocDisc;
-			updateSettings(false);
+			updateSettings();
 			launchNextActivity();
 			launchedFromParamsAlready = true;
 		    }
