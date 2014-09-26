@@ -71,7 +71,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RadioGroup;
 
 public class MainApp extends Activity {
-    public static AutoCompleteTextView toEditText;
     public static Button searchButton;
 
     private static boolean isMoreOptionsUnchanged = true;
@@ -347,18 +346,16 @@ public class MainApp extends Activity {
 		      toEditText.setText(r.end);	*/				
 		}
 	    });
-        
+
         Bundle b = getIntent().getExtras();
         if (b != null) {
-	    Log.i(TAG, "Bundle: "+b);
 	    String toAddress = b.getString("toAddress");
 	    String fromAddress = b.getString("fromAddress");
-        	 
 	    String toCoordsInt = b.getString("toCoords");
 	    String fromCoordsInt = b.getString("fromCoords");
-        	 
+
 	    if (toAddress != null) {
-		toEditText.setText(toAddress);
+		mTo.setText(toAddress);
 		toName = toAddress;
 	    }
 	    if (fromAddress != null) { 
@@ -733,7 +730,7 @@ public class MainApp extends Activity {
 	    {
 		//Log.i(TAG, "locationToClickListener toCoords:"+toCoords);
 		toName = geoTo.get(position).name+", "+geoTo.get(position).city;
-		toEditText.setText(toName);
+		mTo.setText(toName);
 		// NB! THIS SHOULD BE AFTER toEditText.setText(toName);
 		toCoords = geoTo.get(position).coords;
 		locationToSelectDialog.dismiss();
@@ -842,7 +839,7 @@ public class MainApp extends Activity {
 	    if (!mFrom.getHint().equals(getString(R.string.maEditFromHint)) && !mFrom.getHint().equals("")) f = mFrom.getHint().toString();
 	    //Log.i(TAG, "sWAP: "+fromEditText.getText().toString().equals("")+"  "+(!fromEditText.getHint().equals("From") && !fromEditText.getHint().equals(""))+" "+f);
 	    if (!mFrom.getText().toString().equals("")) f = mFrom.getText().toString();
-	    if (!toEditText.getText().toString().equals("")) t = toEditText.getText().toString();
+	    if (!mTo.getText().toString().equals("")) t = mTo.getText().toString();
 	    mFrom.setText(t);
 	    mTo.setText(f);
 	    // TODO:
