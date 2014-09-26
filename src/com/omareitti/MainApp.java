@@ -106,6 +106,11 @@ public class MainApp extends Activity {
     private String mOptimize;
     private String mTransportTypes;
 
+    private static final int ACTIVITY_RESULT_CONTACTS_FROM = 1;
+    private static final int ACTIVITY_RESULT_CONTACTS_TO = 2;
+    private static final int ACTIVITY_RESULT_MAP_FROM = 3;
+    private static final int ACTIVITY_RESULT_MAP_TO = 4;
+
     private void updateSettings() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -173,10 +178,13 @@ public class MainApp extends Activity {
         mFrom = (LocationSelector)findViewById(R.id.fromLocation);
 	mFrom.setInitialHint(R.string.maEditFromHint);
 	mFrom.setLocationFinder(mLocation);
+	mFrom.setActivityIds(MainApp.this,
+			     ACTIVITY_RESULT_CONTACTS_FROM, ACTIVITY_RESULT_MAP_FROM);
 
 	mTo = (LocationSelector)findViewById(R.id.toLocation);
 	mTo.setInitialHint(R.string.maEditToHint);
 	mTo.setLocationFinder(mLocation);
+	mTo.setActivityIds(MainApp.this, ACTIVITY_RESULT_CONTACTS_TO, ACTIVITY_RESULT_MAP_TO);
 
 	mDateTime = (DateTimeSelector)findViewById(R.id.dateTime);
 
@@ -375,111 +383,26 @@ public class MainApp extends Activity {
 	    }
         }
     }
-    
-    private LocationSelector putAddressHere = null;
-    private static final int PICK_CONTACT = 123;
-    private static final int PICK_MAP = 124;
-    private static int currentAction = 0;
-    
-    private void showGetAddress() {
-    	final String[] items = new String[]{
-	    getString(R.string.maAddressMenuLocation),
-	    getString(R.string.maAddressMenuMap),
-	    getString(R.string.maAddressMenuContacts)
-	};
 
-	AlertDialog.Builder builder = new AlertDialog.Builder(MainApp.this);
-	builder.setItems(items, new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int which) {
-		    currentAction = which;
-		    switch(which) {
-		    case 0:
-			if (api != null && putAddressHere != null) {
-			    putAddressHere.setText("");
-			    putAddressHere.setHint(getString(R.string.maEditFromHintLocating));
-			    try {
-				api.requestLastKnownAddress(1);
-			    } catch (Exception e) { };
-			}
-			break;
-		    case 1:
-			Intent myIntent = new Intent(MainApp.this, MapScreen.class);
-			myIntent.putExtra("pickPoint", "yes");
-			startActivityForResult(myIntent, PICK_MAP);
-			break;
-		    case 2:
-			Intent intent = new Intent(Intent.ACTION_PICK, android.provider.ContactsContract.Contacts.CONTENT_URI);
-			startActivityForResult(intent, PICK_CONTACT);
-			break;
-		    }
-		}
-	    });
-	builder.show();    	
-    }
-    
     @Override
 	public void onActivityResult(int reqCode, int resultCode, Intent data) {
 	super.onActivityResult(reqCode, resultCode, data);
 
+	if (resultCode != Activity.RESULT_OK) {
+	    return;
+	}
+
 	switch (reqCode) {
-	case PICK_CONTACT:
-	    if (resultCode == Activity.RESULT_OK) {
-		Uri contactData = data.getData();
-		String id = null;
-		Cursor c = managedQuery(contactData, null, null, null, null);
-		if (c.getCount() > 0) {
-		    while (c.moveToNext()) {
-			id = c.getString(
-					 c.getColumnIndex(ContactsContract.Contacts._ID));
-			Log.i(TAG, "id:"+id);
-		    }
-		}
-		if (id == null || id.equals("")) return;
-		String addrWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
-		String[] addrWhereParams = new String[]{id, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE};
-					
-		ContentResolver cr = getContentResolver();
-		c = cr.query(ContactsContract.Data.CONTENT_URI, 
-			     null, addrWhere, addrWhereParams, null); 
-					
-		//Cursor c = managedQuery(contactData, null, null, null, null);
-		if (c.moveToFirst()) {
-		    String addr = "";
-						
-		    do {
-			try {
-			    int addrColumn = c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET);
-			    String[] cc = c.getColumnNames();
-			    if (addrColumn == -1) continue;
-			    String tmp = c.getString(addrColumn);
-			    if (tmp != null && tmp.length() > 0) addr = tmp; break;
-			} catch(Exception e) { Log.e(TAG, "PICK_CONTACT", e); };
-		    } while (c.moveToNext());	
-	
-		    putAddressHere.setText(addr);
-		    c.close();
-		}
-		//putAddressHere = null;
-	    }
+	case ACTIVITY_RESULT_CONTACTS_FROM:
+	case ACTIVITY_RESULT_MAP_FROM:
+	    mFrom.onActivityResult(reqCode, data);
 	    break;
-	case PICK_MAP:
-	    if (resultCode == Activity.RESULT_OK) {
-		String mapAddress = data.getStringExtra("mapAddress");
-		String mapCoords = data.getStringExtra("mapCoords");
-		putAddressHere.setText(mapAddress);
-		// TODO:
-		//		if (putAddressHere == mFrom) {
-		//		    fromCoords = mapCoords;
-		//		} else if (putAddressHere == mTo) {
-		//		    toCoords = mapCoords;
-		//		}
-		Log.i(TAG, "PICK_MAP: "+mapAddress+" "+mapCoords);
-		//putAddressHere = null;
-	    }
+
+	case ACTIVITY_RESULT_CONTACTS_TO:
+	case ACTIVITY_RESULT_MAP_TO:
+	    mTo.onActivityResult(reqCode, data);
 	    break;
 	}
-	currentAction = 0;
-	putAddressHere = null;
     }
 
     private void showEditName() {
@@ -712,7 +635,7 @@ public class MainApp extends Activity {
 	    TextView text;
     	}
     }
-    
+
     private OnItemClickListener locationFromClickListener = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
@@ -905,15 +828,16 @@ public class MainApp extends Activity {
 
 	    public void addressDiscovered(String address) throws RemoteException {
 		Log.i(TAG, "addressDiscovered: "+address);
+		// TODO:
 		//fromEditText = (EditText) findViewById(R.id.editText1);
-		if (putAddressHere == null) {
-		    if (address.equals("")) {
-			//			mFrom.setHint(getString(R.string.maEditFromHint));
-		    } else {
-			//			mFrom.setHint(address);
-			fromName = address;
-		    }
-		} else if (currentAction == 0) putAddressHere.setText(address);
+		// if (putAddressHere == null) {
+		//     if (address.equals("")) {
+		// 	//			mFrom.setHint(getString(R.string.maEditFromHint));
+		//     } else {
+		// 	//			mFrom.setHint(address);
+		// 	fromName = address;
+		//     }
+		// } else if (currentAction == 0) putAddressHere.setText(address);
 
 		if (launchedFromParamsAlready) return;
 	        Bundle b = getIntent().getExtras();

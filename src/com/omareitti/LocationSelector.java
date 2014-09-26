@@ -19,6 +19,10 @@ import com.omareitti.datatypes.Coords;
 import com.omareitti.datatypes.GeoRec;
 import java.util.ArrayList;
 import android.widget.ArrayAdapter;
+import android.content.Intent;
+import android.net.Uri;
+import android.database.Cursor;
+import android.provider.ContactsContract;
 
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
@@ -27,11 +31,22 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private Coords mCoords;
     private int mHint;
     private Context mContext;
+
+    private Activity mActivity;
+    private int mContactsActivityId;
+    private int mMapActivityId;
+
     private static final String TAG = MainApp.class.getSimpleName();
 
     public LocationSelector(Context context, AttributeSet attrs) {
 	super(context, attrs);
 	mContext = context;
+    }
+
+    public void setActivityIds(Activity activity, int contactsActivityId, int mapActivityId) {
+	mActivity = activity;
+	mContactsActivityId = contactsActivityId;
+	mMapActivityId = mapActivityId;
     }
 
     public void setLocationFinder(LocationFinder finder) {
@@ -58,7 +73,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
     // TODO: kill these:
     public void setText(String text) {
-
+	mText.setText(text);
     }
 
     public CharSequence getText() {
@@ -88,8 +103,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
 	mButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
-		    // TODO:
-		    // showGetAddress();
+		    showGetAddress();
 		}
 	    });
     }
@@ -112,32 +126,106 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     }
 
     private void showGetAddress() {
-	// TODO: add the first one only if gps is enabled
-    	final String[] items = new String[]{
-	    getResources().getString(R.string.maAddressMenuLocation)
-	    /*
-// TODO: implement me
-,
-
+	// TODO: use a string array
+    	final String[] items = new String[] {
+	    getResources().getString(R.string.maAddressMenuLocation),
 	    getResources().getString(R.string.maAddressMenuMap),
 	    getResources().getString(R.string.maAddressMenuContacts)
-	    */
 	};
 
 	AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 	builder.setItems(items, new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int which) {
-		    //		case 0:
-		    mText.setHint(R.string.maEditFromHintLocating);
+		    switch (which) {
+		    case 0:
+			// TODO:
+		    //		    mText.setHint(R.string.maEditFromHintLocating);
 		    // Try to start our GPS listener.
-		    mFinder.add((LocationFinder.Listener)LocationSelector.this);
-		    //		    break;
+		    //		    mFinder.add((LocationFinder.Listener)LocationSelector.this);
+			break;
 
-		    //		case 1:
-		    //		case 2:
+		    case 1:
+			{
+			    Intent intent = new Intent(getContext().getApplicationContext(),
+						       MapScreen.class);
+			    intent.putExtra("pickPoint", "yes");
+			    mActivity.startActivityForResult(intent, mMapActivityId);
+			}
+			break;
+		    case 2:
+			{
+			    Intent intent =
+				new Intent(Intent.ACTION_PICK,
+					   android.provider.ContactsContract.Contacts.CONTENT_URI);
+			    mActivity.startActivityForResult(intent, mContactsActivityId);
+			}
+			break;
+		    }
 		}
 	    });
 
 	builder.show();
+    }
+
+    public void onActivityResult(int id, Intent data) {
+	if (id == mContactsActivityId) {
+	    // TODO: show a dialog to select the address if we have multiple
+	    Uri contactData = data.getData();
+	    Cursor c = mActivity.getContentResolver().query(contactData, null, null, null, null);
+
+	    if (c.getCount() <= 0) {
+		c.close();
+		return;
+	    }
+
+	    String ct = null;
+
+	    while (c.moveToNext()) {
+		ct = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+	    }
+
+	    c.close();
+
+	    if (ct == null || ct == "") {
+		return;
+	    }
+
+	    String addrWhere =
+		ContactsContract.Data.CONTACT_ID +
+		" = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+
+	    String[] addrWhereParams =
+		new String[]{ct,
+			     ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE};
+	    c = mActivity.getContentResolver().query(ContactsContract.Data.CONTENT_URI,
+						     null,addrWhere, addrWhereParams, null);
+
+	    String addr = null;
+	    if (c.moveToFirst()) {
+		do {
+		    try {
+			int addrColumn =
+			    c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET);
+
+			if (addrColumn == -1)
+			    continue;
+
+			addr = c.getString(addrColumn);
+			if (addr != null && addr.length() > 0)
+			    break;
+
+		    } catch(Exception e) { Log.e(TAG, "PICK_CONTACT", e); };
+		} while (c.moveToNext());
+	    }
+
+	    c.close();
+
+	    if (addr != null && addr.length() > 0)
+		setText(addr);
+
+	} else if (id == mMapActivityId) {
+	    setLocation(data.getStringExtra("mapAddress"),
+			new Coords(data.getStringExtra("mapCoords")));
+	}
     }
 }
