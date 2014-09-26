@@ -190,6 +190,11 @@ public class Route {
      */
     public static ArrayList<GeoRec> getGeocodeCoords(String json) {
 	ArrayList<GeoRec> res = new ArrayList<GeoRec>();
+
+	if (json == null) {
+	    return null;
+	}
+
 	try {
 	    // Reittiopas couldn't find any locations
 	    if (json.equals("") || json.substring(0, 3).equals("<h1")) return res;

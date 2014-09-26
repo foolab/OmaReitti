@@ -110,7 +110,7 @@ public class MapScreen extends Activity {
         
 	isJustLooking = getIntent().getExtras().getBoolean("isJustLooking", false);
 	pickPoint = getIntent().getExtras().getString("pickPoint");
-	//if (pickPoint == null) pickPoint = "";
+
 	Log.i(TAG, "pickPoint: "+pickPoint);
 
 	mapView = (MapView) findViewById(R.id.mapview);
@@ -149,11 +149,9 @@ public class MapScreen extends Activity {
 	if (pickPoint != null) {
 
 	    MapOverlay mapOverlay = new MapOverlay(MapScreen.this);
-	    /*List<Overlay> listOfOverlays = mapView.getOverlays();
-	      listOfOverlays.clear();*/
 	    mapView.getOverlays().add(mapOverlay);
 
-	    mapView.invalidate();				
+	    mapView.invalidate();
 	    Toast.makeText(this, getString(R.string.msToastAddressSelect), Toast.LENGTH_SHORT).show();
 	    takeLocation = true;
 	    ((Button)findViewById(R.id.gotoRouteButton)).setVisibility(View.GONE);
@@ -274,6 +272,9 @@ public class MapScreen extends Activity {
 		    (GeoPoint)mapView.getProjection().fromPixels((int) event.getX(),
 								 (int) event.getY());
 
+		if (p == null)
+		    return false;
+
 		Geocoder geoCoder = new Geocoder(getBaseContext(),
 						 Locale.getDefault());
      		try {
@@ -293,13 +294,13 @@ public class MapScreen extends Activity {
      		      Log.i(TAG, "j:"+j+" i:"+i+" "+addresses.get(j).getAddressLine(i));*/
      		    /*}*/
 
-     		    ArrayList<GeoRec> recs = (new ReittiopasAPI()).getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
-     		    if (recs.size() == 0) return false;
+     		    ArrayList<GeoRec> recs = ReittiopasAPI.getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
+     		    if (recs == null || recs.size() == 0) return false;
      		    String name = recs.get(0).name;
      		    Toast.makeText(getBaseContext(), name, Toast.LENGTH_SHORT).show();
      		    if (name.length() > 0) {
      			//Intent intent = getIntent();
-     			Intent intent = new Intent(); 
+     			Intent intent = new Intent();
      			intent.putExtra("mapAddress", name);
      			intent.putExtra("mapCoords", (p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
      			Log.i(TAG, "mapCoords:"+(p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
