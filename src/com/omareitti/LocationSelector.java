@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.widget.AdapterView;
 
 // TODO: take into account history when completing
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
@@ -36,6 +37,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private Activity mActivity;
     private int mContactsActivityId;
     private int mMapActivityId;
+    private CursorAdapter mAdapter;
 
     private static final String TAG = MainApp.class.getSimpleName();
 
@@ -98,8 +100,18 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     }
 
     private void setupViewItems() {
+	mAdapter = new CursorAdapter(mContext);
 	mText = (AutoCompleteTextView)findViewById(R.id.editText);
-	mText.setAdapter(new CursorAdapter(mContext));
+	mText.setAdapter(mAdapter);
+	mText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		public void onItemClick(AdapterView parent, View view, int position, long id) {
+		    Cursor c = mAdapter.getCursor();
+		    c.moveToPosition(position);
+		    c.getString(2);
+		    setLocation(c.getString(1), new Coords(c.getString(2)));
+		}
+
+	    });
 
 	mButton = (Button)findViewById(R.id.button);
 

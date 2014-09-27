@@ -28,14 +28,17 @@ public class CursorAdapter extends SimpleCursorAdapter {
 			return null;
 		    }
 
-		    String[] columnNames = { "_id", "name" };
+		    String[] columnNames = { "_id", "name", "coords" };
 		    MatrixCursor c = new MatrixCursor(columnNames);
 
 		    final ArrayList<GeoRec> rects =
 			ReittiopasAPI.getGeocode(constraint.toString());
 
 		    for (int x = 0; x < rects.size(); x++) {
-			c.newRow().add(x).add(rects.get(x).name + ", " + rects.get(x).city);
+			c.newRow()
+			    .add(x)
+			    .add(rects.get(x).name + ", " + rects.get(x).city)
+			    .add(rects.get(x).coords.toString());
 		    }
 
 		    return c;
