@@ -39,6 +39,8 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private int mMapActivityId;
     private CursorAdapter mAdapter;
 
+    private boolean mBlockCoordsReset;
+
     private static final String TAG = MainApp.class.getSimpleName();
 
     public LocationSelector(Context context, AttributeSet attrs) {
@@ -53,7 +55,9 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     }
 
     public void setLocationFinder(LocationFinder finder) {
+	mBlockCoordsReset = true;
 	mFinder = finder;
+	mBlockCoordsReset = false;
     }
 
     public void setInitialHint(int hint) {
@@ -103,6 +107,17 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	mAdapter = new CursorAdapter(mContext);
 	mText = (AutoCompleteTextView)findViewById(R.id.editText);
 	mText.setAdapter(mAdapter);
+	mText.addTextChangedListener(new TextWatcher() {
+		public void afterTextChanged(Editable s) {
+		    if (mBlockCoordsReset == false)
+			mCoords = null;
+		}
+
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+		public void onTextChanged(CharSequence s, int start, int before, int count) { }
+	    });
+
 	mText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView parent, View view, int position, long id) {
 		    Cursor c = mAdapter.getCursor();
