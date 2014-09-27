@@ -113,6 +113,8 @@ public class MainApp extends Activity {
 	    mTransportTypes = prefs.getString("prefRouteSearchOptionsTT", "all");
         }
 
+	mTimeType = "departure";
+
         ReittiopasAPI.walkingSpeed = (int)(Double.parseDouble(prefs.getString("prefWalkingSpeed", "1"))*60);
     }
 
