@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.widget.AdapterView;
 
-// TODO: take into account history when completing
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
     private Button mButton;
