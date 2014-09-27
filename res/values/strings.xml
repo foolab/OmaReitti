@@ -72,6 +72,7 @@
     <string name="maDlgSelectTo">Select \'To\' address</string>
     <string name="maDlgErrorEmptyFromTooShort">From cannot be less than 3 characters</string>
     <string name="maDlgErrorEmptyToTooShort">To cannot be less than 3 characters</string>
+    <string name="maDlgErrorCurrentLocation">Failed to get current location</string>
     <string name="maBtnNow">Now</string>
     <!-- <string name="maDlgSearchOptions">Search options</string> -->
     <string name="maMenuClear">Clear</string>

@@ -49,8 +49,18 @@ public class LocationFinder implements LocationListener {
 
 	// TODO: error checking
 	mManager = (LocationManager)mCtx.getSystemService(Context.LOCATION_SERVICE);
-	mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 20, this);
-	mManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 20, this);
+	try {
+	    mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 20, this);
+	} catch (Exception e) {
+	    Log.e(TAG, "Error requesting location updates " + e);
+	}
+
+	try {
+	    mManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 20, this);
+	} catch (Exception e) {
+	    Log.e(TAG, "Error requesting location updates " + e);
+	}
+
     }
 
     private void stop() {
@@ -59,7 +69,6 @@ public class LocationFinder implements LocationListener {
 	}
 
 	mManager.removeUpdates(this);
-	mManager.removeUpdates(this); // TODO: do we need to call this 2 times?
 	mManager = null;
     }
 

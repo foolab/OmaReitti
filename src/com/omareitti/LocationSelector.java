@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.widget.AdapterView;
+import android.os.AsyncTask;
 
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
@@ -37,12 +38,15 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private int mContactsActivityId;
     private int mMapActivityId;
     private CursorAdapter mAdapter;
+    private boolean mLocationAware;
+    ReverseGeocode mTask;
 
     private static final String TAG = MainApp.class.getSimpleName();
 
     public LocationSelector(Context context, AttributeSet attrs) {
 	super(context, attrs);
 	mContext = context;
+	mLocationAware = false;
     }
 
     public void setActivityIds(Activity activity, int contactsActivityId, int mapActivityId) {
@@ -92,7 +96,9 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 		    mCoords = null;
 		}
 
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		    setLocationAware(false);
+		}
 
 		public void onTextChanged(CharSequence s, int start, int before, int count) { }
 	    });
@@ -116,21 +122,40 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    });
     }
 
+    private void setLocationAware(boolean enable) {
+	if (mLocationAware == enable) {
+	    return;
+	}
+
+	mLocationAware = enable;
+
+	if (mLocationAware) {
+	    // enable
+	    mText.setHint(R.string.maEditFromHintLocating);
+	    mFinder.add((LocationFinder.Listener)LocationSelector.this);
+	} else {
+	    // disable
+	    mFinder.remove((LocationFinder.Listener)LocationSelector.this);
+	    if (mTask != null) {
+		mTask.cancel(true);
+		mTask = null;
+	    } else {
+		// If we have a task then let it take care of resetting the hint.
+		mText.setHint(mHint);
+	    }
+	}
+    }
+
     public void onCoordinatesChanged() {
-	new Thread(new Runnable() {
-		public void run() {
-		    Coords coords = mFinder.coordinates();
-		    Log.i(TAG, "Getting address for coordinates "+coords.toString());
-		    ArrayList<GeoRec> recs = ReittiopasAPI.getReverseGeocode(coords.toString());
-		    // TODO:
-		    if (recs.size() > 0) {
-			GeoRec rec = recs.get(0);
-			//			Log.e(TAG, "=============== " + rec.name);
-			//			lastKnownAddress = rec.name;
-			//			addressDiscovered(rec.name);
-		    }
-		}
-	    }).run();
+	// Get our coordinates
+	Coords coords = mFinder.coordinates();
+
+	// We don't want anymore updates
+	setLocationAware(false);
+
+	// Now we take care of ourselves
+	mTask = new ReverseGeocode();
+	mTask.execute(coords);
     }
 
     private void showGetAddress() {
@@ -144,29 +169,26 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 	builder.setItems(items, new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int which) {
+		    setLocationAware(false);
+
 		    switch (which) {
 		    case 0:
-			// TODO:
-		    //		    mText.setHint(R.string.maEditFromHintLocating);
-		    // Try to start our GPS listener.
-		    //		    mFinder.add((LocationFinder.Listener)LocationSelector.this);
+			// We disable first above.
+			// This toggle makes sure we destroy any pending reverse geocoding tasks
+			setLocationAware(true);
 			break;
 
 		    case 1:
-			{
-			    Intent intent = new Intent(getContext().getApplicationContext(),
-						       MapScreen.class);
-			    intent.putExtra("pickPoint", "yes");
-			    mActivity.startActivityForResult(intent, mMapActivityId);
-			}
+			Intent mapIntent = new Intent(getContext().getApplicationContext(),
+						      MapScreen.class);
+			mapIntent.putExtra("pickPoint", "yes");
+			mActivity.startActivityForResult(mapIntent, mMapActivityId);
 			break;
 		    case 2:
-			{
-			    Intent intent =
-				new Intent(Intent.ACTION_PICK,
-					   android.provider.ContactsContract.Contacts.CONTENT_URI);
-			    mActivity.startActivityForResult(intent, mContactsActivityId);
-			}
+			Intent intent =
+			    new Intent(Intent.ACTION_PICK,
+				       android.provider.ContactsContract.Contacts.CONTENT_URI);
+			mActivity.startActivityForResult(intent, mContactsActivityId);
 			break;
 		    }
 		}
@@ -234,6 +256,37 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	} else if (id == mMapActivityId) {
 	    setLocation(data.getStringExtra("mapAddress"),
 			new Coords(data.getStringExtra("mapCoords")));
+	}
+    }
+
+
+    private class ReverseGeocode extends AsyncTask<Coords, Integer, GeoRec> {
+	@Override
+	protected GeoRec doInBackground(Coords... tasks) {
+	    Coords c = tasks[0];
+	    ArrayList<GeoRec> recs = ReittiopasAPI.getReverseGeocode(c.toString());
+	    if (recs.size() > 0)
+		return recs.get(0);
+	    return null;
+	}
+
+	@Override
+	protected void onPostExecute(GeoRec result) {
+	    if (result == null) {
+		MainApp.showErrorDialog(mContext, mContext.getString(R.string.error),
+					mContext.getString(R.string.maDlgErrorCurrentLocation));
+	    } else {
+		setLocation(result.name, result.coords);
+	    }
+
+	    mText.setHint(mHint);
+	}
+
+	@Override
+	protected void onCancelled(GeoRec result) {
+	    mText.setHint(mHint);
+
+	    super.onCancelled(result);
 	}
     }
 }

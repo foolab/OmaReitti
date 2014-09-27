@@ -472,11 +472,12 @@ public class MainApp extends Activity {
 
 	    for (GeocodeTask task : results) {
 		if (task.mResult == null) {
-		    showErrorDialog(getString(R.string.networkErrorTitle),
+		    showErrorDialog(MainApp.this, getString(R.string.networkErrorTitle),
 				    getString(R.string.networkErrorText));
 		    launchActivity = false;
 		} else if (task.mResult.size() == 0) {
-		    showErrorDialog(getString(R.string.error), getString(task.mResource));
+		    showErrorDialog(MainApp.this,
+				    getString(R.string.error), getString(task.mResource));
 		    launchActivity = false;
 		} else if (task.mResult.size() == 1) {
 		    task.mSelector.setLocation(task.mResult.get(0).name,
@@ -505,25 +506,25 @@ public class MainApp extends Activity {
     private OnClickListener searchRouteListener = new OnClickListener() {
 	    public void onClick(View v) {
 		if (mFrom.getName() == null || mFrom.getName().length() == 0) {
-		    showErrorDialog(getString(R.string.error),
+		    showErrorDialog(MainApp.this, getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyFrom));
 		    return;
 		}
 
 		if (mTo.getName() == null || mTo.getName().length() == 0) {
-		    showErrorDialog(getString(R.string.error),
+		    showErrorDialog(MainApp.this, getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyTo));
 		    return;
 		}
 
 		if (mFrom.getName().length() < 3) {
-		    showErrorDialog(getString(R.string.error),
+		    showErrorDialog(MainApp.this, getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyFromTooShort));
 		    return;
 		}
 
 		if (mTo.getName().length() < 3) {
-		    showErrorDialog(getString(R.string.error),
+		    showErrorDialog(MainApp.this, getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyToTooShort));
 		    return;
 		}
@@ -671,11 +672,12 @@ public class MainApp extends Activity {
 	    }
 	};
 
-    private void showErrorDialog(String title, String message) {
-	AlertDialog alertDialog = new AlertDialog.Builder(MainApp.this).create();
+    static protected void showErrorDialog(Context context, String title, String message) {
+	AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 	alertDialog.setTitle(title);
 	alertDialog.setMessage(message);
-	alertDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+	alertDialog.setButton(context.getString(R.string.ok),
+			      new DialogInterface.OnClickListener() {
 	    	public void onClick(DialogInterface dialog, int which) {
 		    // Nothing
 		} });
