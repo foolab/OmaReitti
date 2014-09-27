@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.omareitti.R;
 import com.omareitti.RouteInfoScreen;
 import com.omareitti.datatypes.GeoRec;
 
@@ -46,8 +45,24 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import com.omareitti.datatypes.Coords;
+import android.view.MenuInflater;
 
 public class SelectRouteScreen extends Activity {
+    public ArrayList<Route> routes = null;
+    public volatile Handler handler;
+
+    public int screenWidth;
+    public String fromCoords = "";
+    public String toCoords = "";
+    public String fromName = "";
+    public String toName = "";
+    public String date = "";
+    public String time = "";
+    public String optimize = "";
+    public String timetype = "";
+    public String transport_types = "";
+
+    public ListView l1;
 
     private static class EfficientAdapter extends BaseAdapter {
 	private LayoutInflater mInflater;
@@ -168,31 +183,8 @@ public class SelectRouteScreen extends Activity {
 	}
     }
 
-    private static final int ID_DIALOG_SEARCHING = 0;
-    private static final int EARLIER_MENU_ID = 0;
-    private static final int NOW_MENU_ID = 1;
-    private static final int LATER_MENU_ID = 2;
-
-    public ProgressDialog dialog;
-
-    public ArrayList<Route> routes = null;
-    public volatile Handler handler;
-
-    public int screenWidth;
-    public String fromCoords = "";
-    public String toCoords = "";
-    public String fromName = "";
-    public String toName = "";
-    public String date = "";
-    public String time = "";
-    public String optimize = "";
-    public String timetype = "";
-    public String transport_types = "";
-
-    public ListView l1;
-
     @Override
-	protected void onStart() {
+    protected void onStart() {
 	// TODO Auto-generated method stub
 	super.onStart();
 
@@ -229,24 +221,20 @@ public class SelectRouteScreen extends Activity {
     }
 
     private OnItemClickListener routeClickListener = new OnItemClickListener() {
-	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-	    {
-		//Log.i("CLICK", routes.get(position).jsonString);
-		SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("route", routes.get(position).jsonString);
-		editor.commit();
-
+	    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 		Intent myIntent = new Intent(v.getContext(), RouteInfoScreen.class);
 		myIntent.putExtra("from", fromName);
 		myIntent.putExtra("to", toName);
+		myIntent.putExtra("route", routes.get(position).jsonString);
 		startActivity(myIntent);
 	    }
 	};
 
     @Override
-	public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+	getActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle b = getIntent().getExtras();
 
@@ -263,11 +251,12 @@ public class SelectRouteScreen extends Activity {
         History.saveHistory(this, fromName, "", new Coords(fromCoords));
         History.saveHistory(this, toName, "", new Coords(toCoords));
         History.saveRoute(this, fromName, toName, new Coords(fromCoords), new Coords(toCoords));
+
 	calcRoutes();
     }
 
     public void calcRoutes() {
-	dialog =
+	final ProgressDialog dialog =
 	    ProgressDialog.show(SelectRouteScreen.this, "",
 				getString(R.string.srDlgSearching), true);
 
@@ -319,8 +308,9 @@ public class SelectRouteScreen extends Activity {
     }
 
     @Override
-	public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
 	if (routes != null) {
 	    setContentView(R.layout.selectroutescreen);
 	    doMakeUp();
@@ -335,39 +325,33 @@ public class SelectRouteScreen extends Activity {
     }
 
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.selectroute_actions, menu);
 
-   	Drawable drRew  = getResources().getDrawable(android.R.drawable.ic_media_rew);
-    	Drawable drForw = getResources().getDrawable(android.R.drawable.ic_media_ff);
-    	Drawable drNow = getResources().getDrawable(android.R.drawable.ic_menu_set_as);
-
-    	MenuItem tmp = menu.add(0, EARLIER_MENU_ID, 0, getString(R.string.srMenuEarlier));
-    	tmp.setIcon(drRew);
-    	tmp = menu.add(0, NOW_MENU_ID, 1, getString(R.string.srMenuNow));
-    	tmp.setIcon(drNow);
-    	tmp = menu.add(0, LATER_MENU_ID, 2, getString(R.string.srMenuLater));
-    	tmp.setIcon(drForw);
     	return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+    public boolean onOptionsItemSelected(MenuItem item) {
     	Date dt = new Date();
-        switch (item.getItemId()) {
-	case EARLIER_MENU_ID:
+
+	switch (item.getItemId()) {
+	case R.id.action_prev:
 	    if (timetype.equals("departure")) {
-		long diff = (routes.get(routes.size()-1).depTime).getTime() - (routes.get(0).depTime).getTime();
-		Log.i("DEBUG", Long.toString(diff));
+		long diff = (routes.get(routes.size() - 1).depTime).getTime() -
+		    (routes.get(0).depTime).getTime();
 		dt = new Date((routes.get(0).depTime).getTime() - diff);
 	    } else {
 		dt = routes.get(routes.size()-1).arrTime;
 	    }
 	    break;
-	case NOW_MENU_ID:
-	    dt = new Date();
+
+	case R.id.action_now:
+	    // Nothing
 	    break;
-	case LATER_MENU_ID:
+
+	case R.id.action_next:
 	    if (timetype.equals("departure")) {
 		dt = routes.get(routes.size()-1).depTime;
 	    } else {
@@ -375,16 +359,20 @@ public class SelectRouteScreen extends Activity {
 		dt = new Date((routes.get(0).arrTime).getTime() + 900000);
 	    }
 	    break;
+
+	case android.R.id.home:
+            onBackPressed();
+	    return true;
+
 	default:
 	    return super.onOptionsItemSelected(item);
-        }
+	}
 
     	date = ReittiopasAPI.formatDate(dt);
     	time = ReittiopasAPI.formatTime(dt);
 
         calcRoutes();
 
-        return true;
+	return true;
     }
-
 }
