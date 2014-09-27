@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 
+// TODO: take into account history when completing
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
     private Button mButton;
@@ -41,7 +42,6 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     public LocationSelector(Context context, AttributeSet attrs) {
 	super(context, attrs);
 	mContext = context;
-	mText.setAdapter(new CursorAdapter(mContext));
     }
 
     public void setActivityIds(Activity activity, int contactsActivityId, int mapActivityId) {
@@ -99,6 +99,8 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
     private void setupViewItems() {
 	mText = (AutoCompleteTextView)findViewById(R.id.editText);
+	mText.setAdapter(new CursorAdapter(mContext));
+
 	mButton = (Button)findViewById(R.id.button);
 
 	mButton.setOnClickListener(new View.OnClickListener() {
