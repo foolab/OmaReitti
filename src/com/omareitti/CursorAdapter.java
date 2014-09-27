@@ -35,7 +35,7 @@ public class CursorAdapter extends SimpleCursorAdapter {
 			ReittiopasAPI.getGeocode(constraint.toString());
 
 		    for (int x = 0; x < rects.size(); x++) {
-			c.newRow().add(x).add(rects.get(x).name);
+			c.newRow().add(x).add(rects.get(x).name + ", " + rects.get(x).city);
 		    }
 
 		    return c;
