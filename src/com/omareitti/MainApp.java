@@ -544,32 +544,27 @@ public class MainApp extends Activity {
 		    mGeocode = new Geocode();
 		    mGeocode.setProgressDialog(dlg);
 
-		    GeocodeTask f = null, t = null;
+		    ArrayList<GeocodeTask> tasks = new ArrayList<GeocodeTask>();
 
 		    if (fromCoords == null) {
-			f = new GeocodeTask();
-			f.mSelector = mFrom;
-			f.mKey = mFrom.getName();
-			f.mResource = R.string.maDlgErrorNoFrom;
-			f.mDialogTitleResource = R.string.maDlgSelectFrom;
+			GeocodeTask task = new GeocodeTask();
+			task.mSelector = mFrom;
+			task.mKey = mFrom.getName();
+			task.mResource = R.string.maDlgErrorNoFrom;
+			task.mDialogTitleResource = R.string.maDlgSelectFrom;
+			tasks.add(task);
 		    }
 
 		    if (toCoords == null) {
-			t = new GeocodeTask();
-			t.mSelector = mTo;
-			t.mKey = mTo.getName();
-			t.mResource = R.string.maDlgErrorNoTo;
-			t.mDialogTitleResource = R.string.maDlgSelectTo;
+			GeocodeTask task = new GeocodeTask();
+			task.mSelector = mTo;
+			task.mKey = mTo.getName();
+			task.mResource = R.string.maDlgErrorNoTo;
+			task.mDialogTitleResource = R.string.maDlgSelectTo;
+			tasks.add(task);
 		    }
 
-		    // TODO: is there a better way to do this?
-		    if (t != null && f != null) {
-			mGeocode.execute(f, t);
-		    } else if (t != null) {
-			mGeocode.execute(t);
-		    } else {
-			mGeocode.execute(f);
-		    }
+		    mGeocode.execute(tasks.toArray(new GeocodeTask[] {}));
 
 		} else {
 		    // We can already search
