@@ -82,23 +82,22 @@ public class MapScreen extends Activity {
     // }
 
     @Override
-	protected void onCreate(Bundle icicle) {
+    protected void onCreate(Bundle icicle) {
 	// TODO Auto-generated method stub
 	super.onCreate(icicle);
 	setContentView(R.layout.mapscreen);
 
-	SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
-	routeString = settings.getString("route", "");
-
 	//Log.i(TAG, "routeString:"+routeString);
 	//Log.i(TAG, "getIntent().getExtras():"+getIntent().getExtras());
 
-	if (getIntent().getExtras() == null && routeString.equals("")) {
+	if (getIntent().getExtras() == null) {
             startActivity(new Intent(MapScreen.this, MainApp.class));
             Log.i(TAG, "intent extras is null, switching to main activity ");
             finish();
             return;
 	}
+
+	routeString = getIntent().getExtras().getString("route");
 
 	mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
