@@ -41,6 +41,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     public LocationSelector(Context context, AttributeSet attrs) {
 	super(context, attrs);
 	mContext = context;
+	mText.setAdapter(new CursorAdapter(mContext));
     }
 
     public void setActivityIds(Activity activity, int contactsActivityId, int mapActivityId) {
@@ -56,7 +57,6 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     public void setInitialHint(int hint) {
 	mHint = hint;
 	mText.setHint(mHint);
-	mText.setAdapter(new CursorAdapter(mContext));
     }
 
     public Coords getCoords() {
