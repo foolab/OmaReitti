@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_clear"
+          android:icon="@drawable/android:ic_menu_close_clear_cancel"
+          android:title="@string/maMenuClear"
+          android:showAsAction="always" />
+
+    <item android:id="@+id/action_swap"
+          android:icon="@drawable/android:ic_menu_rotate"
+          android:title="@string/maMenuSwap"
+          android:showAsAction="always" />
+
+    <item android:id="@+id/action_settings"
+          android:icon="@drawable/android:ic_menu_manage"
+          android:title="@string/maMenuSettings"
+          android:showAsAction="never" />
+
+    <item android:id="@+id/action_about"
+          android:icon="@drawable/android:ic_menu_info_details"
+          android:title="@string/maMenuAbout"
+          android:showAsAction="never" />
+</menu>

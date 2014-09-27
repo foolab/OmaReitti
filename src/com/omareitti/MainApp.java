@@ -26,7 +26,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -69,18 +68,12 @@ import android.widget.ScrollView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RadioGroup;
 import android.os.AsyncTask;
+import android.view.MenuInflater;
 
 public class MainApp extends Activity {
     private static boolean isMoreOptionsUnchanged = true;
 
-    public volatile Handler handler;
-
     SharedPreferences prefs;
-
-    private static final int SWAP_MENU_ID = 0;
-    private static final int SETTINGS_MENU_ID = 1;
-    private static final int ABOUT_MENU_ID = 2;
-
 
     private String mTimeType;
     private static Button mSearchButton;
@@ -125,8 +118,6 @@ public class MainApp extends Activity {
     @Override
 	protected void onStart() {
 	super.onStart();
-
-	handler = new Handler();
     }
 
     @Override
@@ -652,7 +643,7 @@ public class MainApp extends Activity {
     }
 
     private void launchNextActivity() {
-	// only if we successfully retrieved both from and to
+	// Only if we successfully retrieved both from and to
 	// coordinates, start the new activity
 
 	if (mFrom.getCoords() != null && mTo.getCoords() != null) {
@@ -692,77 +683,66 @@ public class MainApp extends Activity {
 	alertDialog.setMessage(message);
 	alertDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 	    	public void onClick(DialogInterface dialog, int which) {
-		    //SelectRouteScreen.this.finish();
+		    // Nothing
 		} });
-	alertDialog.show();	
+	alertDialog.show();
     }
-    
+
     @Override
 	public void onConfigurationChanged(Configuration newConfig)
     {
-        super.onConfigurationChanged(newConfig);	    
-    }
-    
-    @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-    	
-    	Drawable drSwap  = getResources().getDrawable(android.R.drawable.ic_menu_rotate);	
-    	Drawable drSettings = getResources().getDrawable(android.R.drawable.ic_menu_manage);	
-    	Drawable drAbout = getResources().getDrawable(android.R.drawable.ic_menu_info_details);	
-    	
-    	MenuItem tmp = menu.add(0, SWAP_MENU_ID, 0, getString(R.string.maMenuSwap));
-    	tmp.setIcon(drSwap);
-    	tmp = menu.add(0, SETTINGS_MENU_ID, 1, getString(R.string.maMenuSettings));
-    	tmp.setIcon(drSettings);
-    	tmp = menu.add(0, ABOUT_MENU_ID, 2, getString(R.string.maMenuAbout));
-    	tmp.setIcon(drAbout);
-    	return super.onCreateOptionsMenu(menu);
-    }
-    
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-	case SWAP_MENU_ID:
-	    String f = "";
-	    String t = "";
-	    // TODO: crash if both locations are empty
-	    if (!mFrom.getHint().equals(getString(R.string.maEditFromHint)) && !mFrom.getHint().equals("")) f = mFrom.getHint().toString();
-	    //Log.i(TAG, "sWAP: "+fromEditText.getText().toString().equals("")+"  "+(!fromEditText.getHint().equals("From") && !fromEditText.getHint().equals(""))+" "+f);
-	    if (!mFrom.getText().toString().equals("")) f = mFrom.getText().toString();
-	    if (!mTo.getText().toString().equals("")) t = mTo.getText().toString();
-	    mFrom.setText(t);
-	    mTo.setText(f);
-	    // TODO:
-	    //	    String tmp = fromCoords;
-	    //	    fromCoords = toCoords;
-	    //	    toCoords = tmp;
-	    break;
-	case SETTINGS_MENU_ID:
-	    Intent settingsActivity = new Intent(MainApp.this, SettingsScreen.class);
-	    startActivity(settingsActivity);	 
-	    break;
-	case ABOUT_MENU_ID:
-	    final SpannableString s = new SpannableString(getString(R.string.about));
-	    Linkify.addLinks(s, Linkify.WEB_URLS);
-	        	  
-	    AlertDialog alertDialog = new AlertDialog.Builder(MainApp.this).create();
-	    alertDialog.setTitle(getString(R.string.maMenuAboutDlgTitle));
-	    	    
-	    alertDialog.setMessage(s);
-	    alertDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int which) {
-			//
-	    	    } });
-	    alertDialog.show();	
-	    break;
-	default:
-	    return super.onOptionsItemSelected(item);	        	
-        }
-        
-        return true;
+        super.onConfigurationChanged(newConfig);
     }
 
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.mainactivity_actions, menu);
+
+    	return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+	case R.id.action_clear:
+	    mFrom.setLocation("", null);
+	    mTo.setLocation("", null);
+	    return true;
+
+	case R.id.action_swap:
+	    String s = mFrom.getText();
+	    Coords c = mFrom.getCoords();
+	    mFrom.setLocation(mTo.getText(), mTo.getCoords());
+	    mTo.setLocation(s, c);
+	    return true;
+
+	case R.id.action_settings:
+	    startActivity(new Intent(MainApp.this, SettingsScreen.class));
+	    return true;
+
+	case R.id.action_about:
+	    SpannableString ss = new SpannableString(getString(R.string.about));
+	    Linkify.addLinks(ss, Linkify.WEB_URLS);
+	    AlertDialog alertDialog = new AlertDialog.Builder(MainApp.this).create();
+	    alertDialog.setTitle(getString(R.string.maMenuAboutDlgTitle));
+	    alertDialog.setMessage(ss);
+	    alertDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+			// Nothing
+	    	    } });
+	    alertDialog.show();
+	    return true;
+
+	default:
+	    break;
+        }
+
+	return super.onOptionsItemSelected(item);
+    }
+
+    // TODO:
     private String lastLocDisc = "";
     private Boolean launchedFromParamsAlready = false;
     /** 

@@ -74,6 +74,7 @@
     <string name="maDlgErrorEmptyToTooShort">To cannot be less than 3 characters</string>
     <string name="maBtnNow">Now</string>
     <!-- <string name="maDlgSearchOptions">Search options</string> -->
+    <string name="maMenuClear">Clear</string>
     <string name="maMenuSwap">Swap locations</string>
     <string name="maMenuSettings">Settings</string>
     <string name="maMenuAbout">About</string>
