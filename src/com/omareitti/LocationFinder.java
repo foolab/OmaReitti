@@ -47,18 +47,17 @@ public class LocationFinder implements LocationListener {
 	    return;
 	}
 
-	// TODO: error checking
 	mManager = (LocationManager)mCtx.getSystemService(Context.LOCATION_SERVICE);
 	try {
 	    mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 20, this);
 	} catch (Exception e) {
-	    Log.e(TAG, "Error requesting location updates " + e);
+	    Log.e(TAG, "Error requesting GPS location updates " + e);
 	}
 
 	try {
 	    mManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 20, this);
 	} catch (Exception e) {
-	    Log.e(TAG, "Error requesting location updates " + e);
+	    Log.e(TAG, "Error requesting network location updates " + e);
 	}
 
     }
