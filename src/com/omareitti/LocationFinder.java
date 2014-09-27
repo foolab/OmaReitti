@@ -22,7 +22,7 @@ public class LocationFinder implements LocationListener {
     }
 
     public Coords coordinates() {
-	return new Coords(mLocation.getLatitude(), mLocation.getLongitude());
+	return new Coords(mLocation.getLongitude(), mLocation.getLatitude());
     }
 
     public void add(Listener s) {
