@@ -532,6 +532,18 @@ public class MainApp extends Activity {
 		    return;
 		}
 
+		if (mFrom.getText().length() < 3) {
+		    showErrorDialog(getString(R.string.error),
+				    getString(R.string.maDlgErrorEmptyFromTooShort));
+		    return;
+		}
+
+		if (mTo.getText().length() < 3) {
+		    showErrorDialog(getString(R.string.error),
+				    getString(R.string.maDlgErrorEmptyToTooShort));
+		    return;
+		}
+
 		mFrom.clearFocus();
 		mTo.clearFocus();
 
