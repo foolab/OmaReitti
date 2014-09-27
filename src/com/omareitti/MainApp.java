@@ -488,7 +488,8 @@ public class MainApp extends Activity {
 		    showErrorDialog(getString(R.string.error), getString(task.mResource));
 		    launchActivity = false;
 		} else if (task.mResult.size() == 1) {
-		    task.mSelector.setLocation(task.mKey, task.mResult.get(0).coords);
+		    task.mSelector.setLocation(task.mResult.get(0).name,
+					       task.mResult.get(0).coords);
 		} else {
 		    // Multiple results
 		    launchActivity = false;
