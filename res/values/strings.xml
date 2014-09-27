@@ -104,17 +104,8 @@
 	<string name="msToastAddressSelect">Double tap to select address</string>
 	<string name="msMenuCurrentLocation">My current location</string>
 		
-<!-- RouteInfoScreen -->    
-    <string name="riButtonSelect">Select</string>
-    <string name="riButtonCancelRoute">Cancel route</string>
+<!-- RouteInfoScreen -->
     <string name="riButtonShowMap">Show map</string>
-    <string name="riCBDeparture">Notify departure</string>       
-    <string name="riCBArrival">Notify arrival</string>
-    <string name="riToastNotSelected">Please note, your current route is not selected, press on Select button to start route</string>
-    <string name="riDlgNoGPSTitle">GPS Not Enabled</string>
-    <string name="riDlgNoGPSText">Please enable GPS in if you want to be reminded before arrival</string>
-    <string name="riDlgNoGPSButton">Settings</string>
-        
 <!-- SelectRouteScreen -->
     <string name="srDeparture">Departure</string>
     <string name="srArrival">Arrival</string>
