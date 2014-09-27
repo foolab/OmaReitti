@@ -164,14 +164,10 @@ public class MainApp extends Activity {
 
     ArrayList<HistoryItem> history;
     ArrayList<RouteHistoryItem> routes;
-    private int lastSelectedHistory = -1;
-    private int lastSelectedRoute = -1;
     ListView myPlaces, myRoutes;
 
     History.HistoryAdapter historyAdapter;
     History.RoutesAdapter routesAdapter;
-
-    private ArrayAdapter<String> autoCompleteAdapter;
 
     /** Called when the activity is first created. */
     @Override
@@ -262,19 +258,14 @@ public class MainApp extends Activity {
         myPlaces.setAdapter(historyAdapter);
         myRoutes.setAdapter(routesAdapter);
 
-	// TODO: take into account history when completing
-        autoCompleteAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, History.getHistoryAsArray());
-        
-	//        mFrom.setAdapter(autoCompleteAdapter);
-	//        mTo.setAdapter(autoCompleteAdapter);
         Utils.setListViewHeightBasedOnChildren((ListView)findViewById(R.id.myPlacesList));
         Utils.setListViewHeightBasedOnChildren((ListView)findViewById(R.id.myRoutesList));
-        
+
         myPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 
-		    lastSelectedHistory = arg2;
+		    final HistoryItem h = history.get(arg2);
 
 		    final String[] items = new String[]{
 			getString(R.string.maTabPlacesMenuFrom),
@@ -287,7 +278,7 @@ public class MainApp extends Activity {
 		    AlertDialog.Builder builder = new AlertDialog.Builder(MainApp.this);
 		    builder.setItems(items, new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog, int which) {
-				HistoryItem h = history.get(lastSelectedHistory);
+
 				switch(which) {
 				case 0:
 				    mFrom.setLocation(h.address, h.coords);
@@ -296,18 +287,20 @@ public class MainApp extends Activity {
 				    mTo.setLocation(h.address, h.coords);
 				    break;
 				case 2:
-				    showEditName();
+				    showEditName(h);
 				    break;
 				case 3:
-				    History.remove(MainApp.this, "history_"+history.get(lastSelectedHistory).address);
+				    History.remove(MainApp.this, "history_"+h.address);
 				    History.init(MainApp.this);
 				    history = History.getHistory(MainApp.this);
 				    historyAdapter.notifyDataSetChanged();
 				    break;
 				case 4:
 				    String name = h.name;
-				    if (name.equals("")) name = h.address;
-				    Utils.addHomeScreenShortcut(MainApp.this, name, null, h.address, null, h.coords);
+				    if (name.equals(""))
+					name = h.address;
+				    Utils.addHomeScreenShortcut(MainApp.this, name,
+								null, h.address, null, h.coords);
 				    break;
 				}
 			    }
@@ -318,7 +311,9 @@ public class MainApp extends Activity {
 
         myRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		    lastSelectedRoute = arg2;
+
+		    final History.RouteHistoryItem r = routes.get(arg2);
+
 		    final String[] items = new String[]{
 			getString(R.string.maTabRoutesMenuSet),
 			getString(R.string.maTabRoutesMenuSetBackwards),
@@ -329,7 +324,7 @@ public class MainApp extends Activity {
 		    AlertDialog.Builder builder = new AlertDialog.Builder(MainApp.this);
 		    builder.setItems(items, new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog, int which) {
-				History.RouteHistoryItem r = routes.get(lastSelectedRoute);
+
 				switch(which) {
 				case 0:
 				    mFrom.setLocation(r.start, r.coords);
@@ -346,18 +341,19 @@ public class MainApp extends Activity {
 				    routesAdapter.notifyDataSetChanged();
 				    break;
 				case 3:
-				    String n1 = r.start.substring(0, 5); if (r.start.length() > 0) n1 +=".";
-				    String n2 = r.end;//.substring(0, 5); if (r.end.length() > 0) n2 +=".";
-				    Utils.addHomeScreenShortcut(MainApp.this, n1+"-"+n2, r.start, r.end, r.coords, r.coords2);
+				    String n1 = r.start.substring(0, 5);
+				    if (r.start.length() > 0)
+					n1 +=".";
+				    String n2 = r.end;
+
+				    Utils.addHomeScreenShortcut(MainApp.this,
+								n1+"-"+n2, r.start, r.end,
+								r.coords, r.coords2);
 				    break;
 				}
-								
 			    }
 			});
-		    builder.show();				
-		    /*History.RouteHistoryItem r = routes.get(arg2);
-		      fromEditText.setText(r.start);
-		      toEditText.setText(r.end);	*/				
+		    builder.show();
 		}
 	    });
 
@@ -368,13 +364,12 @@ public class MainApp extends Activity {
 	    String toCoordsInt = b.getString("toCoords");
 	    String fromCoordsInt = b.getString("fromCoords");
 
-	    if (toAddress != null) {
+	    if (toAddress != null)
 		mTo.setLocation(toAddress, new Coords(toCoordsInt));
-	    }
 
-	    if (fromAddress != null) {
+	    if (fromAddress != null)
 		mFrom.setLocation(fromAddress, new Coords(fromCoordsInt));
-	    }
+
 	    // TODO: show an error if we don't have all the data we need
 
 	    //	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
@@ -405,7 +400,7 @@ public class MainApp extends Activity {
 	}
     }
 
-    private void showEditName() {
+    private void showEditName(final HistoryItem h) {
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setTitle(getString(R.string.maTabPlacesMenuRenameDlgTitle));
     	LayoutInflater inflater = LayoutInflater.from(this);
@@ -415,34 +410,31 @@ public class MainApp extends Activity {
     	AlertDialog alertDialog = builder.create();
 
     	EditText et = (EditText)convertView.findViewById(R.id.editName);
-    	HistoryItem h = history.get(lastSelectedHistory);
 
     	String str = h.address;
-    	if (!h.name.equals("")) str = h.name;
+    	if (!h.name.equals(""))
+	    str = h.name;
     	et.setText(str);
-    	
+
     	alertDialog.setButton(getString(R.string.save), new DialogInterface.OnClickListener() {
 	    	public void onClick(DialogInterface dialog, int which) {
-		    HistoryItem h = history.get(lastSelectedHistory);
-	    		
 		    EditText et = (EditText)convertView.findViewById(R.id.editName);
-		    History.saveHistory(MainApp.this, h.address, et.getText().toString(), h.coords);
+		    History.saveHistory(MainApp.this, h.address, et.getText().toString(),
+					h.coords);
 		    History.init(MainApp.this);
 		    history = History.getHistory(MainApp.this);
-	    		
-		    Log.i(TAG, h.address+" "+et.getText().toString());
 		    dialog.dismiss();
 		    historyAdapter.notifyDataSetChanged();
 		} });
-    	
-    	alertDialog.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+   	alertDialog.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
 	    	public void onClick(DialogInterface dialog, int which) {
 		    dialog.dismiss();
-		} });    	
-    	
-    	alertDialog.show();	    	
+		} });
+
+    	alertDialog.show();
     }
-    
+
     @Override
 	protected void onDestroy() {
 	// TODO Auto-generated method stub
