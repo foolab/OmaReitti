@@ -73,13 +73,7 @@ import android.os.AsyncTask;
 public class MainApp extends Activity {
     private static boolean isMoreOptionsUnchanged = true;
 
-    ArrayList<GeoRec> geoFrom;
-    ArrayList<GeoRec> geoTo;
-
     public volatile Handler handler;
-    private ListView l1;
-    public Dialog locationFromSelectDialog;
-    public Dialog locationToSelectDialog;
 
     SharedPreferences prefs;
 
@@ -215,7 +209,7 @@ public class MainApp extends Activity {
         mMoreOptionsButton = (Button)findViewById(R.id.MainAppMoreOptions);
         mMoreOptionsButton.setOnClickListener(moreOptionsListener);
 
-	l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
+	ListView l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
 
 	Log.i(TAG, "trying to bind service "+BackgroundService.class.getName());
 	Intent servIntent = new Intent(BackgroundService.class.getName());//this, BackgroundService.class);
@@ -454,21 +448,24 @@ public class MainApp extends Activity {
 	String mKey;
 	ArrayList<GeoRec> mResult;
 	int mResource;
+	int mDialogTitleResource;
     };
 
     private class Geocode extends AsyncTask<GeocodeTask, Integer, ArrayList<GeocodeTask>> {
 	@Override
 	protected ArrayList<GeocodeTask> doInBackground(GeocodeTask... tasks) {
 	    ArrayList<GeocodeTask> result = new ArrayList<GeocodeTask>();
-
 	    for (GeocodeTask task : tasks) {
+
 		ArrayList<GeoRec> res
 		    = ReittiopasAPI.getGeocode(task.mKey);
+
 		GeocodeTask r = new GeocodeTask();
 		r.mKey = task.mKey;
 		r.mSelector = task.mSelector;
 		r.mResult = res;
 		r.mResource = task.mResource;
+		r.mDialogTitleResource = task.mDialogTitleResource;
 
 		result.add(r);
 	    }
@@ -480,31 +477,26 @@ public class MainApp extends Activity {
 	protected void onPostExecute(ArrayList<GeocodeTask> results) {
 	    mDlg.dismiss();
 
-	    boolean error = false;
+	    boolean launchActivity = true;
 
 	    for (GeocodeTask task : results) {
 		if (task.mResult == null) {
 		    showErrorDialog(getString(R.string.networkErrorTitle),
 				    getString(R.string.networkErrorText));
-		    error = true;
+		    launchActivity = false;
 		} else if (task.mResult.size() == 0) {
 		    showErrorDialog(getString(R.string.error), getString(task.mResource));
-		    error = true;
-		} else {
-		    // TODO: handle multiple addresses
+		    launchActivity = false;
+		} else if (task.mResult.size() == 1) {
 		    task.mSelector.setLocation(task.mKey, task.mResult.get(0).coords);
-
-		// original code:
-		// 			    if (geoTo.size() > 1) {
-		// 				showLocationToSelectDialog();
-		// 			    }
-		// 			    if (geoFrom.size() > 1) {
-		// 				showLocationFromSelectDialog();
-		// 			    }
+		} else {
+		    // Multiple results
+		    launchActivity = false;
+		    showLocationSelectDialog(task);
 		}
 	    }
 
-	    if (error == false) {
+	    if (launchActivity == true) {
 		launchNextActivity();
 	    }
 
@@ -567,6 +559,7 @@ public class MainApp extends Activity {
 			f.mSelector = mFrom;
 			f.mKey = mFrom.getText().toString();
 			f.mResource = R.string.maDlgErrorNoFrom;
+			f.mDialogTitleResource = R.string.maDlgSelectFrom;
 		    }
 
 		    if (toCoords == null) {
@@ -574,6 +567,7 @@ public class MainApp extends Activity {
 			t.mSelector = mTo;
 			t.mKey = mTo.getText().toString();
 			t.mResource = R.string.maDlgErrorNoTo;
+			t.mDialogTitleResource = R.string.maDlgSelectTo;
 		    }
 
 		    // TODO: is there a better way to do this?
@@ -591,7 +585,7 @@ public class MainApp extends Activity {
 		}
 	    }
 	};
-    
+
     private static class EfficientAdapter extends BaseAdapter {
     	private LayoutInflater mInflater;
     	private ArrayList<GeoRec> recs;
@@ -613,7 +607,7 @@ public class MainApp extends Activity {
 	    return position;
     	}
 
-    	public View getView(int position, View convertView, ViewGroup parent) { 			
+    	public View getView(int position, View convertView, ViewGroup parent) {
 	    ViewHolder holder;
 	    if (convertView == null) {
 		convertView = mInflater.inflate(R.layout.geoselectoritem, null);
@@ -635,55 +629,27 @@ public class MainApp extends Activity {
     	}
     }
 
-    private OnItemClickListener locationFromClickListener = new OnItemClickListener() {
-	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-	    {
-		//		fromName = geoFrom.get(position).name+", "+geoFrom.get(position).city;
-		//		mFrom.setText(fromName);
-		// NB! THIS SHOULD BE AFTER fromEditText.setText(fromName);
-		// TODO:
-		//		fromCoords = geoFrom.get(position).coords;
-		locationFromSelectDialog.dismiss();
-		launchNextActivity();
-	    }
-	};
-	
-    private OnItemClickListener locationToClickListener = new OnItemClickListener() {
-	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-	    {
-		// TODO:
-		//Log.i(TAG, "locationToClickListener toCoords:"+toCoords);
-		//		toName = geoTo.get(position).name+", "+geoTo.get(position).city;
-		//mTo.setText(toName);
-		// NB! THIS SHOULD BE AFTER toEditText.setText(toName);
-		//toCoords = geoTo.get(position).coords;
-		//locationToSelectDialog.dismiss();
-		//launchNextActivity();
-	    }
-	};
-
-    private void showLocationFromSelectDialog() {
+    private void showLocationSelectDialog(final GeocodeTask result) {
     	Context context = MainApp.this;
-    	locationFromSelectDialog = new Dialog(context);
-    	locationFromSelectDialog.setTitle(getString(R.string.maDlgSelectFrom));
-	locationFromSelectDialog.setContentView(R.layout.geoselector);
-	l1 = (ListView) locationFromSelectDialog.findViewById(R.id.MainAppGeoSelectorListView);		
-	l1.setAdapter(new EfficientAdapter(context, geoFrom));
-	l1.setOnItemClickListener(locationFromClickListener);
-	locationFromSelectDialog.show();
+    	final Dialog locationSelectDialog = new Dialog(context);
+    	locationSelectDialog.setTitle(getString(result.mDialogTitleResource));
+	locationSelectDialog.setContentView(R.layout.geoselector);
+	ListView l1 =
+	    (ListView) locationSelectDialog.findViewById(R.id.MainAppGeoSelectorListView);
+
+	l1.setAdapter(new EfficientAdapter(context, result.mResult));
+	l1.setOnItemClickListener(new OnItemClickListener() {
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+		    String name = result.mResult.get(position).name
+			+ ", " + result.mResult.get(position).city;
+		    result.mSelector.setLocation(name, result.mResult.get(position).coords);
+		    locationSelectDialog.dismiss();
+		    launchNextActivity();
+		}
+	    });
+	locationSelectDialog.show();
     }
-    
-    private void showLocationToSelectDialog() {
-	Context context = MainApp.this;
-    	locationToSelectDialog = new Dialog(context);
-    	locationToSelectDialog.setTitle(getString(R.string.maDlgSelectTo));
-	locationToSelectDialog.setContentView(R.layout.geoselector);
-	l1 = (ListView) locationToSelectDialog.findViewById(R.id.MainAppGeoSelectorListView);		
-	l1.setAdapter(new EfficientAdapter(context, geoTo));
-	l1.setOnItemClickListener(locationToClickListener);
-	locationToSelectDialog.show();
-    }
-    
+
     private void launchNextActivity() {
 	// only if we successfully retrieved both from and to
 	// coordinates, start the new activity
