@@ -504,25 +504,25 @@ public class MainApp extends Activity {
 
     private OnClickListener searchRouteListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mFrom.getText() == null || mFrom.getText().length() == 0) {
+		if (mFrom.getName() == null || mFrom.getName().length() == 0) {
 		    showErrorDialog(getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyFrom));
 		    return;
 		}
 
-		if (mTo.getText() == null || mTo.getText().length() == 0) {
+		if (mTo.getName() == null || mTo.getName().length() == 0) {
 		    showErrorDialog(getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyTo));
 		    return;
 		}
 
-		if (mFrom.getText().length() < 3) {
+		if (mFrom.getName().length() < 3) {
 		    showErrorDialog(getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyFromTooShort));
 		    return;
 		}
 
-		if (mTo.getText().length() < 3) {
+		if (mTo.getName().length() < 3) {
 		    showErrorDialog(getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyToTooShort));
 		    return;
@@ -549,7 +549,7 @@ public class MainApp extends Activity {
 		    if (fromCoords == null) {
 			f = new GeocodeTask();
 			f.mSelector = mFrom;
-			f.mKey = mFrom.getText().toString();
+			f.mKey = mFrom.getName();
 			f.mResource = R.string.maDlgErrorNoFrom;
 			f.mDialogTitleResource = R.string.maDlgSelectFrom;
 		    }
@@ -557,7 +557,7 @@ public class MainApp extends Activity {
 		    if (toCoords == null) {
 			t = new GeocodeTask();
 			t.mSelector = mTo;
-			t.mKey = mTo.getText().toString();
+			t.mKey = mTo.getName();
 			t.mResource = R.string.maDlgErrorNoTo;
 			t.mDialogTitleResource = R.string.maDlgSelectTo;
 		    }
@@ -650,8 +650,8 @@ public class MainApp extends Activity {
             Intent myIntent = new Intent(MainApp.this, SelectRouteScreen.class);
             myIntent.putExtra("fromCoords", mFrom.getCoords().toString());
             myIntent.putExtra("toCoords", mTo.getCoords().toString());
-            myIntent.putExtra("fromName", mFrom.getText());
-            myIntent.putExtra("toName", mTo.getText());
+            myIntent.putExtra("fromName", mFrom.getName());
+            myIntent.putExtra("toName", mTo.getName());
             myIntent.putExtra("date", mDateTime.getYear()+mDateTime.getMonth()+mDateTime.getDay());
             myIntent.putExtra("time", mDateTime.getHour() + mDateTime.getMinute());
             myIntent.putExtra("optimize", mOptimize);
@@ -712,9 +712,9 @@ public class MainApp extends Activity {
 	    return true;
 
 	case R.id.action_swap:
-	    String s = mFrom.getText();
+	    String s = mFrom.getName();
 	    Coords c = mFrom.getCoords();
-	    mFrom.setLocation(mTo.getText(), mTo.getCoords());
+	    mFrom.setLocation(mTo.getName(), mTo.getCoords());
 	    mTo.setLocation(s, c);
 	    return true;
 

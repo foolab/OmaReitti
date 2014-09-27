@@ -3,7 +3,6 @@ package com.omareitti;
 import java.util.ArrayList;
 
 import com.omareitti.IBackgroundServiceAPI;
-import com.omareitti.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,8 +35,8 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class RouteInfoScreen extends Activity {
-	
     private static final String TAG = MainApp.class.getSimpleName();
+
     public String fromLoc = "";
     public String toLoc = "";
 	

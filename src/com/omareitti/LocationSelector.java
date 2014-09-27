@@ -69,6 +69,10 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	return mCoords;
     }
 
+    public String getName() {
+	return mText.getText().toString();
+    }
+
     public void setLocation(String location, Coords coords) {
 	if (!mText.getText().equals(location)) {
 	    mText.setText(location);
@@ -76,25 +80,6 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
 	mCoords = coords;
     }
-
-    // TODO: kill these:
-    public void setText(String text) {
-	mText.setText(text);
-    }
-
-    public String getText() {
-	return mText.getText().toString();
-    }
-
-    public CharSequence getHint() {
-	return mText.getHint();
-    }
-
-    public void setHint(String hint) {
-
-    }
-
-    // end TODO:
 
     @Override
     protected void onFinishInflate() {
@@ -250,7 +235,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    c.close();
 
 	    if (addr != null && addr.length() > 0)
-		setText(addr);
+		mText.setText(addr);
 
 	} else if (id == mMapActivityId) {
 	    setLocation(data.getStringExtra("mapAddress"),
