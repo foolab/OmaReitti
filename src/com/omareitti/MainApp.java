@@ -3,7 +3,6 @@ package com.omareitti;
 import java.util.ArrayList;
 import com.omareitti.IBackgroundServiceAPI;
 import com.omareitti.IBackgroundServiceListener;
-import com.omareitti.R;
 import com.omareitti.History.HistoryItem;
 import com.omareitti.History.RouteHistoryItem;
 import com.omareitti.datatypes.GeoRec;
@@ -69,26 +68,18 @@ import android.widget.ToggleButton;
 import android.widget.ScrollView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RadioGroup;
+import android.os.AsyncTask;
 
 public class MainApp extends Activity {
-    public static Button searchButton;
-
     private static boolean isMoreOptionsUnchanged = true;
 
     ArrayList<GeoRec> geoFrom;
     ArrayList<GeoRec> geoTo;
 
-    private Coords fromCoords;
-    private Coords toCoords;
-    private String fromName = "";
-    private String toName = "";
-
     public volatile Handler handler;
     private ListView l1;
     public Dialog locationFromSelectDialog;
     public Dialog locationToSelectDialog;
-
-    public ProgressDialog processDialog;
 
     SharedPreferences prefs;
 
@@ -98,6 +89,7 @@ public class MainApp extends Activity {
 
 
     private String mTimeType;
+    private static Button mSearchButton;
     private LocationSelector mFrom;
     private LocationSelector mTo;
     private LocationFinder mLocation;
@@ -105,6 +97,8 @@ public class MainApp extends Activity {
     private static Button mMoreOptionsButton;
     private String mOptimize;
     private String mTransportTypes;
+
+    private Geocode mGeocode = null;
 
     private static final int ACTIVITY_RESULT_CONTACTS_FROM = 1;
     private static final int ACTIVITY_RESULT_CONTACTS_TO = 2;
@@ -120,6 +114,16 @@ public class MainApp extends Activity {
         }
 
         ReittiopasAPI.walkingSpeed = (int)(Double.parseDouble(prefs.getString("prefWalkingSpeed", "1"))*60);
+    }
+
+    @Override
+	public void onBackPressed() {
+	if (mGeocode != null) {
+	    mGeocode.cancel(true);
+	    mGeocode = null;
+	}
+
+	super.onBackPressed();
     }
 
     @Override
@@ -204,8 +208,8 @@ public class MainApp extends Activity {
 		}
 	    });
 
-        searchButton = (Button)findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(searchRouteListener);
+        mSearchButton = (Button)findViewById(R.id.searchButton);
+        mSearchButton.setOnClickListener(searchRouteListener);
 
         isMoreOptionsUnchanged = true;
         updateSettings();
@@ -363,24 +367,18 @@ public class MainApp extends Activity {
 	    String fromCoordsInt = b.getString("fromCoords");
 
 	    if (toAddress != null) {
-		mTo.setText(toAddress);
-		toName = toAddress;
+		mTo.setLocation(toAddress, new Coords(toCoordsInt));
 	    }
-	    if (fromAddress != null) { 
-		mFrom.setText(fromAddress);
-		fromName = fromAddress;
+
+	    if (fromAddress != null) {
+		mFrom.setLocation(fromAddress, new Coords(fromCoordsInt));
 	    }
-	    // TODO:
-	    //	    if (fromCoordsInt != null) 
-	    //		fromCoords = fromCoordsInt;
-	    //	    if (toCoordsInt != null) 
-	    //		toCoords = toCoordsInt;
-        	 
-	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
-		//optimize = "default";
+	    // TODO: show an error if we don't have all the data we need
+
+	    //	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
 		updateSettings();
 		launchNextActivity();
-	    }
+		//	    }
         }
     }
 
@@ -452,144 +450,139 @@ public class MainApp extends Activity {
 	} catch(Exception e) {
 	    Log.e(TAG, "ERROR!!", e);
 	}
-		
+
 	unbindService(servceConection);
 	Log.i(TAG, "unbind ");
     }
 
-    private OnClickListener searchRouteListener = new OnClickListener() {
-	    public void onClick(View v) {
-		if (mFrom.getText() == null || mFrom.getText().equals("")) {
-		    // TODO: not working?!
-		    showErrorDialog("", getString(R.string.maDlgErrorEmptyFrom));
-		    return;
-		}
+    private class GeocodeTask {
+	LocationSelector mSelector;
+	String mKey;
+	ArrayList<GeoRec> mResult;
+	int mResource;
+    };
 
-		if (mTo.getText() == null || mTo.getText().equals("")) {
-		    // TODO: not working?!
-		    showErrorDialog("", getString(R.string.maDlgErrorEmptyTo));
-		    return;
-		}
+    private class Geocode extends AsyncTask<GeocodeTask, Integer, ArrayList<GeocodeTask>> {
+	@Override
+	protected ArrayList<GeocodeTask> doInBackground(GeocodeTask... tasks) {
+	    ArrayList<GeocodeTask> result = new ArrayList<GeocodeTask>();
 
-        	processDialog =
-		    ProgressDialog.show(MainApp.this, "",
-					getString(R.string.maDlgSearch), true);
+	    for (GeocodeTask task : tasks) {
+		ArrayList<GeoRec> res
+		    = ReittiopasAPI.getGeocode(task.mKey);
+		GeocodeTask r = new GeocodeTask();
+		r.mKey = task.mKey;
+		r.mSelector = task.mSelector;
+		r.mResult = res;
+		r.mResource = task.mResource;
 
-		// TODO: what if we have coordinates?
+		result.add(r);
+	    }
 
-		new Thread(new Runnable() {
-			public void run() {
-			    ArrayList<GeoRec> res;
-			    res = ReittiopasAPI.getGeocode(mFrom.getText().toString());
+	    return result;
+	}
 
-			    try {
-				fromName = res.get(0).name;
-				// TODO:
-				//				fromCoords = res.get(0).coords;
-			    } catch (Exception e) {
-				Log.e(TAG, "error: ", e);
-			    }
+	@Override
+	protected void onPostExecute(ArrayList<GeocodeTask> results) {
+	    mDlg.dismiss();
 
-			    res = ReittiopasAPI.getGeocode(mTo.getText().toString());
-			    try {
-				toName = res.get(0).name;
-				//TODO:
-				//				toCoords = res.get(0).coords;
-			    } catch (Exception e) {
-				Log.e(TAG, "error: ", e);
-			    }
+	    boolean error = false;
 
-			    handler.post(new Runnable() {
-				    public void run() {
-					processDialog.dismiss();
-					// TODO: alerts
-					launchNextActivity();
-				    }
-				});
+	    for (GeocodeTask task : results) {
+		if (task.mResult == null) {
+		    showErrorDialog(getString(R.string.networkErrorTitle),
+				    getString(R.string.networkErrorText));
+		    error = true;
+		} else if (task.mResult.size() == 0) {
+		    showErrorDialog(getString(R.string.error), getString(task.mResource));
+		    error = true;
+		} else {
+		    // TODO: handle multiple addresses
+		    task.mSelector.setLocation(task.mKey, task.mResult.get(0).coords);
 
-			}
-		    }).run();
-
-		// //		String from = 
-		// ArrayList<GeoRec> res = ReittiopasAPI.getGeocode(mFrom.getText().toString());
-		// if (res.size() == 0) {
-		//     // TODO: tell ths user something
-		//     return;
-		// }
-
-
-
-		// String from = res.get(0).name;
-
-		// res = ReittiopasAPI.getGeocode(mTo.getText().toString());
-		// if (res.size() == 0) {
-		//     // TODO: tell ths user something
-		//     return;
-		// }
-
-		// String to = res.get(0).name;
-
-
-        	// if (!fromCoords.equals("") && !toCoords.equals("")) {
-		//     launchNextActivity();
-		//     return;
-		// }         	
-		// fromCoords = "";
-		// toCoords = "";
-		// fromName = "";
-		// toName = "";   
-        	
-
-        	
-    		// new Thread(new Runnable() {
-    		// 	public void run() {
-		// 	    try {
-		// 		ReittiopasAPI api = new ReittiopasAPI();
-    					
-		// 		if (mFrom.getText().toString().equals("") && !mFrom.getHint().equals(getString(R.string.maEditFromHint)) && !mFrom.getHint().equals("")) {
-		// 		    geoFrom = api.getGeocode(mFrom.getHint().toString());
-		// 		} else {    					
-		// 		    geoFrom = api.getGeocode(mFrom.getText().toString()); // This makes an HTTP request don't call it many times
-		// 		}
-		// 		geoTo = api.getGeocode(toEditText.getText().toString());
-		// 	    } catch ( Exception e ) {
-		// 		Log.e("ERROR", "No network", e);
-		// 	    }
-
-		// 	    handler.post(new Runnable() {
-		// 		    public void run() {	
-		// 			processDialog.dismiss(); 
-    						
-		// 			if (geoFrom == null || geoTo == null) {
-		// 			    showErrorDialog(getString(R.string.networkErrorTitle), getString(R.string.networkErrorText));
-		// 			} else {
-		// 			    if (geoFrom.size() == 0) showErrorDialog(getString(R.string.error), getString(R.string.maDlgErrorNoFrom));
-		// 			    if (geoTo.size() == 0) showErrorDialog(getString(R.string.error), getString(R.string.maDlgErrorNoTo));
-            					            					
+		// original code:
 		// 			    if (geoTo.size() > 1) {
 		// 				showLocationToSelectDialog();
 		// 			    }
-            					
 		// 			    if (geoFrom.size() > 1) {
 		// 				showLocationFromSelectDialog();
-		// 			    }            					
-          					
-		// 			    if (geoFrom.size() == 1) {
-		// 				fromCoords = geoFrom.get(0).coords;
-		// 				fromName = geoFrom.get(0).name+", "+geoFrom.get(0).city;
 		// 			    }
-		// 			    if (geoTo.size() == 1) {
-		// 				toCoords = geoTo.get(0).coords;
-		// 				toName = geoTo.get(0).name+", "+geoTo.get(0).city;
-		// 			    }
+		}
+	    }
 
-		// 			    launchNextActivity();
-		// 			}
-		// 		    }
-    		// 		});					
-    		// 	}
-		//     }).start();
+	    if (error == false) {
+		launchNextActivity();
+	    }
 
+	    mGeocode = null;
+	}
+
+	public void setProgressDialog(ProgressDialog dlg) {
+	    mDlg = dlg;
+	}
+
+	private ProgressDialog mDlg;
+    }
+
+    private OnClickListener searchRouteListener = new OnClickListener() {
+	    public void onClick(View v) {
+		if (mFrom.getText() == null || mFrom.getText().length() == 0) {
+		    showErrorDialog(getString(R.string.error),
+				    getString(R.string.maDlgErrorEmptyFrom));
+		    return;
+		}
+
+		if (mTo.getText() == null || mTo.getText().length() == 0) {
+		    showErrorDialog(getString(R.string.error),
+				    getString(R.string.maDlgErrorEmptyTo));
+		    return;
+		}
+
+		mFrom.clearFocus();
+		mTo.clearFocus();
+
+		Coords fromCoords = mFrom.getCoords();
+		Coords toCoords = mTo.getCoords();
+
+		if (fromCoords == null || toCoords == null) {
+		    // TODO: this is also not an accurate description of what we are doing
+		    ProgressDialog dlg =
+			ProgressDialog.show(MainApp.this, "",
+					    getString(R.string.maDlgSearch), true);
+		    dlg.show();
+
+		    mGeocode = new Geocode();
+		    mGeocode.setProgressDialog(dlg);
+
+		    GeocodeTask f = null, t = null;
+
+		    if (fromCoords == null) {
+			f = new GeocodeTask();
+			f.mSelector = mFrom;
+			f.mKey = mFrom.getText().toString();
+			f.mResource = R.string.maDlgErrorNoFrom;
+		    }
+
+		    if (toCoords == null) {
+			t = new GeocodeTask();
+			t.mSelector = mTo;
+			t.mKey = mTo.getText().toString();
+			t.mResource = R.string.maDlgErrorNoTo;
+		    }
+
+		    // TODO: is there a better way to do this?
+		    if (t != null && f != null) {
+			mGeocode.execute(f, t);
+		    } else if (t != null) {
+			mGeocode.execute(t);
+		    } else {
+			mGeocode.execute(f);
+		    }
+
+		} else {
+		    // We can already search
+		    launchNextActivity();
+		}
 	    }
 	};
     
@@ -639,10 +632,11 @@ public class MainApp extends Activity {
     private OnItemClickListener locationFromClickListener = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
-		fromName = geoFrom.get(position).name+", "+geoFrom.get(position).city;
-		mFrom.setText(fromName);
+		//		fromName = geoFrom.get(position).name+", "+geoFrom.get(position).city;
+		//		mFrom.setText(fromName);
 		// NB! THIS SHOULD BE AFTER fromEditText.setText(fromName);
-		fromCoords = geoFrom.get(position).coords;
+		// TODO:
+		//		fromCoords = geoFrom.get(position).coords;
 		locationFromSelectDialog.dismiss();
 		launchNextActivity();
 	    }
@@ -651,13 +645,14 @@ public class MainApp extends Activity {
     private OnItemClickListener locationToClickListener = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
+		// TODO:
 		//Log.i(TAG, "locationToClickListener toCoords:"+toCoords);
-		toName = geoTo.get(position).name+", "+geoTo.get(position).city;
-		mTo.setText(toName);
+		//		toName = geoTo.get(position).name+", "+geoTo.get(position).city;
+		//mTo.setText(toName);
 		// NB! THIS SHOULD BE AFTER toEditText.setText(toName);
-		toCoords = geoTo.get(position).coords;
-		locationToSelectDialog.dismiss();
-		launchNextActivity();
+		//toCoords = geoTo.get(position).coords;
+		//locationToSelectDialog.dismiss();
+		//launchNextActivity();
 	    }
 	};
 
@@ -686,7 +681,7 @@ public class MainApp extends Activity {
     private void launchNextActivity() {
 	// only if we successfully retrieved both from and to
 	// coordinates, start the new activity
-    	Log.i(TAG, "launchNextActivity fromCoords:"+fromCoords+" toCoords:"+toCoords);
+
 	if (mFrom.getCoords() != null && mTo.getCoords() != null) {
             Intent myIntent = new Intent(MainApp.this, SelectRouteScreen.class);
             myIntent.putExtra("fromCoords", mFrom.getCoords().toString());
@@ -848,10 +843,10 @@ public class MainApp extends Activity {
 
 		    String toCoordsInt = b.getString("toCoords");
 		    if (toAddress != null && fromAddress == null && !lastLocDisc.equals("")) {
-			toName = toAddress;
+			//			toName = toAddress;
 			// TODO:
 			//			toCoords = toCoordsInt;
-			fromName = address;
+			//			fromName = address;
 			//			fromCoords = lastLocDisc;
 			updateSettings();
 			launchNextActivity();

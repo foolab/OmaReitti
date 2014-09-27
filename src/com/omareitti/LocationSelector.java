@@ -76,8 +76,8 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	mText.setText(text);
     }
 
-    public CharSequence getText() {
-	return mText.getText();
+    public String getText() {
+	return mText.getText().toString();
     }
 
     public CharSequence getHint() {
