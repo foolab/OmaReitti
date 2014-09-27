@@ -535,7 +535,6 @@ public class MainApp extends Activity {
 		Coords toCoords = mTo.getCoords();
 
 		if (fromCoords == null || toCoords == null) {
-		    // TODO: this is also not an accurate description of what we are doing
 		    ProgressDialog dlg =
 			ProgressDialog.show(MainApp.this, "",
 					    getString(R.string.maDlgSearch), true);

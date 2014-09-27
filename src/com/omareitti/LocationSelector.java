@@ -38,8 +38,6 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private int mMapActivityId;
     private CursorAdapter mAdapter;
 
-    private boolean mBlockCoordsReset;
-
     private static final String TAG = MainApp.class.getSimpleName();
 
     public LocationSelector(Context context, AttributeSet attrs) {
@@ -54,9 +52,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     }
 
     public void setLocationFinder(LocationFinder finder) {
-	mBlockCoordsReset = true;
 	mFinder = finder;
-	mBlockCoordsReset = false;
     }
 
     public void setInitialHint(int hint) {
@@ -93,8 +89,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	mText.setAdapter(mAdapter);
 	mText.addTextChangedListener(new TextWatcher() {
 		public void afterTextChanged(Editable s) {
-		    if (mBlockCoordsReset == false)
-			mCoords = null;
+		    mCoords = null;
 		}
 
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -234,7 +229,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    c.close();
 
 	    if (addr != null && addr.length() > 0)
-		mText.setText(addr);
+		setLocation(addr, null);
 
 	} else if (id == mMapActivityId) {
 	    setLocation(data.getStringExtra("mapAddress"),
