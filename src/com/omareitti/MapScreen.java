@@ -58,6 +58,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.view.MenuInflater;
 
 public class MapScreen extends Activity {
     private static final String TAG = MapScreen.class.getSimpleName();
@@ -75,20 +76,18 @@ public class MapScreen extends Activity {
     //private MyLocationOverlay myLocOverlay;
     private Boolean isJustLooking = false;
     SharedPreferences prefs;
-
-    // @Override
-    // 	protected boolean isRouteDisplayed() {
-    // 	return false;
-    // }
+    private MapController myMapController;
+    private GeoPoint currentPoint = null;
+    private float locationAngle = 0f;
+    private Boolean takeLocation = false;
 
     @Override
     protected void onCreate(Bundle icicle) {
-	// TODO Auto-generated method stub
 	super.onCreate(icicle);
-	setContentView(R.layout.mapscreen);
 
-	//Log.i(TAG, "routeString:"+routeString);
-	//Log.i(TAG, "getIntent().getExtras():"+getIntent().getExtras());
+	getActionBar().setDisplayHomeAsUpEnabled(true);
+
+	setContentView(R.layout.mapscreen);
 
 	if (getIntent().getExtras() == null) {
             startActivity(new Intent(MapScreen.this, MainApp.class));
@@ -105,8 +104,6 @@ public class MapScreen extends Activity {
 					SensorManager.SENSOR_DELAY_GAME);
 
         makeArrow();
-	// markerBmp = BitmapFactory.decodeResource(getResources(), R.drawable.map_pin); // pin.png image will require.
-        
 	isJustLooking = getIntent().getExtras().getBoolean("isJustLooking", false);
 	pickPoint = getIntent().getExtras().getString("pickPoint");
 
@@ -123,9 +120,7 @@ public class MapScreen extends Activity {
 	myMapController = (MapController)mapView.getController();
 	myMapController.setZoom(zoomLevel);
 
-	myMapController.setCenter(new GeoPoint(6016265,24915534)); 
-	//myMapController.setCenter(new GeoPoint(60171135, 24943797));
-	//myMapController.setZoom(12);
+	myMapController.setCenter(new GeoPoint(6016265,24915534));
 
         mPaint = new Paint();
         mPaint.setDither(true);
@@ -153,7 +148,6 @@ public class MapScreen extends Activity {
 	    mapView.invalidate();
 	    Toast.makeText(this, getString(R.string.msToastAddressSelect), Toast.LENGTH_SHORT).show();
 	    takeLocation = true;
-	    ((Button)findViewById(R.id.gotoRouteButton)).setVisibility(View.GONE);
 	    return;
 	}
 
@@ -174,7 +168,6 @@ public class MapScreen extends Activity {
         currentStep = getIntent().getExtras().getInt("currentStep");
 
 	mapView.getOverlays().add(new RouteOverlay(MapScreen.this));
-	//myMapController.setCenter(new GeoPoint(60216298, 24881828));
 
 	if (route != null && route.steps.size() > currentStep) {
 	    RouteStep r = route.steps.get(currentStep);
@@ -183,43 +176,41 @@ public class MapScreen extends Activity {
 		myMapController.setCenter(new GeoPoint((int) (p.coords.x * 1E6), (int) (p.coords.y * 1E6)));
 	    }
 	}
-
-	((Button)findViewById(R.id.gotoRouteButton)).setOnClickListener(new View.OnClickListener() {
-		public void onClick(View arg0) {
-		    MapScreen.this.onBackPressed();
-		}
-	    });
     }
-	
-    private static final int LOC_MENU_ID = 333; 
-	
+
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-    	
-    	Drawable drLocation  = getResources().getDrawable(android.R.drawable.ic_menu_mylocation);	
-    	MenuItem tmp = menu.add(0, LOC_MENU_ID, 0, getString(R.string.msMenuCurrentLocation));
-    	tmp.setIcon(drLocation);
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.mapscreen_actions, menu);
 
     	return super.onCreateOptionsMenu(menu);
     }
-    
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-	case LOC_MENU_ID:
-	    if (currentPoint == null) { takeLocation = true; return true; }
-	    myMapController.animateTo(currentPoint);
-	    break;
-	default:
-	    return super.onOptionsItemSelected(item);	        	
-        }
-        return true;
-    }
-    
 
     @Override
-	protected void onDestroy() {
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case R.id.action_show_mylocation:
+	    if (currentPoint == null) {
+		takeLocation = true;
+		return true;
+	    }
+
+	    myMapController.animateTo(currentPoint);
+	    break;
+
+	case android.R.id.home:
+            onBackPressed();
+	    return true;
+
+	default:
+	    break;
+        }
+
+	return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
 	super.onDestroy();
 	mSensorManager.unregisterListener(mListener);
 	try {
@@ -375,10 +366,6 @@ public class MapScreen extends Activity {
     	}
     }
 
-    private MapController myMapController;
-    private GeoPoint currentPoint = null;
-    private float locationAngle = 0f;
-    private Boolean takeLocation = false;
     /** 
      * Service interaction stuff
      */
@@ -503,35 +490,3 @@ public class MapScreen extends Activity {
 	    }
 	};
 }
-/**
-   public SampleView(Context context) {
-   super(context);
-
-   // Construct a wedge-shaped path
-   mPath.moveTo(0, -50);
-   mPath.lineTo(-20, 60);
-   mPath.lineTo(0, 50);
-   mPath.lineTo(20, 60);
-   mPath.close();
-   }
-
-   @Override protected void onDraw(Canvas canvas) {
-   Paint paint = mPaint;
-
-   canvas.drawColor(Color.WHITE);
-
-   paint.setAntiAlias(true);
-   paint.setColor(Color.BLACK);
-   paint.setStyle(Paint.Style.FILL);
-
-   int w = canvas.getWidth();
-   int h = canvas.getHeight();
-   int cx = w / 2;
-   int cy = h / 2;
-
-   canvas.translate(cx, cy);
-   if (mValues != null) {
-   canvas.rotate(-mValues[0]);
-   }
-   canvas.drawPath(mPath, mPaint);
-   }*/
