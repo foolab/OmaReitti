@@ -180,8 +180,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
 		    case 1:
 			Intent mapIntent = new Intent(getContext().getApplicationContext(),
-						      MapScreen.class);
-			mapIntent.putExtra("pickPoint", "yes");
+						      LocationPicker.class);
 			mActivity.startActivityForResult(mapIntent, mMapActivityId);
 			break;
 		    case 2:

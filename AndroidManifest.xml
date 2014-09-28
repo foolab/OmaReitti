@@ -32,7 +32,13 @@
 	      android:finishOnTaskLaunch="true"
 	      android:noHistory="true"/>
 
-    <activity android:name=".MapScreen"
+<!--    <activity android:name=".BaseMapScreen"
+	      android:label="@string/appName"/> -->
+
+    <activity android:name=".LocationPicker"
+	      android:label="@string/appName"/>
+
+    <activity android:name=".RouteMap"
 	      android:label="@string/appName"/>
 
     <activity android:name=".ShortcutActivity">
