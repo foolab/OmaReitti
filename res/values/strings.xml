@@ -103,7 +103,8 @@
 <!-- MapScreen -->
 	<string name="msToastAddressSelect">Double tap to select address</string>
 	<string name="msMenuCurrentLocation">My current location</string>
-		
+	<string name="msFailedAddress">Failed to get address</string>
+
 <!-- RouteInfoScreen -->
     <string name="riButtonShowMap">Show map</string>
 <!-- SelectRouteScreen -->

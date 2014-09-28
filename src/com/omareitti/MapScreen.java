@@ -43,8 +43,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -59,6 +57,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.view.MenuInflater;
+import android.os.AsyncTask;
+import android.app.ProgressDialog;
 
 public class MapScreen extends Activity {
     private static final String TAG = MapScreen.class.getSimpleName();
@@ -129,7 +129,7 @@ public class MapScreen extends Activity {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(5);
-        
+
 	Log.i(TAG, "trying to bind service "+BackgroundService.class.getName());
 	Intent servIntent = new Intent(BackgroundService.class.getName());//this, BackgroundService.class);
         startService(servIntent);
@@ -139,7 +139,7 @@ public class MapScreen extends Activity {
         //myLocOverlay = new MyLocationOverlay(this, mapView);
 	//myLocOverlay.enableMyLocation();
 	//mapView.getOverlays().add(myLocOverlay);
-        
+
 	if (pickPoint != null) {
 
 	    MapOverlay mapOverlay = new MapOverlay(MapScreen.this);
@@ -265,43 +265,13 @@ public class MapScreen extends Activity {
 		if (p == null)
 		    return false;
 
-		Geocoder geoCoder = new Geocoder(getBaseContext(),
-						 Locale.getDefault());
-     		try {
-     		    /*List<Address> addresses = geoCoder.getFromLocation(
-     		      p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6,
-     		      1);
-     		      String add = "";
-     		      if (addresses.size() > 0) {
-     		      if (addresses.get(0).getMaxAddressLineIndex() > 0)
-     		      add += addresses.get(0).getAddressLine(0);
-     		      /*for (int i = 0; i < addresses.get(0).getMaxAddressLineIndex(); i++) {
-     		      add += addresses.get(0).getAddressLine(i);
-     		      if (i != addresses.get(0).getMaxAddressLineIndex() - 1) add += ", ";
-     		      }
-     		      for (int j = 0; j < addresses.size(); j++)
-     		      for (int i = 0; i < addresses.get(j).getMaxAddressLineIndex(); i++)
-     		      Log.i(TAG, "j:"+j+" i:"+i+" "+addresses.get(j).getAddressLine(i));*/
-     		    /*}*/
+		ProgressDialog dlg =
+		    ProgressDialog.show(MapScreen.this, "",
+					getString(R.string.maDlgSearch), true);
+		dlg.show();
 
-     		    ArrayList<GeoRec> recs = ReittiopasAPI.getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
-     		    if (recs == null || recs.size() == 0) return false;
-     		    String name = recs.get(0).name;
-     		    Toast.makeText(getBaseContext(), name, Toast.LENGTH_SHORT).show();
-     		    if (name.length() > 0) {
-     			//Intent intent = getIntent();
-     			Intent intent = new Intent();
-     			intent.putExtra("mapAddress", name);
-     			intent.putExtra("mapCoords", (p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
-     			Log.i(TAG, "mapCoords:"+(p.getLongitudeE6() / 1E6f)+","+(p.getLatitudeE6() / 1E6f));
-     			setResult(RESULT_OK, intent);
-     			//mapView.getOverlays().remove(myLocOverlay);
-     			finish();
-     		    }
-     		} catch (Exception e) {
-     		    e.printStackTrace();
-     		}
-     		return true;
+		new Geocode(dlg, p).execute(p);
+		return true;
      	    } else
      		return false;
     	}
@@ -489,4 +459,46 @@ public class MapScreen extends Activity {
 	    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 	    }
 	};
+
+    private class Geocode extends AsyncTask<GeoPoint, Integer, String> {
+	public Geocode(ProgressDialog dlg, GeoPoint p) {
+	    super();
+
+	    mDlg = dlg;
+	    mPoint = p;
+	}
+
+	@Override
+	protected String doInBackground(GeoPoint... points) {
+	    GeoPoint p = points[0];
+
+	    ArrayList<GeoRec> recs =
+		ReittiopasAPI.getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
+	    if (recs == null || recs.size() == 0)
+		return null;
+
+	    return recs.get(0).name;
+	}
+
+	@Override
+	protected void onPostExecute(String result) {
+	    mDlg.dismiss();
+
+	    if (result == null || result.length() == 0) {
+		MainApp.showErrorDialog(MapScreen.this,
+					getString(R.string.error), getString(R.string.msFailedAddress));
+	    } else {
+		Toast.makeText(getBaseContext(), result, Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent();
+		intent.putExtra("mapAddress", result);
+		intent.putExtra("mapCoords", (mPoint.getLongitudeE6() / 1E6f)+","+(mPoint.getLatitudeE6() / 1E6f));
+		setResult(RESULT_OK, intent);
+		finish();
+	    }
+	}
+
+	private ProgressDialog mDlg;
+	private GeoPoint mPoint;
+    }
+
 }
