@@ -59,6 +59,7 @@ import android.widget.Toast;
 import android.view.MenuInflater;
 import android.os.AsyncTask;
 import android.app.ProgressDialog;
+import com.omareitti.datatypes.Coords;
 
 public class MapScreen extends Activity {
     private static final String TAG = MapScreen.class.getSimpleName();
@@ -473,7 +474,8 @@ public class MapScreen extends Activity {
 	    GeoPoint p = points[0];
 
 	    ArrayList<GeoRec> recs =
-		ReittiopasAPI.getReverseGeocode(""+(p.getLongitudeE6() / 1E6)+","+(p.getLatitudeE6() / 1E6));
+		ReittiopasAPI.getReverseGeocode(new Coords(p.getLongitudeE6() / 1E6,
+							   p.getLatitudeE6() / 1E6).toString());
 	    if (recs == null || recs.size() == 0)
 		return null;
 
@@ -486,12 +488,15 @@ public class MapScreen extends Activity {
 
 	    if (result == null || result.length() == 0) {
 		MainApp.showErrorDialog(MapScreen.this,
-					getString(R.string.error), getString(R.string.msFailedAddress));
+					getString(R.string.error),
+					getString(R.string.msFailedAddress));
 	    } else {
 		Toast.makeText(getBaseContext(), result, Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		intent.putExtra("mapAddress", result);
-		intent.putExtra("mapCoords", (mPoint.getLongitudeE6() / 1E6f)+","+(mPoint.getLatitudeE6() / 1E6f));
+		intent.putExtra("mapCoords",
+				new Coords(mPoint.getLongitudeE6() / 1E6,
+					   mPoint.getLatitudeE6() / 1E6).toString());
 		setResult(RESULT_OK, intent);
 		finish();
 	    }
