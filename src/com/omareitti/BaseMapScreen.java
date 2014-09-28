@@ -61,8 +61,8 @@ import android.os.AsyncTask;
 import android.app.ProgressDialog;
 import com.omareitti.datatypes.Coords;
 
-public class MapScreen extends Activity {
-    private static final String TAG = MapScreen.class.getSimpleName();
+public class BaseMapScreen extends Activity {
+    private static final String TAG = BaseMapScreen.class.getSimpleName();
 
     LinearLayout linearLayout;
     MapView mapView;
@@ -91,7 +91,7 @@ public class MapScreen extends Activity {
 	setContentView(R.layout.mapscreen);
 
 	if (getIntent().getExtras() == null) {
-            startActivity(new Intent(MapScreen.this, MainApp.class));
+            startActivity(new Intent(BaseMapScreen.this, MainApp.class));
             Log.i(TAG, "intent extras is null, switching to main activity ");
             finish();
             return;
@@ -143,7 +143,7 @@ public class MapScreen extends Activity {
 
 	if (pickPoint != null) {
 
-	    MapOverlay mapOverlay = new MapOverlay(MapScreen.this);
+	    MapOverlay mapOverlay = new MapOverlay(BaseMapScreen.this);
 	    mapView.getOverlays().add(mapOverlay);
 
 	    mapView.invalidate();
@@ -158,7 +158,7 @@ public class MapScreen extends Activity {
 	    else {
 		Log.i(TAG, "Couldn't get the route from JSONobj "+routeString);
 		Toast.makeText(this, "Can't get current route", Toast.LENGTH_LONG);
-		startActivity(new Intent(MapScreen.this, MainApp.class));
+		startActivity(new Intent(BaseMapScreen.this, MainApp.class));
 		finish();
                 return;
 	    }
@@ -168,7 +168,7 @@ public class MapScreen extends Activity {
 
         currentStep = getIntent().getExtras().getInt("currentStep");
 
-	mapView.getOverlays().add(new RouteOverlay(MapScreen.this));
+	mapView.getOverlays().add(new RouteOverlay(BaseMapScreen.this));
 
 	if (route != null && route.steps.size() > currentStep) {
 	    RouteStep r = route.steps.get(currentStep);
@@ -267,7 +267,7 @@ public class MapScreen extends Activity {
 		    return false;
 
 		ProgressDialog dlg =
-		    ProgressDialog.show(MapScreen.this, "",
+		    ProgressDialog.show(BaseMapScreen.this, "",
 					getString(R.string.maDlgSearch), true);
 		dlg.show();
 
@@ -487,7 +487,7 @@ public class MapScreen extends Activity {
 	    mDlg.dismiss();
 
 	    if (result == null || result.length() == 0) {
-		MainApp.showErrorDialog(MapScreen.this,
+		MainApp.showErrorDialog(BaseMapScreen.this,
 					getString(R.string.error),
 					getString(R.string.msFailedAddress));
 	    } else {
