@@ -308,14 +308,10 @@ public class Route {
 		JSONObject coord = loc.getJSONObject("coord");
 			
 		PathSegment p = new PathSegment();
-		//		String parts = coo
-		// TODO:
-		Log.e("FOOO", coord.toString());
-		p.coords = new Coords(coord.getDouble("y"), coord.getDouble("x"));
-				
+		p.coords = new Coords(coord.getDouble("x"), coord.getDouble("y"));
 		p.arrTime = parseReittiOpasDate(loc.getString("arrTime"));
 		p.depTime = parseReittiOpasDate(loc.getString("depTime"));
-								
+
 		try {
 		    p.name = loc.getString("name");
 		} catch (Exception e) {
