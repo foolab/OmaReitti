@@ -28,6 +28,8 @@ public class LocationPicker extends BaseMapScreen {
 		       getString(R.string.msToastAddressSelect), Toast.LENGTH_SHORT).show();
 
 	getMapView().getOverlays().add(new DoubleTapOverlay(LocationPicker.this));
+
+	getMapView().invalidate();
     }
 
     @Override

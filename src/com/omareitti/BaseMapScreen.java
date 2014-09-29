@@ -52,6 +52,8 @@ public class BaseMapScreen extends Activity {
 
 	mCompass = new CompassOverlay(BaseMapScreen.this, mView);
 	mView.getOverlays().add(mCompass);
+
+	mView.invalidate();
     }
 
     @Override
