@@ -137,9 +137,8 @@ public class RouteInfoScreen extends Activity {
     private OnItemClickListener routeClickListener = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
-		Intent myIntent = new Intent(v.getContext(), MapScreen.class);
+		Intent myIntent = new Intent(v.getContext(), RouteMap.class);
 		myIntent.putExtra("currentStep", position);
-		myIntent.putExtra("isJustLooking", true);
 		myIntent.putExtra("route", routeString);
 
 		startActivity(myIntent);
@@ -234,7 +233,7 @@ public class RouteInfoScreen extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
 	switch (item.getItemId()) {
 	case R.id.action_show_map:
-            Intent myIntent = new Intent(RouteInfoScreen.this, MapScreen.class);
+            Intent myIntent = new Intent(RouteInfoScreen.this, RouteMap.class);
 	    myIntent.putExtra("currentStep", 0);
 	    myIntent.putExtra("route", routeString);
 	    startActivity(myIntent);
