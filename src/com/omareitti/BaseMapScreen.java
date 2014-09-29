@@ -45,6 +45,7 @@ public class BaseMapScreen extends Activity {
 	mController = (MapController)mView.getController();
 	mController.setZoom(zoomLevel);
 
+	// Helsinki location from wikipedia
 	mController.setCenter(new GeoPoint(60.170833, 24.9375));
 
 	mLocation = new MyLocationNewOverlay(BaseMapScreen.this, mView);

@@ -359,32 +359,6 @@ public class Route {
 		
 	return new Date( Integer.parseInt(year)-1900, Integer.parseInt(month)-1, Integer.parseInt(day), Integer.parseInt(hour), Integer.parseInt(minute));		
     }
-	
-    public void test() {
-	Log.i("ROUTE-TEST", "Duration: " + this.duration);
-	Log.i("ROUTE-TEST", "Length: " + this.length);
-	Log.i("ROUTE-TEST", "Steps: " + this.steps.size());
-	for(int i=0; i<this.steps.size(); i++) {
-	    RouteStep s = this.steps.get(i);
-	    Log.i("ROUTE-TEST", "\tDuration:"+s.duration);
-	    Log.i("ROUTE-TEST", "\tLength:"+s.length);
-			
-	    Log.i("ROUTE-TEST", "\tfirstLoc:"+s.firstLoc);
-	    Log.i("ROUTE-TEST", "\tlastLoc:"+s.lastLoc);
-	    Log.i("ROUTE-TEST", "\ttype:"+s.type);
-	    Log.i("ROUTE-TEST", "\tIcon:"+s.getIconId());
-			
-	    Log.i("ROUTE-TEST", "\tPath length:"+s.path.size());
-			
-	    for(int j=0; j<s.path.size(); j++) {
-		PathSegment p = s.path.get(j);
-		Log.i("ROUTE-TEST", "\t\tPath name:"+p.name);
-		Log.i("ROUTE-TEST", "\t\tCoords:"+p.coords.x+" "+p.coords.y);
-		Log.i("ROUTE-TEST", "\t\tarrTime:"+p.arrTime.toLocaleString());
-		Log.i("ROUTE-TEST", "\t\tdepTime:"+p.depTime.toLocaleString());
-	    }
-	}
-    }
 }
 
 /**

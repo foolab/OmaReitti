@@ -83,8 +83,7 @@ public class RouteMap extends BaseMapScreen {
 
 	for (int x = 0; x < paths.size(); x++) {
 	    Coords c = paths.get(x).coords;
-	    // Coords.x is longitude but GeoPoint takes latitude first
-	    list.add(new GeoPoint(c.y, c.x));
+	    list.add(c.toGeoPoint());
 	}
 
 	line.setPoints(list);
@@ -96,8 +95,7 @@ public class RouteMap extends BaseMapScreen {
 	    Coords c = paths.get(x).coords;
 	    Marker m = new Marker(getMapView());
 
-	    // Coords.x is longitude but GeoPoint takes latitude first
-	    m.setPosition(new GeoPoint(c.y, c.x));
+	    m.setPosition(c.toGeoPoint());
 
 	    m.setOnMarkerClickListener(mListener);
 	    m.setSubDescription(r.path.get(x).name);

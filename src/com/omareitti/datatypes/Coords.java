@@ -1,14 +1,16 @@
 package com.omareitti.datatypes;
 
 import android.util.Log;
+import org.osmdroid.util.GeoPoint;
 
 // x is longitude. y is latitude
 
 public class Coords {
     private static final String TAG = Coords.class.getSimpleName();
 
-    public double x;
-    public double y;
+    private double x;
+    private double y;
+    private GeoPoint mPt = null;
 
     public Coords(String coord) {
 	String p[] = coord.split(",");
@@ -35,5 +37,14 @@ public class Coords {
 
     public int yToInt() {
 	return (int) (y*1E6);
+    }
+
+    public GeoPoint toGeoPoint() {
+	if (mPt == null) {
+	    // Coords.x is longitude but GeoPoint takes latitude first
+	    mPt = new GeoPoint(y, x);
+	}
+
+	return mPt;
     }
 }
