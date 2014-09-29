@@ -1,8 +1,6 @@
 package com.omareitti;
 
 import java.util.ArrayList;
-import com.omareitti.IBackgroundServiceAPI;
-import com.omareitti.IBackgroundServiceListener;
 import com.omareitti.History.HistoryItem;
 import com.omareitti.History.RouteHistoryItem;
 import com.omareitti.datatypes.GeoRec;
@@ -17,7 +15,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -133,14 +130,8 @@ public class MainApp extends Activity {
     }
 
     @Override
-	protected void onResume() {
+    protected void onResume() {
 	super.onResume();
-
-	if (api != null) {
-	    try {
-		api.requestLastKnownAddress(1);
-	    } catch (Exception e) { };
-	}
 
 	updateSettings();
     }
@@ -201,12 +192,6 @@ public class MainApp extends Activity {
         mMoreOptionsButton.setOnClickListener(moreOptionsListener);
 
 	ListView l1 = (ListView) findViewById(R.id.MainAppGeoSelectorListView);
-
-	Log.i(TAG, "trying to bind service "+BackgroundService.class.getName());
-	Intent servIntent = new Intent(BackgroundService.class.getName());//this, BackgroundService.class);
-        startService(servIntent);
-        Log.i(TAG, "starting service "+servIntent.toString());
-        bindService(servIntent, servceConection, 0);
 
         history = History.getHistory(this);
         routes = History.getRoutes(this);
@@ -421,17 +406,8 @@ public class MainApp extends Activity {
     }
 
     @Override
-	protected void onDestroy() {
-	// TODO Auto-generated method stub
+    protected void onDestroy() {
 	super.onDestroy();
-	try {
-	    if (api != null) api.removeListener(serviceListener);
-	} catch(Exception e) {
-	    Log.e(TAG, "ERROR!!", e);
-	}
-
-	unbindService(servceConection);
-	Log.i(TAG, "unbind ");
     }
 
     private class GeocodeTask {
@@ -737,98 +713,4 @@ public class MainApp extends Activity {
 
 	return super.onOptionsItemSelected(item);
     }
-
-    // TODO:
-    private String lastLocDisc = "";
-    private Boolean launchedFromParamsAlready = false;
-    /** 
-     * Service interaction stuff
-     */
-    private IBackgroundServiceListener serviceListener = new IBackgroundServiceListener.Stub() {
-		
-	    public void locationDiscovered(double lat, double lon)
-		throws RemoteException {
-		// TODO Auto-generated method stub
-		Log.i(TAG, "locationDiscovered: "+lat+" "+lon);
-		lastLocDisc = lon+","+lat;
-
-		// TODO:
-		//		if (fromCoords.equals(""))
-		//		    fromCoords = lon+","+lat;			
-	    }
-		
-	    public void handleUpdate(String s) throws RemoteException {
-		//Log.i(TAG, "handleUpdate: "+s);
-			
-	    }
-		
-	    public void handleGPSUpdate(double lat, double lon, float angle) throws RemoteException {
-		// TODO Auto-generated method stub
-		Log.i(TAG, "handleGPSUpdate: "+lat+" "+lon);
-		// TODO:
-		//		if (fromCoords.equals(""))
-		//  fromCoords = lon+","+lat;
-	    }
-
-	    public void addressDiscovered(String address) throws RemoteException {
-		Log.i(TAG, "addressDiscovered: "+address);
-		// TODO:
-		//fromEditText = (EditText) findViewById(R.id.editText1);
-		// if (putAddressHere == null) {
-		//     if (address.equals("")) {
-		// 	//			mFrom.setHint(getString(R.string.maEditFromHint));
-		//     } else {
-		// 	//			mFrom.setHint(address);
-		// 	fromName = address;
-		//     }
-		// } else if (currentAction == 0) putAddressHere.setText(address);
-
-		if (launchedFromParamsAlready) return;
-	        Bundle b = getIntent().getExtras();
-	        if (b != null) {
-		    Log.i(TAG, "Bundle: "+b);
-		    String toAddress = b.getString("toAddress");
-		    String fromAddress = b.getString("fromAddress");
-
-		    String toCoordsInt = b.getString("toCoords");
-		    if (toAddress != null && fromAddress == null && !lastLocDisc.equals("")) {
-			//			toName = toAddress;
-			// TODO:
-			//			toCoords = toCoordsInt;
-			//			fromName = address;
-			//			fromCoords = lastLocDisc;
-			updateSettings();
-			launchNextActivity();
-			launchedFromParamsAlready = true;
-		    }
-	        }
-	    }
-	};
-
-    private IBackgroundServiceAPI api = null;
-
-    private ServiceConnection servceConection = new ServiceConnection() {
-	    public void onServiceDisconnected(ComponentName name) {
-		Log.i(TAG, "Service disconnected!");
-		api = null;
-	    }
-
-	    public void onServiceConnected(ComponentName name, IBinder service) {
-		api = IBackgroundServiceAPI.Stub.asInterface(service);
-
-		//		mFrom.setHint(getString(R.string.maEditFromHintLocating));
-
-		Log.i(TAG, "Service connected! "+api.toString());
-		try {
-		    api.addListener(serviceListener);
-		    int res = api.requestLastKnownAddress(1);
-		    api.cancelRoute(0);
-		    //if (res == 1) { }
-		    Log.i(TAG, "requestLastKnownAddress: "+res);
-		    //api.setRoute(new TestObject("{asd:\"Hello!\" }"));
-		} catch(Exception e) {
-		    Log.e(TAG, "ERROR!!", e);
-		}
-	    }
-	};
 }

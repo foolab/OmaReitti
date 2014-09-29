@@ -32,9 +32,6 @@
 	      android:finishOnTaskLaunch="true"
 	      android:noHistory="true"/>
 
-<!--    <activity android:name=".BaseMapScreen"
-	      android:label="@string/appName"/> -->
-
     <activity android:name=".LocationPicker"
 	      android:label="@string/appName"/>
 
@@ -47,13 +44,6 @@
 	<category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
-
-    <service android:name=".BackgroundService"
-	     android:label=".BackgroundService" android:process=":remote">
-      <intent-filter>
-	<action android:name="com.omareitti.BackgroundService" />
-      </intent-filter>
-    </service>
   </application>
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
