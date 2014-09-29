@@ -33,6 +33,7 @@ public class BaseMapScreen extends Activity {
 
 	mView = (MapView) findViewById(R.id.mapview);
 	mView.setBuiltInZoomControls(true);
+	mView.setMultiTouchControls(true);
 
 	// TODO: a menu with available tile sources
 	////	mView.setSatellite(false);
