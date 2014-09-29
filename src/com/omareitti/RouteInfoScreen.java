@@ -234,7 +234,7 @@ public class RouteInfoScreen extends Activity {
 	switch (item.getItemId()) {
 	case R.id.action_show_map:
             Intent myIntent = new Intent(RouteInfoScreen.this, RouteMap.class);
-	    myIntent.putExtra("currentStep", 0);
+	    myIntent.putExtra("currentStep", -1);
 	    myIntent.putExtra("route", routeString);
 	    startActivity(myIntent);
 
