@@ -120,8 +120,6 @@ public class MainApp extends Activity {
     @Override
 	protected void onStop() {
 	super.onStop();
-
-	// TODO: stop gps
     }
 
     @Override
@@ -136,6 +134,14 @@ public class MainApp extends Activity {
 	updateSettings();
     }
 
+    @Override
+    protected void onPause() {
+	super.onPause();
+
+	mFrom.setLocationAware(false);
+	mTo.setLocationAware(false);
+    }
+
     private static final String TAG = MainApp.class.getSimpleName();
 
     ArrayList<HistoryItem> history;
@@ -147,7 +153,7 @@ public class MainApp extends Activity {
 
     /** Called when the activity is first created. */
     @Override
-	public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainapp);
 

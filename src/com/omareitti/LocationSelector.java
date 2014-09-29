@@ -122,7 +122,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    });
     }
 
-    private void setLocationAware(boolean enable) {
+    public void setLocationAware(boolean enable) {
 	if (mLocationAware == enable) {
 	    return;
 	}
