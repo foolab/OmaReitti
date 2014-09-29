@@ -7,12 +7,17 @@ import java.util.ArrayList;
 import com.omareitti.datatypes.Coords;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.bonuspack.overlays.Polyline;
+import org.osmdroid.bonuspack.overlays.Marker;
 import java.util.ArrayList;
+import org.osmdroid.views.MapView;
+import android.widget.Toast;
 
+// TODO: Toasts not working
 public class RouteMap extends BaseMapScreen {
     private static final String TAG = RouteMap.class.getSimpleName();
 
     private Route mRoute;
+    private MarkerClickListener mListener;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -46,6 +51,8 @@ public class RouteMap extends BaseMapScreen {
 	    startMainActivity();
 	    return;
 	}
+
+	mListener = new MarkerClickListener();
 
 	if (currentStep == -1) {
 	    for (int x = 0; x < mRoute.steps.size(); x++) {
@@ -82,5 +89,27 @@ public class RouteMap extends BaseMapScreen {
 
 	line.setPoints(list);
 	getMapView().getOverlays().add(line);
+
+	// Now our markers:
+
+	for (int x = 0; x < paths.size(); x++) {
+	    Coords c = paths.get(x).coords;
+	    Marker m = new Marker(getMapView());
+
+	    // Coords.x is longitude but GeoPoint takes latitude first
+	    m.setPosition(new GeoPoint(c.y, c.x));
+
+	    m.setOnMarkerClickListener(mListener);
+	    m.setSubDescription(r.path.get(x).name);
+
+	    getMapView().getOverlays().add(m);
+	}
+    }
+
+    class MarkerClickListener implements Marker.OnMarkerClickListener {
+	public boolean onMarkerClick(Marker marker, MapView mapView) {
+	    Toast.makeText(RouteMap.this, marker.getSubDescription(),Toast.LENGTH_LONG);
+	    return true;
+	}
     }
 }
