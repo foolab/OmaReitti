@@ -76,7 +76,8 @@ public class RouteMap extends BaseMapScreen {
 
 	for (int x = 0; x < paths.size(); x++) {
 	    Coords c = paths.get(x).coords;
-	    list.add(new GeoPoint(c.x * 1E6, c.y * 1E6));
+	    // Coords.x is longitude but GeoPoint takes latitude first
+	    list.add(new GeoPoint(c.y, c.x));
 	}
 
 	line.setPoints(list);
