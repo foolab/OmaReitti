@@ -344,8 +344,11 @@ public class Route {
 		    //Log.e("HelsinkiTravel", "That's ok");
 		};
 
-		if (p.name != null && !p.name.equals("nul")) {
-		    if (s.firstLoc.equals(""))
+		if (p.name != null && p.name.equals("null"))
+		    p.name = null;
+
+		if (p.name != null) {
+		    if (s.firstLoc.equals("") && j == 0)
 			s.firstLoc = p.name;
 
 		    s.lastLoc = p.name;
