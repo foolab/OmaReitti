@@ -100,15 +100,18 @@ public class RouteMap extends BaseMapScreen {
 	overlays.add(line);
 
 	// Now our markers:
-
 	for (int x = 0; x < paths.size(); x++) {
+	    if (paths.get(x).name == null || r.getTransportName() == R.string.tr_walk) {
+		continue;
+	    }
+
 	    Coords c = paths.get(x).coords;
 	    Marker m = createMarker();
 
 	    m.setPosition(c.toGeoPoint());
 
 	    m.setOnMarkerClickListener(mListener);
-	    m.setSubDescription(r.path.get(x).name);
+	    m.setSubDescription(paths.get(x).name);
 
 	    markers.add(m);
 	}
