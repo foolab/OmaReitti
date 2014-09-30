@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.MenuItem;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
+import android.os.Looper;
+import android.os.Handler;
 
 public class BaseMapScreen extends Activity {
     private static final String TAG = BaseMapScreen.class.getSimpleName();
@@ -46,7 +48,7 @@ public class BaseMapScreen extends Activity {
 	mController.setZoom(zoomLevel);
 
 	// Helsinki location from wikipedia
-	mController.setCenter(new GeoPoint(60.170833, 24.9375));
+	setCenter(new GeoPoint(60.170833, 24.9375));
 
 	mLocation = new MyLocationNewOverlay(BaseMapScreen.this, mView);
 	mLocation.setDrawAccuracyEnabled(true);
@@ -103,5 +105,29 @@ public class BaseMapScreen extends Activity {
 
 	if (p != null)
 	    mController.animateTo(p);
+    }
+
+    private GeoPoint mCenter = null;
+    public void setCenter(GeoPoint center) {
+	// TODO: Does not work as it should and all workarounds failed :(
+	// See https://github.com/osmdroid/osmdroid/issues/22
+	if (mCenter != null) {
+	    mCenter = center;
+	    return;
+	}
+
+	mCenter = center;
+
+	new Handler(Looper.getMainLooper())
+	    .post(new Runnable() {
+		    public void run() {
+			if (mCenter == null)
+			    return;
+
+			mView.getController().setCenter(mCenter);
+			mCenter = null;
+		    }
+		}
+		);
     }
 }

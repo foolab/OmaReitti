@@ -58,9 +58,13 @@ public class RouteMap extends BaseMapScreen {
 		Route.RouteStep r = mRoute.steps.get(x);
 		addStep(r);
 	    }
+
+	    setCenter(mRoute.steps.get(0).path.get(0).coords.toGeoPoint());
+
 	} else {
 	    Route.RouteStep r = mRoute.steps.get(currentStep);
 	    addStep(r);
+	    setCenter(r.path.get(0).coords.toGeoPoint());
 	}
 
 	getMapView().invalidate();
