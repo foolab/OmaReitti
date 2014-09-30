@@ -237,7 +237,7 @@ public class Route {
 		    Integer.parseInt(geo_rec.getString("locTypeId")) : minLocTypeID;
 	    }
 
-	    for (int i=0; i<list.length(); i++) {
+	    for (int i = 0; i < list.length(); i++) {
 		JSONObject geo_rec = list.getJSONObject(i);
 
 		// filter out unwanted location entries
@@ -286,8 +286,6 @@ public class Route {
 	return res;
     }
 
-    public Route() {}
-
     public String jsonString;
 
     public Route(String json) throws JSONException {
@@ -306,7 +304,7 @@ public class Route {
 
 	steps = new ArrayList<Route.RouteStep>();
 
-	for(int i=0;i<legs.length();i++) {
+	for(int i = 0; i < legs.length(); i++) {
 	    RouteStep s = new RouteStep();
 
 	    JSONObject leg = legs.getJSONObject(i);
@@ -331,7 +329,7 @@ public class Route {
 
 	    s.path = new ArrayList<Route.PathSegment>();
 
-	    for(int j=0;j<locs.length();j++) {
+	    for(int j = 0; j < locs.length(); j++) {
 		JSONObject loc = locs.getJSONObject(j);
 		JSONObject coord = loc.getJSONObject("coord");
 
@@ -358,6 +356,7 @@ public class Route {
 		if (s.depTime == null && p.depTime != null) {
 		    s.depTime = parseReittiOpasDate(loc.getString("depTime"));
 		}
+
 		if (p.arrTime != null) {
 		    s.arrTime = parseReittiOpasDate(loc.getString("arrTime"));
 		}
