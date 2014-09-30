@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import org.osmdroid.views.MapView;
 import android.widget.Toast;
 
-// TODO: Toasts not working
 public class RouteMap extends BaseMapScreen {
     private static final String TAG = RouteMap.class.getSimpleName();
 
@@ -106,7 +105,7 @@ public class RouteMap extends BaseMapScreen {
 
     class MarkerClickListener implements Marker.OnMarkerClickListener {
 	public boolean onMarkerClick(Marker marker, MapView mapView) {
-	    Toast.makeText(RouteMap.this, marker.getSubDescription(),Toast.LENGTH_LONG);
+	    Toast.makeText(RouteMap.this, marker.getSubDescription(),Toast.LENGTH_LONG).show();
 	    return true;
 	}
     }
