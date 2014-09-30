@@ -42,10 +42,6 @@ public class ReittiopasAPI {
     // Walking speed. Optional, default 70 m/min, range 1-500.
     public static int walkingSpeed = 70;
 
-    public interface RequestReceiver {
-	public void handleRequest(String content);
-    }
-
     public static String formatDate(Date dt) {
 	return dateFormat.format(dt);
     }
@@ -103,15 +99,6 @@ public class ReittiopasAPI {
 	String content = queryUrl(url);
 	ArrayList<Route> routes = Route.parseRoute(content);
 	return routes;
-    }
-
-    public void get(final String url, final RequestReceiver rr) {
-	new Thread(new Runnable() {
-		public void run() {
-		    String res = queryUrl(url);
-		    rr.handleRequest(res);
-		}
-	    }).run();
     }
 
     public static String queryUrl(String url) {
