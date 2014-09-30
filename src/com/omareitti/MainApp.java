@@ -68,7 +68,16 @@ import android.os.AsyncTask;
 import android.view.MenuInflater;
 
 public class MainApp extends Activity {
+    // TODO: settings
+    private static final String TAG = MainApp.class.getSimpleName();
+
     private static boolean isMoreOptionsUnchanged = true;
+    ArrayList<HistoryItem> history;
+    ArrayList<RouteHistoryItem> routes;
+    ListView myPlaces, myRoutes;
+
+    History.HistoryAdapter historyAdapter;
+    History.RoutesAdapter routesAdapter;
 
     SharedPreferences prefs;
 
@@ -103,7 +112,7 @@ public class MainApp extends Activity {
     }
 
     @Override
-	public void onBackPressed() {
+    public void onBackPressed() {
 	if (mGeocode != null) {
 	    mGeocode.cancel(true);
 	    mGeocode = null;
@@ -113,17 +122,17 @@ public class MainApp extends Activity {
     }
 
     @Override
-	protected void onStart() {
+    protected void onStart() {
 	super.onStart();
     }
 
     @Override
-	protected void onStop() {
+    protected void onStop() {
 	super.onStop();
     }
 
     @Override
-	protected void onRestart() {
+    protected void onRestart() {
 	super.onRestart();
     }
 
@@ -142,16 +151,6 @@ public class MainApp extends Activity {
 	mTo.setLocationAware(false);
     }
 
-    private static final String TAG = MainApp.class.getSimpleName();
-
-    ArrayList<HistoryItem> history;
-    ArrayList<RouteHistoryItem> routes;
-    ListView myPlaces, myRoutes;
-
-    History.HistoryAdapter historyAdapter;
-    History.RoutesAdapter routesAdapter;
-
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -356,7 +355,7 @@ public class MainApp extends Activity {
     }
 
     @Override
-	public void onActivityResult(int reqCode, int resultCode, Intent data) {
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
 	super.onActivityResult(reqCode, resultCode, data);
 
 	if (resultCode != Activity.RESULT_OK) {
@@ -667,13 +666,13 @@ public class MainApp extends Activity {
     }
 
     @Override
-	public void onConfigurationChanged(Configuration newConfig)
+    public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
     }
 
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
 	MenuInflater inflater = getMenuInflater();
 	inflater.inflate(R.menu.mainactivity_actions, menu);
 
@@ -681,7 +680,7 @@ public class MainApp extends Activity {
     }
 
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
 	case R.id.action_clear:
