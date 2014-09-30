@@ -7,7 +7,7 @@ public class GeoRec {
     public Coords coords;
     public String lang;
     public String locType, locTypeId, city;
-    public String json;
+    //public String json;
 
     public String toString() {
 	return ""+name+" "+coords+" "+lang+" "+locType+" "+locTypeId+" "+city;

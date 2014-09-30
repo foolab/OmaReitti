@@ -274,7 +274,7 @@ public class Route {
 		rec.locType = geo_rec.getString("locType");
 		rec.locTypeId = geo_rec.getString("locTypeId");
 
-		rec.json = geo_rec.toString(); // DELETE THIS AFTER ALL
+		//rec.json = geo_rec.toString();
 
 		res.add(rec);
 	    }
