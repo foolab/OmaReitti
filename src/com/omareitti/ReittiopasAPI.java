@@ -94,7 +94,8 @@ public class ReittiopasAPI {
 	    +"&timetype="+timetype
 	    +"&transport_types="+transport_types
 	    +"&walk_speed="+walkingSpeed
-	    +"&show=5";
+	    +"&show=5"
+	    +"&detail=full";
 
 	String content = queryUrl(url);
 	ArrayList<Route> routes = Route.parseRoute(content);
