@@ -1,30 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/scroller"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:fillViewport="true"
-	    android:windowSoftInputMode="stateHidden">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroller"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:windowSoftInputMode="stateHidden"
+  >
 
   <LinearLayout
       xmlns:android="http://schemas.android.com/apk/res/android"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content" android:orientation="vertical">
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+    >
 
-  <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:stretchColumns="*" android:id="@+id/top_address_bar">
-    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/TopAddressRow">
-      <TextView android:id="@+id/RouteInfoScreenTextFrom" android:textColor="#FF000000" android:layout_height="wrap_content" android:textStyle="normal|bold" android:gravity="top|left" android:layout_width="fill_parent" android:text="Address1"></TextView>
-      <TextView android:textColor="#FF000000" android:id="@+id/RouteInfoScreenTextTo" android:layout_height="wrap_content" android:textStyle="normal|bold" android:text="Address2" android:gravity="right" android:layout_gravity="right" ></TextView>
-    </TableRow>
-  </TableLayout>
+  <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:stretchColumns="*"
+        android:id="@+id/top_address_bar"
+      >
+    <TableRow
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/TopAddressRow"
+        >
+      <TextView
+            android:id="@+id/RouteInfoScreenTextFrom"
+            android:textColor="#FF000000"
+            android:layout_height="wrap_content"
+            android:textStyle="normal|bold"
+            android:gravity="top|left"
+            android:layout_width="fill_parent"
+            android:text="Address1"
+        />
+      <TextView
+            android:textColor="#FF000000"
+            android:id="@+id/RouteInfoScreenTextTo"
+            android:layout_height="wrap_content"
+            android:textStyle="normal|bold"
+            android:text="Address2"
+            android:gravity="right"
+            android:layout_gravity="right"
+        />
+    </TableRow
+      >
+  </TableLayout
+    >
 
-  <TableLayout android:layout_below="@+id/top_address_bar" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:stretchColumns="*" android:id="@+id/top_info_bar">
-    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/TopInfoRow">
-      <TextView android:id="@+id/RouteInfoScreenTextDuration" android:textColor="#FF000000" android:layout_height="wrap_content" android:textStyle="normal" android:gravity="top|left" android:layout_width="fill_parent" android:text="Address1"></TextView>
-      <TextView android:textColor="#FF000000" android:id="@+id/RouteInfoScreenTextDistance" android:layout_height="wrap_content" android:textStyle="normal" android:text="Address2" android:gravity="right" android:layout_gravity="right" ></TextView>
-    </TableRow>
-  </TableLayout>
+  <TableLayout
+        android:layout_below="@+id/top_address_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:stretchColumns="*"
+        android:id="@+id/top_info_bar"
+      >
+    <TableRow
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/TopInfoRow"
+        >
+      <TextView
+            android:id="@+id/RouteInfoScreenTextDuration"
+            android:textColor="#FF000000"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:gravity="top|left"
+            android:layout_width="fill_parent"
+            android:text="Address1"
+        />
+      <TextView
+            android:textColor="#FF000000"
+            android:id="@+id/RouteInfoScreenTextDistance"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="Address2"
+            android:gravity="right"
+            android:layout_gravity="right"
+        />
+    </TableRow
+      >
+  </TableLayout
+    >
 
-  <ListView android:layout_height="wrap_content" android:layout_below="@id/top_info_bar" android:id="@+id/RouteInfoScreenListView" android:layout_width="fill_parent"></ListView>
-  </LinearLayout>
-</ScrollView>
+  <ListView
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_info_bar"
+        android:id="@+id/RouteInfoScreenListView"
+        android:layout_width="fill_parent"
+    />
+  </LinearLayout
+  >
+</ScrollView
+>

@@ -1,16 +1,26 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_prev"
-          android:icon="@drawable/android:ic_media_rew"
-          android:title="@string/srMenuEarlier"
-          android:showAsAction="always" />
+<?xml version="1.0"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+  >
+    <item
+      android:id="@+id/action_prev"
+      android:icon="@drawable/android:ic_media_rew"
+      android:title="@string/srMenuEarlier"
+      android:showAsAction="always"
+  />
 
-    <item android:id="@+id/action_now"
-          android:icon="@drawable/android:ic_menu_set_as"
-          android:title="@string/srMenuNow"
-          android:showAsAction="always" />
+    <item
+      android:id="@+id/action_now"
+      android:icon="@drawable/android:ic_menu_set_as"
+      android:title="@string/srMenuNow"
+      android:showAsAction="always"
+  />
 
-    <item android:id="@+id/action_next"
-          android:icon="@drawable/android:ic_media_ff"
-          android:title="@string/srMenuLater"
-          android:showAsAction="always" />
-</menu>
+    <item
+      android:id="@+id/action_next"
+      android:icon="@drawable/android:ic_media_ff"
+      android:title="@string/srMenuLater"
+      android:showAsAction="always"
+  />
+</menu
+>
