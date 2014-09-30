@@ -3,7 +3,7 @@
 	  package="com.omareitti"
 	  android:versionName="@string/versionName" android:versionCode="0751">
 
-  <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="11"></uses-sdk>
+  <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="11"></uses-sdk>
   <application android:icon="@drawable/icon" android:label="@string/appName"
 	       android:description="@string/appDesc">
     <activity android:name=".MainApp" android:configChanges="keyboardHidden|orientation"
