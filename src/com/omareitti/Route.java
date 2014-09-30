@@ -351,7 +351,8 @@ public class Route {
 		    if (s.firstLoc.equals("") && j == 0)
 			s.firstLoc = p.name;
 
-		    s.lastLoc = p.name;
+		    if (j == locs.length() - 1)
+			s.lastLoc = p.name;
 		}
 
 		s.path.add(p);
