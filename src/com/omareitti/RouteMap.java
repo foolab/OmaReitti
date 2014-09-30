@@ -11,6 +11,8 @@ import org.osmdroid.bonuspack.overlays.Marker;
 import java.util.ArrayList;
 import org.osmdroid.views.MapView;
 import android.widget.Toast;
+import java.util.ArrayList;
+import org.osmdroid.views.overlay.Overlay;
 
 public class RouteMap extends BaseMapScreen {
     private static final String TAG = RouteMap.class.getSimpleName();
@@ -53,21 +55,25 @@ public class RouteMap extends BaseMapScreen {
 
 	mListener = new MarkerClickListener();
 
+	ArrayList<Overlay> overlays = new ArrayList<Overlay>();
+	ArrayList<Overlay> markers = new ArrayList<Overlay>();
+
 	if (currentStep == -1) {
 	    for (int x = 0; x < mRoute.steps.size(); x++) {
 		Route.RouteStep r = mRoute.steps.get(x);
-		addStep(r);
+		addStep(r, overlays, markers);
 	    }
 
 	    setCenter(mRoute.steps.get(0).path.get(0).coords.toGeoPoint());
 
 	} else {
 	    Route.RouteStep r = mRoute.steps.get(currentStep);
-	    addStep(r);
+	    addStep(r, overlays, markers);
 	    setCenter(r.path.get(0).coords.toGeoPoint());
 	}
 
-	getMapView().invalidate();
+	overlays.addAll(markers);
+	addOverlays(overlays);
     }
 
     private void startMainActivity() {
@@ -75,7 +81,8 @@ public class RouteMap extends BaseMapScreen {
 	finish();
     }
 
-    private void addStep(Route.RouteStep r) {
+    private void addStep(Route.RouteStep r,
+			 ArrayList<Overlay> overlays, ArrayList<Overlay> markers) {
 	ArrayList<Route.PathSegment> paths = r.path;
 
 	Polyline line = new Polyline(this);
@@ -90,20 +97,20 @@ public class RouteMap extends BaseMapScreen {
 	}
 
 	line.setPoints(list);
-	getMapView().getOverlays().add(line);
+	overlays.add(line);
 
 	// Now our markers:
 
 	for (int x = 0; x < paths.size(); x++) {
 	    Coords c = paths.get(x).coords;
-	    Marker m = new Marker(getMapView());
+	    Marker m = createMarker();
 
 	    m.setPosition(c.toGeoPoint());
 
 	    m.setOnMarkerClickListener(mListener);
 	    m.setSubDescription(r.path.get(x).name);
 
-	    getMapView().getOverlays().add(m);
+	    markers.add(m);
 	}
     }
 

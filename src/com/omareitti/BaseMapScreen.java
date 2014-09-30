@@ -14,8 +14,11 @@ import android.view.View;
 import android.view.MenuItem;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
+import org.osmdroid.views.overlay.Overlay;
 import android.os.Looper;
 import android.os.Handler;
+import java.util.List;
+import org.osmdroid.bonuspack.overlays.Marker;
 
 public class BaseMapScreen extends Activity {
     private static final String TAG = BaseMapScreen.class.getSimpleName();
@@ -95,16 +98,21 @@ public class BaseMapScreen extends Activity {
 	mLocation.enableMyLocation();
     }
 
-    public MapView getMapView() {
-	return mView;
-    }
-
     public void goToCurrentLocation() {
 	// TODO: feedback if p is null
 	GeoPoint p = mLocation.getMyLocation();
 
 	if (p != null)
 	    mController.animateTo(p);
+    }
+
+    public void addOverlays(List<Overlay> overlays) {
+	mView.getOverlays().addAll(0, overlays);
+	mView.invalidate();
+    }
+
+    public Marker createMarker() {
+	return new Marker(mView);
     }
 
     private GeoPoint mCenter = null;
