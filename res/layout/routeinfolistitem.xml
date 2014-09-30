@@ -6,17 +6,16 @@
     android:orientation="vertical"
     android:stretchColumns="2,4"
   >
-  	
-  	<TableRow
+  <TableRow
       android:id="@+id/RouteInfoRow1"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:paddingTop="3dp"
     >
-  		<LinearLayout
+    <LinearLayout
         android:orientation="vertical"
       >
-	  		<TextView
+      <TextView
           android:text="Time1"
           android:paddingLeft="3dp"
           android:textStyle="bold"
@@ -26,7 +25,7 @@
           android:layout_height="wrap_content"
           android:gravity="left|center_vertical"
       />
-  			<TextView
+      <TextView
           android:text="Time2"
           android:paddingLeft="3dp"
           android:id="@+id/TextRouteArr"
@@ -35,10 +34,9 @@
           android:gravity="left|center_vertical"
           android:textSize="12dp"
       />
-  		</LinearLayout
+    </LinearLayout
     >
-<!--  	<RelativeLayout android:id="@+id/RouteInfoRL"> -->
-  		<ImageView
+    <ImageView
         android:id="@+id/RouteInfoIcon"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
@@ -47,10 +45,10 @@
         android:src="@drawable/man"
         android:paddingLeft="8dp"
     />
-  		<LinearLayout
+    <LinearLayout
         android:orientation="vertical"
       >
-	  		<TextView
+      <TextView
           android:text="Bus 123"
           android:paddingLeft="5dp"
           android:id="@+id/TextRouteBus"
@@ -60,7 +58,7 @@
           android:textStyle="bold"
           android:textSize="16dp"
       />
-  			<TextView
+      <TextView
           android:text="Somekatu 1"
           android:paddingLeft="5dp"
           android:id="@+id/TextRouteAddress"
@@ -68,12 +66,12 @@
           android:layout_height="wrap_content"
           android:gravity="left"
       />
-  		</LinearLayout
-    >  		
-  		<LinearLayout
+    </LinearLayout
+    >
+    <LinearLayout
         android:orientation="vertical"
       >
-	  		<TextView
+      <TextView
           android:text="Duration"
           android:id="@+id/TextRouteDur"
           android:layout_width="wrap_content"
@@ -81,7 +79,7 @@
           android:gravity="right"
           android:layout_gravity="right"
       />
-  			<TextView
+      <TextView
           android:text="Length"
           android:id="@+id/TextRouteLen"
           android:layout_width="wrap_content"
@@ -89,25 +87,23 @@
           android:gravity="right"
           android:layout_gravity="right"
       />
-  		</LinearLayout
+    </LinearLayout
     >
-<!--  	</RelativeLayout> -->
-  	</TableRow
+  </TableRow
   >
-  	<TableRow
+  <TableRow
       android:id="@+id/RouteInfoRow2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_span="5"
     >
-  		<TextView
+    <TextView
         android:text=""
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
     />
-  	</TableRow
+  </TableRow
   >
-  	
 </TableLayout
 >
