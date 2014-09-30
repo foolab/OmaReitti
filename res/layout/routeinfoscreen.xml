@@ -9,7 +9,6 @@
   >
 
   <LinearLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
@@ -51,7 +50,6 @@
     >
 
   <TableLayout
-        android:layout_below="@+id/top_address_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -88,7 +86,6 @@
 
   <ListView
         android:layout_height="wrap_content"
-        android:layout_below="@id/top_info_bar"
         android:id="@+id/RouteInfoScreenListView"
         android:layout_width="fill_parent"
     />

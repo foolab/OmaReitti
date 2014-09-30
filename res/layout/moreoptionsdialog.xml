@@ -8,7 +8,6 @@
   >
 
   <LinearLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
       android:padding="3dip"
       android:layout_width="fill_parent"
       android:gravity="center"
@@ -52,7 +51,6 @@
   </LinearLayout
   >
   <LinearLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
       android:padding="3dip"
       android:gravity="center"
       android:layout_width="fill_parent"
@@ -96,7 +94,6 @@
   </LinearLayout
   >
   <LinearLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
       android:padding="3dip"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
