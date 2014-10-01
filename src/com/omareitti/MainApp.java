@@ -487,6 +487,51 @@ public class MainApp extends Activity {
     private OnClickListener searchRouteListener = new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
+		final View _v = v;
+
+		if (mFrom.getLocationAware() || mTo.getLocationAware()) {
+		    // We need to wait for them.
+		    final ProgressDialog dlg =
+			ProgressDialog.show(MainApp.this, "",
+					    getString(R.string.maSearchingForLocation), true);
+		    dlg.show();
+
+		    final ArrayList<Integer> refs = new ArrayList<Integer>();
+
+		    LocationSelector.Listener locationSelectorListener =
+			new LocationSelector.Listener() {
+			    @Override
+			    public void onLocationObtained(LocationSelector s, boolean obtained) {
+				if (obtained == false) {
+				    dlg.dismiss();
+				    mFrom.setListener(null);
+				    mTo.setListener(null);
+				    // No error is shown because LocationSelector will do it.
+				} else {
+				    s.setListener(null); // reset
+				    refs.remove(0); // pop
+				    if (refs.size() == 0) {
+					// We are done
+					dlg.dismiss();
+					searchRouteListener.onClick(_v);
+				    }
+				}
+			    }
+			};
+
+		    if (mFrom.getLocationAware()) {
+			refs.add(new Integer(1));
+			mFrom.setListener(locationSelectorListener);
+		    }
+
+		    if (mTo.getLocationAware()) {
+			refs.add(new Integer(1));
+			mTo.setListener(locationSelectorListener);
+		    }
+
+		    return;
+		}
+
 		if (mFrom.getName() == null || mFrom.getName().length() == 0) {
 		    showErrorDialog(MainApp.this, getString(R.string.error),
 				    getString(R.string.maDlgErrorEmptyFrom));
