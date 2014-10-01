@@ -136,7 +136,6 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
 	if (mLocationAware) {
 	    // enable
-	    setLocation("", null);
 	    mText.setHint(R.string.maEditFromHintLocating);
 	    mFinder.add((LocationFinder.Listener)LocationSelector.this);
 	} else {
@@ -182,6 +181,10 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 		    case 0:
 			// We disable first above.
 			// This toggle makes sure we destroy any pending reverse geocoding tasks
+			// We need to clear the location here. If we do it in setLocationAware()
+			// then the function will end up calling itself (via the text listener)
+			// with false as an argument.
+			setLocation("", null);
 			setLocationAware(true);
 			break;
 
