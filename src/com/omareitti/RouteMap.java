@@ -67,6 +67,40 @@ public class RouteMap extends BaseMapScreen {
 	    }
 
 	    setCenter(mRoute.mSteps.get(0).path.get(0).mCoords.toGeoPoint());
+	    // Now our markers:
+
+	    if (mRoute.mSteps.get(0).getTransportName() == R.string.tr_walk) {
+		// First segment is walking.
+		Marker m = createMarker();
+		m.setPosition(mRoute.mSteps.get(0).path.get(0).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_departure));
+		m.setSubDescription(mRoute.mSteps.get(0).path.get(0).mName);
+		markers.add(m);
+	    } else {
+		// First segment is not walking
+		Marker m = (Marker)markers.get(0);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_departure));
+	    }
+
+	    if (mRoute.mSteps.get(mRoute.mSteps.size() - 1).getTransportName()
+		== R.string.tr_walk) {
+		// Last segment is walking
+
+		Route.RouteStep r = mRoute.mSteps.get(mRoute.mSteps.size() - 1);
+
+		Marker m = createMarker();
+		m.setPosition(r.path.get(r.path.size() - 1).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(r.path.size() - 1).mName);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_destination));
+		markers.add(m);
+	    } else {
+		// Last segment is not walking
+		Marker m = (Marker)markers.get(markers.size() - 1);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_destination));
+	    }
+
 
 	} else {
 	    Route.RouteStep r = mRoute.mSteps.get(currentStep);
