@@ -115,37 +115,37 @@ public class SelectRouteScreen extends Activity {
 
 	    Route route1 = routes.get(position);
 
-	    String hours = Integer.toString(route1.depTime.getHours());
+	    String hours = Integer.toString(route1.mDepTime.getHours());
 	    hours = hours.length() == 1 ? "0"+hours : hours;
-	    String mins = Integer.toString(route1.depTime.getMinutes());
+	    String mins = Integer.toString(route1.mDepTime.getMinutes());
 	    mins = mins.length() == 1 ? "0"+mins : mins;
 	    holder.text.setText(hours+":"+mins);
 
-	    if (route1.firstBusTime != null) {
-		hours = Integer.toString(route1.firstBusTime.getHours());
+	    if (route1.mFirstBusTime != null) {
+		hours = Integer.toString(route1.mFirstBusTime.getHours());
 		hours = hours.length() == 1 ? "0"+hours : hours;
-		mins = Integer.toString(route1.firstBusTime.getMinutes());
+		mins = Integer.toString(route1.mFirstBusTime.getMinutes());
 		mins = mins.length() == 1 ? "0"+mins : mins;
 		holder.text3.setText(" ("+hours+":"+mins+")");
 	    }
 
-	    holder.text1.setText(RouteInfoScreen.getStringDuration(route1.actual_duration, context));
+	    holder.text1.setText(RouteInfoScreen.getStringDuration(route1.mActualDuration, context));
 
-	    hours = Integer.toString(route1.arrTime.getHours());
+	    hours = Integer.toString(route1.mArrTime.getHours());
 	    hours = hours.length() == 1 ? "0"+hours : hours;
-	    mins = Integer.toString(route1.arrTime.getMinutes());
+	    mins = Integer.toString(route1.mArrTime.getMinutes());
 	    mins = mins.length() == 1 ? "0"+mins : mins;
 	    holder.text2.setText(hours+":"+mins);
 
 	    int iconsFit = (int)Math.floor((double)screenWidth/iconWidth);
-	    iconsFit = iconsFit < route1.steps.size() ? iconsFit-1 : iconsFit;
+	    iconsFit = iconsFit < route1.mSteps.size() ? iconsFit-1 : iconsFit;
 	    int fitLeft = (int)Math.ceil((double)iconsFit/2);
 	    int fitRight = (int)Math.floor((double)iconsFit/2);
 
-	    for (int i = 0; i < route1.steps.size(); i++) {
-		Route.RouteStep step = route1.steps.get(i);
+	    for (int i = 0; i < route1.mSteps.size(); i++) {
+		Route.RouteStep step = route1.mSteps.get(i);
 
-		if (i+1 > fitLeft && i+1 < route1.steps.size()-fitRight+1) {
+		if (i+1 > fitLeft && i+1 < route1.mSteps.size()-fitRight+1) {
 		    if (i+1 == fitLeft+1) {
 			ImageView icon = new ImageView(context);
 			icon.setImageResource(R.drawable.dots);
@@ -339,11 +339,11 @@ public class SelectRouteScreen extends Activity {
 	switch (item.getItemId()) {
 	case R.id.action_prev:
 	    if (timetype.equals("departure")) {
-		long diff = (routes.get(routes.size() - 1).depTime).getTime() -
-		    (routes.get(0).depTime).getTime();
-		dt = new Date((routes.get(0).depTime).getTime() - diff);
+		long diff = (routes.get(routes.size() - 1).mDepTime).getTime() -
+		    (routes.get(0).mDepTime).getTime();
+		dt = new Date((routes.get(0).mDepTime).getTime() - diff);
 	    } else {
-		dt = routes.get(routes.size()-1).arrTime;
+		dt = routes.get(routes.size()-1).mArrTime;
 	    }
 	    break;
 
@@ -353,10 +353,10 @@ public class SelectRouteScreen extends Activity {
 
 	case R.id.action_next:
 	    if (timetype.equals("departure")) {
-		dt = routes.get(routes.size()-1).depTime;
+		dt = routes.get(routes.size()-1).mDepTime;
 	    } else {
 		// web interface in this case adds 15 mins (900000 msec)
-		dt = new Date((routes.get(0).arrTime).getTime() + 900000);
+		dt = new Date((routes.get(0).mArrTime).getTime() + 900000);
 	    }
 	    break;
 

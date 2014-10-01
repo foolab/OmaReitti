@@ -32,6 +32,8 @@ public class RouteMap extends BaseMapScreen {
 
 	String routeString = getIntent().getExtras().getString("route");
         int currentStep = getIntent().getExtras().getInt("currentStep");
+        String from = getIntent().getExtras().getString("from");
+        String to = getIntent().getExtras().getString("to");
 
 	if (routeString.equals("")) {
 	    Log.e(TAG, "no route string");
@@ -40,14 +42,14 @@ public class RouteMap extends BaseMapScreen {
 	}
 
 	try {
-	    mRoute = new Route(routeString);
+	    mRoute = new Route(routeString, from, to);
 	} catch (Exception e) {
 	    Log.e(TAG, "Couldn't get the route from JSONobj "+routeString, e);
 	    startMainActivity();
 	    return;
 	}
 
-	if (currentStep < -1 || mRoute.steps.size() < currentStep) {
+	if (currentStep < -1 || mRoute.mSteps.size() < currentStep) {
 	    Log.e(TAG, "Invalid current step " + currentStep);
 	    startMainActivity();
 	    return;
@@ -59,17 +61,17 @@ public class RouteMap extends BaseMapScreen {
 	ArrayList<Overlay> markers = new ArrayList<Overlay>();
 
 	if (currentStep == -1) {
-	    for (int x = 0; x < mRoute.steps.size(); x++) {
-		Route.RouteStep r = mRoute.steps.get(x);
+	    for (int x = 0; x < mRoute.mSteps.size(); x++) {
+		Route.RouteStep r = mRoute.mSteps.get(x);
 		addStep(r, overlays, markers);
 	    }
 
-	    setCenter(mRoute.steps.get(0).path.get(0).coords.toGeoPoint());
+	    setCenter(mRoute.mSteps.get(0).path.get(0).mCoords.toGeoPoint());
 
 	} else {
-	    Route.RouteStep r = mRoute.steps.get(currentStep);
+	    Route.RouteStep r = mRoute.mSteps.get(currentStep);
 	    addStep(r, overlays, markers);
-	    setCenter(r.path.get(0).coords.toGeoPoint());
+	    setCenter(r.path.get(0).mCoords.toGeoPoint());
 	}
 
 	overlays.addAll(markers);
@@ -92,7 +94,7 @@ public class RouteMap extends BaseMapScreen {
 	ArrayList<GeoPoint> list = new ArrayList<GeoPoint>(paths.size());
 
 	for (int x = 0; x < paths.size(); x++) {
-	    Coords c = paths.get(x).coords;
+	    Coords c = paths.get(x).mCoords;
 	    list.add(c.toGeoPoint());
 	}
 
@@ -101,17 +103,17 @@ public class RouteMap extends BaseMapScreen {
 
 	// Now our markers:
 	for (int x = 0; x < paths.size(); x++) {
-	    if (paths.get(x).name == null || r.getTransportName() == R.string.tr_walk) {
+	    if (paths.get(x).mName == null || r.getTransportName() == R.string.tr_walk) {
 		continue;
 	    }
 
-	    Coords c = paths.get(x).coords;
+	    Coords c = paths.get(x).mCoords;
 	    Marker m = createMarker();
 
 	    m.setPosition(c.toGeoPoint());
 
 	    m.setOnMarkerClickListener(mListener);
-	    m.setSubDescription(paths.get(x).name);
+	    m.setSubDescription(paths.get(x).mName);
 
 	    markers.add(m);
 	}

@@ -63,7 +63,7 @@ public class RouteInfoScreen extends Activity {
 	}
 
 	public int getCount() {
-	    return route.steps.size();
+	    return route.mSteps.size();
 	}
 
 	public Object getItem(int position) {
@@ -93,7 +93,7 @@ public class RouteInfoScreen extends Activity {
 		holder = (ViewHolder) convertView.getTag();
 	    }
 
-	    Route.RouteStep step = route.steps.get(position);
+	    Route.RouteStep step = route.mSteps.get(position);
 
 	    String hours = Integer.toString(step.depTime.getHours());
 	    hours = hours.length() == 1 ? "0"+hours : hours;
@@ -140,6 +140,8 @@ public class RouteInfoScreen extends Activity {
 		Intent myIntent = new Intent(v.getContext(), RouteMap.class);
 		myIntent.putExtra("currentStep", position);
 		myIntent.putExtra("route", routeString);
+		myIntent.putExtra("from", fromLoc);
+		myIntent.putExtra("to", toLoc);
 
 		startActivity(myIntent);
 	    }
@@ -159,10 +161,10 @@ public class RouteInfoScreen extends Activity {
         row1.setBackgroundColor(Color.argb(178,255,255,255));
 
         TextView dur = (TextView) findViewById(R.id.RouteInfoScreenTextDuration);
-        dur.setText(getStringDuration(route.actual_duration, this));
+        dur.setText(getStringDuration(route.mActualDuration, this));
 
         TextView dist = (TextView) findViewById(R.id.RouteInfoScreenTextDistance);
-        dist.setText(String.format(getString(R.string.kmDouble), (route.length/100f)/10f));
+        dist.setText(String.format(getString(R.string.kmDouble), (route.mLength/100f)/10f));
     }
 
     @Override
@@ -183,7 +185,7 @@ public class RouteInfoScreen extends Activity {
 
 	if (routeString != null && !routeString.equals("")) {
 	    try {
-		route = new Route(routeString);
+		route = new Route(routeString, fromLoc, toLoc);
 	    } catch (Exception e) {
 		Log.e(TAG, "Failed to parse route " + e);
 		startActivity(new Intent(RouteInfoScreen.this, MainApp.class));
@@ -236,6 +238,9 @@ public class RouteInfoScreen extends Activity {
             Intent myIntent = new Intent(RouteInfoScreen.this, RouteMap.class);
 	    myIntent.putExtra("currentStep", -1);
 	    myIntent.putExtra("route", routeString);
+	    myIntent.putExtra("from", fromLoc);
+	    myIntent.putExtra("to", toLoc);
+
 	    startActivity(myIntent);
 
 	    return true;

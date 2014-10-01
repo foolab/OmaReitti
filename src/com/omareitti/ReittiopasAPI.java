@@ -98,7 +98,7 @@ public class ReittiopasAPI {
 	    +"&detail=full";
 
 	String content = queryUrl(url);
-	ArrayList<Route> routes = Route.parseRoute(content);
+	ArrayList<Route> routes = Route.parseRoute(content, from, to);
 	return routes;
     }
 

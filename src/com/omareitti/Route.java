@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.omareitti.R;
 import com.omareitti.datatypes.Coords;
 import com.omareitti.datatypes.GeoRec;
 
@@ -15,29 +14,27 @@ import android.graphics.Color;
 import android.util.Log;
 
 public class Route {
-    public ArrayList<RouteStep> steps;
+    public ArrayList<RouteStep> mSteps;
 
-    public double length = 0;
-    public double duration = 0;
-    public double actual_duration = 0;
+    public double mLength;
+    public double mDuration;
+    public double mActualDuration = 0.0;
 
-    public Date depTime = null;
-    public Date arrTime = null;
-    public Date firstBusTime = null;
+    public Date mDepTime = null;
+    public Date mArrTime = null;
+    public Date mFirstBusTime = null;
+    public Date mLastBusTime = null;
 
     public class PathSegment {
-	public Coords coords;
+	public Coords mCoords;
 
-	public Date arrTime;
-	public Date depTime;
+	public Date mArrTime;
+	public Date mDepTime;
 
-	public String name = null;
+	public String mName = null;
     }
 
     public class RouteStep {
-	public RouteStep() {
-	}
-
 	public int iconId = -1;
 	public String desc;
 	public String busNumber = "";
@@ -199,19 +196,36 @@ public class Route {
 	}
     }
 
-    public static ArrayList<Route> parseRoute(String json) {
+    public static ArrayList<Route> parseRoute(String json, String from, String to) {
 	ArrayList<Route> routes = new ArrayList<Route>();
 
 	try {
 	    JSONArray list = new JSONArray(json);
 
-	    for(int i=0;i<list.length();i++)
-                routes.add(new Route(list.getJSONArray(i)));
+	    for(int i = 0; i < list.length(); i++)
+                routes.add(new Route(list.getJSONArray(i), from, to));
 	} catch (Exception e) {
 	    Log.e("HelsinkiTravel", "Caught!", e);
 	    return null;
 	};
 
+	/*
+	for (int x = 0; x < routes.size(); x++) {
+	    // Update those because we don't get them from the API
+	    Route r = routes.get(x);
+	    RouteStep s = r.mSteps.get(0);
+	    PathSegment p = s.path.get(0);
+
+	    s.firstLoc = from;
+	    p.mName = from;
+
+	    s = r.mSteps.get(r.mSteps.size() - 1);
+	    s.lastLoc = to;
+
+	    p = s.path.get(s.path.size() - 1);
+	    p.mName = to;
+	}
+	*/
 	return routes;
     }
 
@@ -288,21 +302,21 @@ public class Route {
 
     public String jsonString;
 
-    public Route(String json) throws JSONException {
-	this(new JSONObject(json));
+    public Route(String json, String from, String to) throws JSONException {
+	this(new JSONObject(json), from, to);
     }
 
-    public Route(JSONArray a) throws JSONException {
-	this(a.getJSONObject(0));
+    public Route(JSONArray a, String from, String to) throws JSONException {
+	this(a.getJSONObject(0), from, to);
     }
 
-    public Route(JSONObject obj) throws JSONException {
-	this.duration = obj.getDouble("duration");
-	this.length = obj.getDouble("length");
+    public Route(JSONObject obj, String from, String to) throws JSONException {
+	mDuration = obj.getDouble("duration");
+	mLength = obj.getDouble("length");
 
 	JSONArray legs = obj.getJSONArray("legs");
 
-	steps = new ArrayList<Route.RouteStep>();
+	mSteps = new ArrayList<Route.RouteStep>();
 
 	for(int i = 0; i < legs.length(); i++) {
 	    RouteStep s = new RouteStep();
@@ -311,7 +325,7 @@ public class Route {
 
 	    s.length = leg.getDouble("length");
 	    s.duration = leg.getDouble("duration");
-	    this.actual_duration += Math.ceil(s.duration/60)*60;
+	    mActualDuration += Math.ceil(s.duration/60)*60;
 
 	    try {
 		s.desc = leg.getString("code");
@@ -334,51 +348,56 @@ public class Route {
 		JSONObject coord = loc.getJSONObject("coord");
 
 		PathSegment p = new PathSegment();
-		p.coords = new Coords(coord.getDouble("x"), coord.getDouble("y"));
-		p.arrTime = parseReittiOpasDate(loc.getString("arrTime"));
-		p.depTime = parseReittiOpasDate(loc.getString("depTime"));
+		p.mCoords = new Coords(coord.getDouble("x"), coord.getDouble("y"));
+		p.mArrTime = parseReittiOpasDate(loc.getString("arrTime"));
+		p.mDepTime = parseReittiOpasDate(loc.getString("depTime"));
 
 		try {
-		    p.name = loc.getString("name");
+		    p.mName = loc.getString("name");
 		} catch (Exception e) {
 		    //Log.e("HelsinkiTravel", "That's ok");
 		};
 
-		if (p.name != null && p.name.equals("null"))
-		    p.name = null;
+		if (p.mName != null && p.mName.equals("null"))
+		    p.mName = null;
 
-		if (p.name != null) {
-		    if (s.firstLoc.equals("") && j == 0)
-			s.firstLoc = p.name;
+		if (j == 0 && p.mName != null)
+		    s.firstLoc = p.mName;
 
-		    if (j == locs.length() - 1)
-			s.lastLoc = p.name;
+		if (j == 0)
+		    s.depTime = p.mDepTime;
+
+		// No else in case we have a short segment with 2 points only.
+		if (j == locs.length() - 1 && p.mName != null)
+		    s.lastLoc = p.mName;
+
+		if (j == locs.length() - 1)
+		    s.arrTime = p.mArrTime;
+
+		// First segment and path
+		if (i == 0 && j == 0) {
+		    p.mName = from;
+		    s.firstLoc = from;
+		    mDepTime = p.mDepTime;
+		}
+
+		// Last segment and path
+		if (i == legs.length() - 1 && j == locs.length() - 1) {
+		    p.mName = to;
+		    s.lastLoc = to;
+		    mArrTime = p.mArrTime;
 		}
 
 		s.path.add(p);
-
-		if (s.depTime == null && p.depTime != null) {
-		    s.depTime = parseReittiOpasDate(loc.getString("depTime"));
-		}
-
-		if (p.arrTime != null) {
-		    s.arrTime = parseReittiOpasDate(loc.getString("arrTime"));
-		}
-
-		if (this.depTime == null && p.depTime != null) {
-		    this.depTime = parseReittiOpasDate(loc.getString("depTime"));
-		}
-
-		if (p.arrTime != null) {
-		    this.arrTime = parseReittiOpasDate(loc.getString("arrTime"));
-		}
-
-		if (this.firstBusTime == null && p.depTime != null && s.type != 0) {
-		    this.firstBusTime = parseReittiOpasDate(loc.getString("depTime"));
-		}
 	    }
 
-	    steps.add(s);
+	    if (mFirstBusTime == null && s.type != 0)
+		mFirstBusTime = s.depTime;
+
+	    if (s.type != 0)
+		mLastBusTime = s.arrTime;
+
+	    mSteps.add(s);
 	}
 
 	this.jsonString = obj.toString();
