@@ -485,6 +485,7 @@ public class MainApp extends Activity {
     }
 
     private OnClickListener searchRouteListener = new OnClickListener() {
+	    @Override
 	    public void onClick(View v) {
 		if (mFrom.getName() == null || mFrom.getName().length() == 0) {
 		    showErrorDialog(MainApp.this, getString(R.string.error),

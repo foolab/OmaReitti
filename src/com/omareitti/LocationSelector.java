@@ -92,18 +92,22 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	mText = (AutoCompleteTextView)findViewById(R.id.editText);
 	mText.setAdapter(mAdapter);
 	mText.addTextChangedListener(new TextWatcher() {
+		@Override
 		public void afterTextChanged(Editable s) {
 		    mCoords = null;
 		}
 
+		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		    setLocationAware(false);
 		}
 
+		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) { }
 	    });
 
 	mText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		@Override
 		public void onItemClick(AdapterView parent, View view, int position, long id) {
 		    Cursor c = mAdapter.getCursor();
 		    c.moveToPosition(position);
@@ -116,6 +120,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	mButton = (Button)findViewById(R.id.button);
 
 	mButton.setOnClickListener(new View.OnClickListener() {
+		@Override
 		public void onClick(View v) {
 		    showGetAddress();
 		}
@@ -146,6 +151,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	}
     }
 
+	@Override
     public void onCoordinatesChanged() {
 	// Get our coordinates
 	Coords coords = mFinder.coordinates();
