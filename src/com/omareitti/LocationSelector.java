@@ -39,9 +39,14 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
     private int mMapActivityId;
     private CursorAdapter mAdapter;
     private boolean mLocationAware;
-    ReverseGeocode mTask;
+    private ReverseGeocode mTask;
+    private Listener mListener = null;
 
     private static final String TAG = MainApp.class.getSimpleName();
+
+    public interface Listener {
+	public abstract void onLocationObtained(LocationSelector s, boolean obtained);
+    }
 
     public LocationSelector(Context context, AttributeSet attrs) {
 	super(context, attrs);
@@ -70,6 +75,10 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
     public String getName() {
 	return mText.getText().toString();
+    }
+
+    public void setListener(Listener listener) {
+	mListener = listener;
     }
 
     public void setLocation(String location, Coords coords) {
@@ -127,6 +136,10 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    });
     }
 
+    public boolean getLocationAware() {
+	return mLocationAware;
+    }
+
     public void setLocationAware(boolean enable) {
 	if (mLocationAware == enable) {
 	    return;
@@ -151,7 +164,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	}
     }
 
-	@Override
+    @Override
     public void onCoordinatesChanged() {
 	// Get our coordinates
 	Coords coords = mFinder.coordinates();
@@ -289,6 +302,9 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    }
 
 	    mText.setHint(mHint);
+
+	    if (mListener != null)
+		mListener.onLocationObtained(LocationSelector.this, result != null);
 	}
 
 	@Override
@@ -296,6 +312,9 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 	    mText.setHint(mHint);
 
 	    super.onCancelled(result);
+
+	    if (mListener != null)
+		mListener.onLocationObtained(LocationSelector.this, false);
 	}
     }
 }

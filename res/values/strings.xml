@@ -58,6 +58,7 @@
     <string name="maTabRoutesMenuSetBackwards">Set backwards</string>
     <string name="maTabRoutesMenuDelete">Delete</string>
     <string name="maTabRoutesMenuHome">Add to Home Screen</string>
+    <string name="maSearchingForLocation">Searching for location...</string>
     <string name="maAddressMenuLocation">Current location</string>
     <string name="maAddressMenuMap">Map</string>
     <string name="maAddressMenuContacts">Contacts</string>
