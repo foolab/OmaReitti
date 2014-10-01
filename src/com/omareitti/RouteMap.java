@@ -72,6 +72,72 @@ public class RouteMap extends BaseMapScreen {
 	    Route.RouteStep r = mRoute.mSteps.get(currentStep);
 	    addStep(r, overlays, markers);
 	    setCenter(r.path.get(0).mCoords.toGeoPoint());
+
+	    // Now our markers:
+	    if (currentStep == 0 && r.getTransportName() == R.string.tr_walk) {
+		// First walking segment
+		Marker m = createMarker();
+		m.setPosition(r.path.get(0).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(0).mName);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_departure));
+		markers.add(m);
+
+		// Add the end marker
+		m = createMarker();
+		m.setPosition(r.path.get(r.path.size() - 1).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(r.path.size() - 1).mName);
+		markers.add(m);
+
+	    } else if (currentStep == 0) {
+		// First non walking segment
+		Marker m = (Marker)markers.get(0);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_departure));
+	    }
+
+	    if (currentStep == mRoute.mSteps.size() - 1
+		&& r.getTransportName() == R.string.tr_walk) {
+		// Last walking segment
+
+		Marker m = createMarker();
+		m.setPosition(r.path.get(r.path.size() - 1).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(r.path.size() - 1).mName);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_destination));
+		markers.add(m);
+
+		// Add the start marker
+		m = createMarker();
+		m.setPosition(r.path.get(0).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(0).mName);
+		markers.add(m);
+
+	    } else if (currentStep == mRoute.mSteps.size() - 1) {
+		// Last non walking segment
+		Marker m = (Marker)markers.get(markers.size() - 1);
+		m.setIcon(getResources().getDrawable(R.drawable.marker_destination));
+	    }
+
+	    if (currentStep != 0 && currentStep != mRoute.mSteps.size() - 1 &&
+		r.getTransportName() == R.string.tr_walk) {
+		// A walking segment in the middle:
+
+		// Start
+		Marker m = createMarker();
+		m.setPosition(r.path.get(0).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(0).mName);
+		markers.add(m);
+
+		// End
+		m = createMarker();
+		m.setPosition(r.path.get(r.path.size() - 1).mCoords.toGeoPoint());
+		m.setOnMarkerClickListener(mListener);
+		m.setSubDescription(r.path.get(r.path.size() - 1).mName);
+		markers.add(m);
+	    }
 	}
 
 	overlays.addAll(markers);
@@ -103,7 +169,7 @@ public class RouteMap extends BaseMapScreen {
 
 	// Now our markers:
 	for (int x = 0; x < paths.size(); x++) {
-	    if (paths.get(x).mName == null || r.getTransportName() == R.string.tr_walk) {
+	    if (r.getTransportName() == R.string.tr_walk) {
 		continue;
 	    }
 
@@ -121,7 +187,11 @@ public class RouteMap extends BaseMapScreen {
 
     class MarkerClickListener implements Marker.OnMarkerClickListener {
 	public boolean onMarkerClick(Marker marker, MapView mapView) {
-	    Toast.makeText(RouteMap.this, marker.getSubDescription(),Toast.LENGTH_LONG).show();
+	    if (marker.getSubDescription() != null) {
+		Toast.makeText(RouteMap.this,
+			       marker.getSubDescription(), Toast.LENGTH_LONG).show();
+	    }
+
 	    return true;
 	}
     }
