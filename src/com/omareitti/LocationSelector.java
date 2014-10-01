@@ -136,6 +136,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
 	if (mLocationAware) {
 	    // enable
+	    setLocation("", null);
 	    mText.setHint(R.string.maEditFromHintLocating);
 	    mFinder.add((LocationFinder.Listener)LocationSelector.this);
 	} else {
