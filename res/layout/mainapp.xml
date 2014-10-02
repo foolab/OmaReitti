@@ -62,6 +62,7 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
+      style="?android:attr/buttonBarStyle"
     >
 
     <Button
@@ -70,6 +71,7 @@
         android:layout_width="wrap_content"
         android:text="@string/maBtnSearch"
         android:layout_weight="1"
+	style="?android:attr/buttonBarButtonStyle"
     />
 <!--	    android:drawableLeft="@android:drawable/ic_menu_search" -->
     <Button
@@ -77,6 +79,7 @@
         android:id="@+id/MainAppMoreOptions"
         android:layout_height="wrap_content"
         android:layout_width="50dip"
+	style="?android:attr/buttonBarButtonStyle"
     />
   </LinearLayout
   >
