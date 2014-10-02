@@ -26,9 +26,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.provider.Contacts;
-import android.provider.ContactsContract;
-import android.provider.Contacts.People;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
@@ -391,21 +388,27 @@ public class MainApp extends Activity {
 	    str = h.name;
     	et.setText(str);
 
-    	alertDialog.setButton(getString(R.string.save), new DialogInterface.OnClickListener() {
-	    	public void onClick(DialogInterface dialog, int which) {
-		    EditText et = (EditText)convertView.findViewById(R.id.editName);
-		    History.saveHistory(MainApp.this, h.address, et.getText().toString(),
-					h.coords);
-		    History.init(MainApp.this);
-		    history = History.getHistory(MainApp.this);
-		    dialog.dismiss();
-		    historyAdapter.notifyDataSetChanged();
-		} });
+    	alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+			      getString(R.string.save), new DialogInterface.OnClickListener() {
+				      @Override
+				      public void onClick(DialogInterface dialog, int which) {
+					  EditText et =
+					      (EditText)convertView.findViewById(R.id.editName);
+					  History.saveHistory(MainApp.this, h.address,
+							      et.getText().toString(),
+							      h.coords);
+					  History.init(MainApp.this);
+					  history = History.getHistory(MainApp.this);
+					  dialog.dismiss();
+					  historyAdapter.notifyDataSetChanged();
+				      } });
 
-   	alertDialog.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-	    	public void onClick(DialogInterface dialog, int which) {
-		    dialog.dismiss();
-		} });
+   	alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+			      getString(R.string.cancel), new DialogInterface.OnClickListener() {
+				      @Override
+				      public void onClick(DialogInterface dialog, int which) {
+					  dialog.dismiss();
+				      } });
 
     	alertDialog.show();
     }
@@ -703,11 +706,13 @@ public class MainApp extends Activity {
 	AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 	alertDialog.setTitle(title);
 	alertDialog.setMessage(message);
-	alertDialog.setButton(context.getString(R.string.ok),
+	alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+			      context.getString(R.string.ok),
 			      new DialogInterface.OnClickListener() {
-	    	public void onClick(DialogInterface dialog, int which) {
-		    // Nothing
-		} });
+				  @Override
+				  public void onClick(DialogInterface dialog, int which) {
+				      // Nothing
+				  } });
 	alertDialog.show();
     }
 
@@ -751,10 +756,12 @@ public class MainApp extends Activity {
 	    AlertDialog alertDialog = new AlertDialog.Builder(MainApp.this).create();
 	    alertDialog.setTitle(getString(R.string.maMenuAboutDlgTitle));
 	    alertDialog.setMessage(ss);
-	    alertDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int which) {
-			// Nothing
-	    	    } });
+	    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+				  getString(R.string.ok), new DialogInterface.OnClickListener() {
+					  @Override
+					  public void onClick(DialogInterface dialog, int which) {
+					      // Nothing
+					  } });
 	    alertDialog.show();
 	    return true;
 

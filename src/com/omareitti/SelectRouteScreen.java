@@ -311,10 +311,12 @@ public class SelectRouteScreen extends Activity {
 					new AlertDialog.Builder(SelectRouteScreen.this).create();
 				    alertDialog.setTitle(getString(R.string.networkErrorTitle));
 				    alertDialog.setMessage(getString(R.string.networkErrorText));
-				    alertDialog.setButton(getString(R.string.ok),
+				    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+							  getString(R.string.ok),
 							  new DialogInterface.OnClickListener() {
+							      @Override
 							      public void onClick(DialogInterface dialog, int which) {
-						SelectRouteScreen.this.finish();
+								  SelectRouteScreen.this.finish();
 							      } });
 				    alertDialog.show();
 				}
