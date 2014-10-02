@@ -44,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
 import com.omareitti.datatypes.Coords;
 import android.view.MenuInflater;
 
@@ -202,6 +203,12 @@ public class SelectRouteScreen extends Activity {
     }
 
     public void doMakeUp() {
+	LinearLayout l = (LinearLayout) findViewById(R.id.layout1);
+	l.setBackgroundColor(Color.argb(178,255,255,255));
+
+	l = (LinearLayout) findViewById(R.id.layout2);
+	l.setBackgroundColor(Color.argb(178,255,255,255));
+
         TextView from = (TextView) findViewById(R.id.SelectRouteScreenTextFrom);
         from.setText(fromName);
 
