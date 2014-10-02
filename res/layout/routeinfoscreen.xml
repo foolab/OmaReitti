@@ -33,14 +33,12 @@
             android:textStyle="normal|bold"
             android:gravity="top|left"
             android:layout_width="fill_parent"
-            android:text="Address1"
         />
       <TextView
             android:textColor="#FF000000"
             android:id="@+id/RouteInfoScreenTextTo"
             android:layout_height="wrap_content"
             android:textStyle="normal|bold"
-            android:text="Address2"
             android:gravity="right"
             android:layout_gravity="right"
         />
@@ -68,14 +66,12 @@
             android:textStyle="normal"
             android:gravity="top|left"
             android:layout_width="fill_parent"
-            android:text="Address1"
         />
       <TextView
             android:textColor="#FF000000"
             android:id="@+id/RouteInfoScreenTextDistance"
             android:layout_height="wrap_content"
             android:textStyle="normal"
-            android:text="Address2"
             android:gravity="right"
             android:layout_gravity="right"
         />

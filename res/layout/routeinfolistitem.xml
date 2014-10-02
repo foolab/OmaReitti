@@ -16,7 +16,6 @@
         android:orientation="vertical"
       >
       <TextView
-          android:text="Time1"
           android:paddingLeft="3dp"
           android:textStyle="bold"
           android:textSize="16dp"
@@ -26,7 +25,6 @@
           android:gravity="left|center_vertical"
       />
       <TextView
-          android:text="Time2"
           android:paddingLeft="3dp"
           android:id="@+id/TextRouteArr"
           android:layout_width="wrap_content"
@@ -48,7 +46,6 @@
         android:orientation="vertical"
       >
       <TextView
-          android:text="Bus 123"
           android:paddingLeft="5dp"
           android:id="@+id/TextRouteBus"
           android:layout_width="wrap_content"
@@ -58,7 +55,6 @@
           android:textSize="16dp"
       />
       <TextView
-          android:text="Somekatu 1"
           android:paddingLeft="5dp"
           android:id="@+id/TextRouteAddress"
           android:layout_width="wrap_content"
@@ -71,7 +67,6 @@
         android:orientation="vertical"
       >
       <TextView
-          android:text="Duration"
           android:id="@+id/TextRouteDur"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -79,7 +74,6 @@
           android:layout_gravity="right"
       />
       <TextView
-          android:text="Length"
           android:id="@+id/TextRouteLen"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -96,7 +90,6 @@
       android:layout_height="wrap_content"
     >
     <TextView
-        android:text=""
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

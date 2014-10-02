@@ -73,7 +73,7 @@
     />
 <!--	    android:drawableLeft="@android:drawable/ic_menu_search" -->
     <Button
-        android:text="..."
+        android:text="@string/maMoreOptions"
         android:id="@+id/MainAppMoreOptions"
         android:layout_height="wrap_content"
         android:layout_width="50dip"

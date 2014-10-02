@@ -82,6 +82,7 @@
     <string name="maMenuAbout">About</string>
     <string name="maMenuAboutDlgTitle">About</string>
     <!-- moreoptionsdialog -->
+    <string name="maMoreOptions">...</string>
     <string name="moOptimizeNormal">Normal</string>
     <string name="moOptimizeFastest">Fastest</string>
     <string name="moOptimizeLeastTransfers">Least transfers</string>
