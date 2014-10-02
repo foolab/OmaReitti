@@ -98,6 +98,7 @@ public class SelectRouteScreen extends Activity {
 		holder.text1 = (TextView) convertView.findViewById(R.id.SelectRouteScreenTextDuration);
 		holder.text2 = (TextView) convertView.findViewById(R.id.SelectRouteScreenTextTimeEnd);
 		holder.text3 = (TextView) convertView.findViewById(R.id.SelectRouteScreenTextTimeFirstBus);
+		holder.text4 = (TextView) convertView.findViewById(R.id.SelectRouteScreenTextTimeLastBus);
 		holder.row1 = (TableRow) convertView.findViewById(R.id.SelectRouteScreenTableRowIcons);
 		holder.row2 = (TableRow) convertView.findViewById(R.id.SelectRouteScreenTableRowDesc);
 
@@ -127,6 +128,14 @@ public class SelectRouteScreen extends Activity {
 		mins = Integer.toString(route1.mFirstBusTime.getMinutes());
 		mins = mins.length() == 1 ? "0"+mins : mins;
 		holder.text3.setText(" ("+hours+":"+mins+")");
+	    }
+
+	    if (route1.mLastBusTime != null) {
+		hours = Integer.toString(route1.mLastBusTime.getHours());
+		hours = hours.length() == 1 ? "0"+hours : hours;
+		mins = Integer.toString(route1.mLastBusTime.getMinutes());
+		mins = mins.length() == 1 ? "0"+mins : mins;
+		holder.text4.setText(" ("+hours+":"+mins+")");
 	    }
 
 	    holder.text1.setText(RouteInfoScreen.getStringDuration(route1.mActualDuration, context));
@@ -178,6 +187,7 @@ public class SelectRouteScreen extends Activity {
 	    TextView text1;
 	    TextView text2;
 	    TextView text3;
+	    TextView text4;
 	    TableRow row1;
 	    TableRow row2;
 	}
