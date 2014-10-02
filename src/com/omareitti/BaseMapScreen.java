@@ -19,6 +19,7 @@ import android.os.Looper;
 import android.os.Handler;
 import java.util.List;
 import org.osmdroid.bonuspack.overlays.Marker;
+import android.widget.Toast;
 
 public class BaseMapScreen extends Activity {
     private static final String TAG = BaseMapScreen.class.getSimpleName();
@@ -99,11 +100,14 @@ public class BaseMapScreen extends Activity {
     }
 
     public void goToCurrentLocation() {
-	// TODO: feedback if p is null
 	GeoPoint p = mLocation.getMyLocation();
 
 	if (p != null)
 	    mController.animateTo(p);
+	else
+	    Toast.makeText(BaseMapScreen.this,
+			   getString(R.string.maDlgErrorCurrentLocation),
+			   Toast.LENGTH_SHORT).show();
     }
 
     public void addOverlays(List<Overlay> overlays) {
