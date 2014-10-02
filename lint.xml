@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+  <issue id="SpUsage">
+    <ignore path="res/layout/bonuspack_bubble.xml" />
+  </issue>
+
+  <issue id="Overdraw">
+    <ignore path="res/layout/bonuspack_bubble.xml" />
+  </issue>
+
+  <issue id="UnusedResources">
+    <ignore path="res/layout/bonuspack_bubble.xml" />
+  </issue>
+
+  <issue id="ContentDescription">
+    <ignore path="res/layout/bonuspack_bubble.xml" />
+  </issue>
+
+  <issue id="HardcodedText">
+    <ignore path="res/layout/bonuspack_bubble.xml" />
+  </issue>
+</lint>
