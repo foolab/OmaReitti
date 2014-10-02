@@ -12,7 +12,7 @@
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
       android:text=""
-      android:autoText="true"
+      android:inputType="text"
       android:bufferType="normal"
       android:singleLine="true"
       android:layout_weight="1"

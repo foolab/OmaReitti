@@ -9,7 +9,7 @@
       android:text="@string/gsLocation"
       android:id="@+id/MainAppGeoSelectorText"
       android:layout_width="wrap_content"
-      android:textSize="20dip"
+      android:textSize="20sp"
       android:padding="6dip"
       android:layout_height="wrap_content"
   />

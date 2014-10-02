@@ -12,6 +12,7 @@
       android:bufferType="normal"
       android:singleLine="true"
       android:imeOptions="actionDone"
+      android:inputType="text"
   />
 </LinearLayout
 >

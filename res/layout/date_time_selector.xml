@@ -15,20 +15,19 @@
       android:cursorVisible="false"
       android:clickable="true"
       android:focusableInTouchMode="false"
-      android:editable="true"
-      android:textSize="20dip"
+      android:focusable="false"
+      android:textSize="20sp"
   />
   <EditText
       android:id="@+id/editDate"
       android:gravity="center"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:editable="false"
       android:clickable="true"
       android:cursorVisible="false"
       android:focusable="false"
       android:focusableInTouchMode="false"
-      android:textSize="20dip"
+      android:textSize="20sp"
   />
   <Button
       android:layout_height="wrap_content"
