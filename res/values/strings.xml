@@ -44,7 +44,7 @@
 <!-- MainApp -->
     <string name="maBtnSearch">Search</string>
     <string name="maEditFromHint">From</string>
-    <string name="maEditFromHintLocating">Locating...</string>
+    <string name="maEditFromHintLocating">Locating&#8230;</string>
     <string name="maEditToHint">To</string>
     <string name="maTabPlaces">My places</string>
     <string name="maTabPlacesMenuFrom">Set as From</string>
@@ -58,13 +58,13 @@
     <string name="maTabRoutesMenuSetBackwards">Set backwards</string>
     <string name="maTabRoutesMenuDelete">Delete</string>
     <string name="maTabRoutesMenuHome">Add to Home Screen</string>
-    <string name="maSearchingForLocation">Searching for location...</string>
+    <string name="maSearchingForLocation">Searching for location&#8230;</string>
     <string name="maAddressMenuLocation">Current location</string>
     <string name="maAddressMenuMap">Map</string>
     <string name="maAddressMenuContacts">Contacts</string>
     <string name="maRadioDeparture">Departure</string>
     <string name="maRadioArrival">Arrival</string>
-    <string name="maDlgSearch">Searching. Please wait...</string>
+    <string name="maDlgSearch">Searching. Please wait&#8230;</string>
     <string name="maDlgErrorEmptyFrom">From cannot be empty</string>
     <string name="maDlgErrorEmptyTo">To cannot be empty</string>
     <string name="maDlgErrorNoFrom">Could not find \'From\' location</string>
@@ -82,7 +82,7 @@
     <string name="maMenuAbout">About</string>
     <string name="maMenuAboutDlgTitle">About</string>
     <!-- moreoptionsdialog -->
-    <string name="maMoreOptions">...</string>
+    <string name="maMoreOptions">&#8230;</string>
     <string name="moOptimizeNormal">Normal</string>
     <string name="moOptimizeFastest">Fastest</string>
     <string name="moOptimizeLeastTransfers">Least transfers</string>
@@ -116,7 +116,7 @@
     <string name="srOptimFastest">Fastest</string>
     <string name="srOptimLeastTrans">Least transfers</string>
     <string name="srOptimLeastWalk">Least walking</string>
-    <string name="srDlgSearching">Searching routes. Please wait...</string>
+    <string name="srDlgSearching">Searching routes. Please wait&#8230;</string>
     <string name="srMenuEarlier">Earlier</string>
     <string name="srMenuNow">Now</string>
     <string name="srMenuLater">Later</string>
