@@ -13,6 +13,9 @@ import org.osmdroid.views.MapView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import org.osmdroid.views.overlay.Overlay;
+import android.view.MenuInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class RouteMap extends BaseMapScreen {
     private static final String TAG = RouteMap.class.getSimpleName();
@@ -176,6 +179,28 @@ public class RouteMap extends BaseMapScreen {
 
 	overlays.addAll(markers);
 	addOverlays(overlays);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.mapscreen_actions, menu);
+
+    	return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case R.id.action_show_mylocation:
+	    goToCurrentLocation();
+	    return true;
+
+	default:
+	    break;
+        }
+
+	return super.onOptionsItemSelected(item);
     }
 
     private void startMainActivity() {
