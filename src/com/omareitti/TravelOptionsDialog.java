@@ -9,6 +9,7 @@ import android.widget.ToggleButton;
 import android.widget.Button;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import android.text.TextUtils;
 
 public class TravelOptionsDialog {
@@ -18,9 +19,11 @@ public class TravelOptionsDialog {
 
     static AlertDialog create(Context context, String transportTypes,
 			      String optimize, final TravelOptionsDialogResults listener) {
+	List<CharSequence> list =
+	    Arrays.asList(context.getResources().getTextArray(R.array.moOptimizeValues));
+
 	final View view = View.inflate(context, R.layout.moreoptionsdialog, null);
-	final ArrayList<String> strings =
-	    new ArrayList(Arrays.asList(context.getResources().getTextArray(R.array.moOptimizeValues)));
+	final ArrayList<CharSequence> strings = new ArrayList<CharSequence>(list);
 	final Spinner spinner = (Spinner) view.findViewById(R.id.moreOptionsSpinner);
 	final ToggleButton bus = (ToggleButton) view.findViewById(R.id.toggleButtonBus);
 	final ToggleButton tram = (ToggleButton) view.findViewById(R.id.toggleButtonTram);
@@ -36,9 +39,10 @@ public class TravelOptionsDialog {
 	DialogInterface.OnClickListener clickListener =
 	    new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int which) {
-		    String optimize = strings.get(spinner.getSelectedItemPosition());
+		    String optimize =
+			strings.get(spinner.getSelectedItemPosition()).toString();
 
-		    ArrayList<String> types = new ArrayList();
+		    ArrayList<String> types = new ArrayList<String>();
 
 		    if (bus.isChecked())
 			types.add("bus|uline|service");
