@@ -192,31 +192,33 @@ public class SelectRouteScreen extends Activity {
     }
 
     public void doMakeUp() {
-        TableRow row = (TableRow) findViewById(R.id.SelectRouteScreenRow1);
-        row.setBackgroundColor(Color.argb(178,255,255,255));
-
         TextView from = (TextView) findViewById(R.id.SelectRouteScreenTextFrom);
         from.setText(fromName);
 
         TextView to = (TextView) findViewById(R.id.SelectRouteScreenTextTo);
         to.setText(toName);
 
-        TableRow row2 = (TableRow) findViewById(R.id.SelectRouteScreenRow3);
-        row2.setBackgroundColor(Color.argb(178,255,255,255));
-
         TextView tt = (TextView) findViewById(R.id.SelectRouteScreenTextTimeType);
-        if (timetype.equals("departure")) {
+        if (timetype.equals("departure"))
 	    tt.setText(getString(R.string.srDeparture));
-        } else {
+	else
 	    tt.setText(getString(R.string.srArrival));
-        }
 
         TextView optim = (TextView) findViewById(R.id.SelectRouteScreenTextOptimization);
         String opt = getString(R.string.srOptimNormal);
-        if (optimize.equals("default")) opt = getString(R.string.srOptimNormal);
-        if (optimize.equals("fastest")) opt = getString(R.string.srOptimFastest);
-        if (optimize.equals("least_transfers")) opt = getString(R.string.srOptimLeastTrans);
-        if (optimize.equals("least_walking")) opt = getString(R.string.srOptimLeastWalk);
+
+        if (optimize.equals("default"))
+	    opt = getString(R.string.srOptimNormal);
+
+        if (optimize.equals("fastest"))
+	    opt = getString(R.string.srOptimFastest);
+
+        if (optimize.equals("least_transfers"))
+	    opt = getString(R.string.srOptimLeastTrans);
+
+        if (optimize.equals("least_walking"))
+	    opt = getString(R.string.srOptimLeastWalk);
+
         optim.setText(opt);
     }
 
