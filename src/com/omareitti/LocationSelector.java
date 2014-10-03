@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListAdapter;
 import android.widget.Filterable;
@@ -25,10 +25,11 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.widget.AdapterView;
 import android.os.AsyncTask;
+import android.graphics.drawable.Drawable;
 
 public class LocationSelector extends LinearLayout implements LocationFinder.Listener {
     private AutoCompleteTextView mText;
-    private Button mButton;
+    private ImageButton mButton;
     private LocationFinder mFinder;
     private Coords mCoords;
     private int mHint;
@@ -126,7 +127,7 @@ public class LocationSelector extends LinearLayout implements LocationFinder.Lis
 
 	    });
 
-	mButton = (Button)findViewById(R.id.button);
+	mButton = (ImageButton)findViewById(R.id.button);
 
 	mButton.setOnClickListener(new View.OnClickListener() {
 		@Override
