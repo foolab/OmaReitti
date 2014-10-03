@@ -36,13 +36,6 @@
 	      android:configChanges="keyboardHidden|orientation"></activity>
 
     <activity android:name=".SettingsScreen"/>
-    <activity android:name=".ServiceDialog"
-	      android:theme="@android:style/Theme.Translucent.NoTitleBar"
-	      android:label="@string/appName"
-	      android:alwaysRetainTaskState="false"
-	      android:excludeFromRecents="true"
-	      android:finishOnTaskLaunch="true"
-	      android:noHistory="true"/>
 
     <activity android:name=".BaseMapScreen"
 	      android:label="@string/appName"/>
