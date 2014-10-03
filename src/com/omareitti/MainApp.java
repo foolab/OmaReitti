@@ -523,12 +523,12 @@ public class MainApp extends Activity {
 			};
 
 		    if (mFrom.getLocationAware()) {
-			refs.add(new Integer(1));
+			refs.add(Integer.valueOf(1));
 			mFrom.setListener(locationSelectorListener);
 		    }
 
 		    if (mTo.getLocationAware()) {
-			refs.add(new Integer(1));
+			refs.add(Integer.valueOf(1));
 			mTo.setListener(locationSelectorListener);
 		    }
 
