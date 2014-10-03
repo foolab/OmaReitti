@@ -121,8 +121,10 @@
     <string name="srMenuNow">Now</string>
     <string name="srMenuLater">Later</string>
 
-<!-- Preferences -->        
+<!-- Preferences --> 
 	<string name="prSettingsTitle">Settings</string>
+    <string name="prTimeTypeValuesDeparture">departure</string>
+    <string name="prTimeTypeValuesArrival">arrival</string>
     <string name="prLanguage">Language</string>
     <string name="prLanguageDefault">English</string>
     <string-array name="prefLanguageEntries">
@@ -142,7 +144,7 @@
         <item>9</item>
         <item>10</item>
         <item>11</item>
-        <item>12</item>        
+        <item>12</item>
         <item>13</item>
         <item>14</item>
         <item>15</item>
@@ -152,7 +154,16 @@
         <item>19</item>
         <item>20</item>
         <item>21</item>
-    </string-array>    
+    </string-array>
+    <string-array name="prTimeTypeEntries">
+      <item>@string/srDeparture</item>
+      <item>@string/srArrival</item>
+    </string-array>
+    <string-array name="prTimeTypeValues">
+      <item>@string/prTimeTypeValuesDeparture</item>
+      <item>@string/prTimeTypeValuesArrival</item>
+    </string-array>
+
     <string name="prRouteSearchOptions">Default Route Search Options</string>
     <string name="prTimeType">Default Time Type</string>
     <string name="prWalkingSpeed">Walking Speed</string>
