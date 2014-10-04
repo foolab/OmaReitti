@@ -45,12 +45,5 @@
 
     <activity android:name=".RouteMap"
 	      android:label="@string/appName"/>
-
-    <activity android:name=".ShortcutActivity">
-      <intent-filter>
-	<action android:name="android.intent.action.CREATE_SHORTCUT"/>
-	<category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
   </application>
 </manifest>
