@@ -1,23 +1,11 @@
 package com.omareitti;
 
-import java.util.List;
 import java.util.UUID;
 
-import com.omareitti.R;
 import com.omareitti.datatypes.Coords;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -59,7 +47,7 @@ public class Utils {
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter(); 
+        ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             // pre-condition
             return;
@@ -77,31 +65,4 @@ public class Utils {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
-    
-    public static String getUniqueID(Context context) {
-        final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-        final String tmDevice, tmSerial, tmPhone, androidId;
-        tmDevice = "" + tm.getDeviceId();
-        tmSerial = "" + tm.getSimSerialNumber();
-        androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        String deviceId = deviceUuid.toString();
-        return deviceId;
-    }
-    /*public static ComponentName getForegroundActivity(Context context) {
-    // get a list of running processes and iterate through them
-    ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
-
-		
-    // get the info from the currently running task
-    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-
-    Log.d("current task :", "CURRENT Activity ::"
-    + taskInfo.get(0).topActivity.getClassName());
-
-    ComponentName componentInfo = taskInfo.get(0).topActivity; 
-    return componentInfo;
-    }*/
 }
