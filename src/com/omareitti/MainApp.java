@@ -491,8 +491,6 @@ public class MainApp extends Activity {
     private OnClickListener searchRouteListener = new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
-		final View _v = v;
-
 		if (mFrom.getLocationAware() || mTo.getLocationAware()) {
 		    // We need to wait for them.
 		    final ProgressDialog dlg =
@@ -517,7 +515,7 @@ public class MainApp extends Activity {
 				    if (refs.size() == 0) {
 					// We are done
 					dlg.dismiss();
-					searchRouteListener.onClick(_v);
+					searchRouteListener.onClick(findViewById(R.id.searchButton));
 				    }
 				}
 			    }
