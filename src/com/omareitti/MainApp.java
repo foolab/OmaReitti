@@ -342,12 +342,13 @@ public class MainApp extends Activity {
 	    if (fromAddress != null)
 		mFrom.setLocation(fromAddress, new Coords(fromCoordsInt));
 
-	    // TODO: show an error if we don't have all the data we need
-
-	    //	    if (toAddress != null && fromAddress != null && fromCoordsInt != null && toCoordsInt != null) {
+	    if (toAddress != null &&
+		fromAddress != null &&
+		fromCoordsInt != null &&
+		toCoordsInt != null) {
 		updateSettings();
-		launchNextActivity();
-		//	    }
+		searchRouteListener.onClick(findViewById(R.id.searchButton));
+	    }
         }
     }
 
